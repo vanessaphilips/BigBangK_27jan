@@ -1,6 +1,5 @@
 package com.example.project_bigbangk.controller;
 /**
-
 @Author Bigbangk
 */
 
@@ -21,8 +20,8 @@ public class RegistrationController {
     /**
      * Receives http post request with JSON body and sends the DTO to registration service.
      * Then sends response based on what service returns
-     * @param registrationDTO
-     * @return
+     * @param registrationDTO DTO containing all registration parameters
+     * @return ResponseEntity with different status codes that will be recieved on the frontend
      */
     @PostMapping("/register")
     @ResponseBody

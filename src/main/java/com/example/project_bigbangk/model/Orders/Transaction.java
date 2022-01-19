@@ -120,15 +120,17 @@ public class Transaction{
         this.orderId = orderId;
     }
 
-    //FIXME toString aanpassen (transaction extends niet meer van abstract order)
-
     @Override
     public String toString() {
-        return super.toString() +
-                "Transaction{" +
-                "transactionFee=" + fee +
+        return "Transaction{" +
+                "asset=" + asset +
+                ", priceExcludingFee=" + priceExcludingFee +
+                ", assetAmount=" + assetAmount +
+                ", date=" + date +
+                ", fee=" + fee +
                 ", buyerWallet=" + buyerWallet +
                 ", sellerWallet=" + sellerWallet +
+                ", orderId=" + orderId +
                 '}';
     }
 }

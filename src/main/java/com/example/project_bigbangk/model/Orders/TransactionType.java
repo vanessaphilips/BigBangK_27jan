@@ -1,37 +1,15 @@
-// Created by vip
-// Creation date 16/12/2021
-
 package com.example.project_bigbangk.model.Orders;
 
 /**
  * Enum created by Vanessa Philips.
- * 4 types of transactions/orders.
+ * 6 types of transactions/orders.
  */
 
-//TODO even overleg over onderstaande namen!
-
 public enum TransactionType {
-    TRANSACTION ("Transaction"),
-    LIMIT_SELL ("Sell if price reaches level above current level"),
-    LIMIT_BUY("Buy if price reaches below desired level"),
-    STOPLOSS_SELL("Sell if price reaches certain level below current price");
-
-    private String transactionName;
-
-    private TransactionType(String transactionName) {
-        this.transactionName =  transactionName;
+    BUY,
+    SELL,
+    TRANSACTION,
+    LIMIT_SELL,
+    LIMIT_BUY,
+    STOPLOSS_SELL;
     }
-
-    @Override
-    public String toString() {
-        return transactionName;
-    }
-
-    public String getTransactionCode() {
-        return this.name();
-    }
-
-    public String getTransactionName() {
-        return transactionName;
-    }
-}

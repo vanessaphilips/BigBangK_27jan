@@ -15,32 +15,32 @@ public class Limit_Buy extends AbstractOrder{
 
     private final Logger logger = LoggerFactory.getLogger(Limit_Buy.class);
 
-    private Wallet buyerWallet;
+    private Wallet buyer;
 
-    public Limit_Buy(int orderId, double requestedPrice, double numberOfAssets, LocalDateTime date) {
-        super(orderId, requestedPrice, numberOfAssets, date);
+    public Limit_Buy(int orderId, double orderLimit, double assetAmount, LocalDateTime date) {
+        super(orderId, orderLimit, assetAmount, date);
         logger.info("New Limit_Buy, without Asset and Wallet");
     }
 
-    public Limit_Buy(Asset asset, double requestedPrice, double numberOfAssets, LocalDateTime date, Wallet buyerWallet) {
-        super(asset, requestedPrice, numberOfAssets, date);
-        this.buyerWallet = buyerWallet;
+    public Limit_Buy(Asset asset, double orderLimit, double assetAmount, LocalDateTime date, Wallet buyer) {
+        super(asset, orderLimit, assetAmount, date);
+        this.buyer = buyer;
         logger.info("New Limit_Buy, without id");
     }
 
-    public Wallet getBuyerWallet() {
-        return buyerWallet;
+    public Wallet getBuyer() {
+        return buyer;
     }
 
-    public void setBuyerWallet(Wallet buyerWallet) {
-        this.buyerWallet = buyerWallet;
+    public void setBuyer(Wallet buyer) {
+        this.buyer = buyer;
     }
 
     @Override
     public String toString() {
         return super.toString() +
                 "Limit_Buy{" +
-                ", buyerWallet=" + buyerWallet +
+                ", buyerWallet=" + buyer +
                 '}';
     }
 }

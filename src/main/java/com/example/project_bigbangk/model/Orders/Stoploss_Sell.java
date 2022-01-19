@@ -15,44 +15,35 @@ public class Stoploss_Sell extends AbstractOrder{
 
     private final Logger logger = LoggerFactory.getLogger(Stoploss_Sell.class);
 
-    private Wallet sellerWallet;
-    private double lowerBound;
+    private Wallet seller;
 
-    public Stoploss_Sell(int orderId, double requestedPrice, double numberOfAssets, LocalDateTime date, double lowerBound) {
-        super(orderId, requestedPrice, numberOfAssets, date);
-        this.lowerBound = lowerBound;
+
+    public Stoploss_Sell(int orderId, double orderLimit, double assetAmount, LocalDateTime date) {
+        super(orderId, orderLimit, assetAmount, date);
         logger.info("New Stoploss_Sell, without Asset and Wallet");
     }
 
-    public Stoploss_Sell(Asset asset, double requestedPrice, double numberOfAssets, LocalDateTime date, Wallet sellerWallet, double lowerBound) {
-        super(asset, requestedPrice, numberOfAssets, date);
-        this.sellerWallet = sellerWallet;
-        this.lowerBound = lowerBound;
+    public Stoploss_Sell(Asset asset, double orderLimit, double assetAmount, LocalDateTime date, Wallet seller) {
+        super(asset, orderLimit, assetAmount, date);
+        this.seller = seller;
+
         logger.info("New Stoploss_Sell, without id");
     }
 
-    public Wallet getSellerWallet() {
-        return sellerWallet;
+    public Wallet getSeller() {
+        return seller;
     }
 
-    public void setSellerWallet(Wallet sellerWallet) {
-        this.sellerWallet = sellerWallet;
+    public void setSeller(Wallet seller) {
+        this.seller = seller;
     }
 
-    public double getLowerBound() {
-        return lowerBound;
-    }
-
-    public void setLowerBound(double lowerBound) {
-        this.lowerBound = lowerBound;
-    }
 
     @Override
     public String toString() {
         return super.toString() +
                 "Stoploss_Sell{" +
-                "sellerWallet=" + sellerWallet +
-                ", lowerBound=" + lowerBound +
+                "sellerWallet=" + seller +
                 '}';
     }
 }

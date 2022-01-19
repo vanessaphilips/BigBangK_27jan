@@ -8,9 +8,7 @@
 package com.example.project_bigbangk.repository;
 
 import com.example.project_bigbangk.model.*;
-import com.example.project_bigbangk.model.Orders.Limit_Buy;
-import com.example.project_bigbangk.model.Orders.Limit_Sell;
-import com.example.project_bigbangk.model.Orders.Transaction;
+import com.example.project_bigbangk.model.Orders.*;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
@@ -60,8 +58,8 @@ public class RootRepository {
     public void createNewlyRegisteredClient(Client client) {
         addressDAO.saveAddress(client.getAddress());
         walletDAO.saveNewWallet(client.getWallet());
-        for (Asset asset : client.getWallet().getAsset().keySet()) {
-            walletDAO.createWalletAsset(client.getWallet(), asset, client.getWallet().getAsset().get(asset));
+        for (Asset asset : client.getWallet().getAssets().keySet()) {
+            walletDAO.createWalletAsset(client.getWallet(), asset, client.getWallet().getAssets().get(asset));
         }
         clientDAO.saveClient(client);
     }
@@ -148,10 +146,17 @@ public class RootRepository {
         for (Asset asset : assets) {
             assetWithAmountMap.put(assetDAO.findAssetByCode(asset.getCode()), walletDAO.findAmountOfAsset(iban, asset.getCode()));
         }
-        wallet.setAsset(assetWithAmountMap);
+        wallet.setAssets(assetWithAmountMap);
         return wallet;
     }
 
+    //Order
+    public List<Limit_Sell> getAllLimitSell() {
+      return null;
+    }
+    public List<Limit_Buy> getAllLimitBuy() {
+        return null;
+    }
     //ORDER > TRANSACTION
 
     /**
@@ -184,6 +189,16 @@ public class RootRepository {
     public void saveWaitingLimitSellOrder(Limit_Sell limit_sell){
         orderDAO.saveLimit_Sell(limit_sell);
     }
+
+    public void saveTransaction(Transaction transaction) {
+        orderDAO.saveTransaction(transaction);
+        walletDAO.updateBalance(transaction.getBuyerWallet());
+        walletDAO.updateWalletAssets(transaction.getBuyerWallet(), transaction.getAsset(), transaction.getBuyerWallet().getAssets().get(transaction.getAsset()));
+        walletDAO.updateBalance(transaction.getSellerWallet());
+        walletDAO.updateWalletAssets(transaction.getSellerWallet(), transaction.getAsset(), transaction.getSellerWallet().getAssets().get(transaction.getAsset()));
+    }
+
+
 
     //ORDER > STOPLOSS_SELL
 

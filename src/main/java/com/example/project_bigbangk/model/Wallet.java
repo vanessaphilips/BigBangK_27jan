@@ -3,11 +3,11 @@
 
 package com.example.project_bigbangk.model;
 
+import com.example.project_bigbangk.BigBangkApplicatie;
 import com.example.project_bigbangk.model.Orders.Limit_Buy;
 import com.example.project_bigbangk.model.Orders.Limit_Sell;
 import com.example.project_bigbangk.model.Orders.Stoploss_Sell;
 import com.example.project_bigbangk.model.Orders.Transaction;
-import com.example.project_bigbangk.service.IbanGeneratorService;
 
 import java.util.List;
 import java.util.Map;
@@ -18,31 +18,31 @@ public class Wallet implements Cloneable {
     private String bank;
     private String iban;
     private double balance;
-    private Map<Asset, Double> asset;
+    private Map<Asset, Double> assets;
     private List<Transaction> transaction;
     private List<Limit_Sell> limitSell;
     private List<Limit_Buy> limitBuy;
     private List<Stoploss_Sell> stoplossSell;
     private ICanTrade owner;
 
-    public Wallet(String bank, String iban, double balance, Map<Asset, Double> asset, List<Transaction> transaction,
-                  List<Limit_Sell> limitSell, List<Limit_Buy> limnitBuy, List<Stoploss_Sell> stoplossSell,
+    public Wallet(String bank, String iban, double balance, Map<Asset, Double> assets, List<Transaction> transaction,
+                  List<Limit_Sell> limitSell, List<Limit_Buy> limitBuy, List<Stoploss_Sell> stoplossSell,
                   ICanTrade owner) {
         this.bank = bank;
         this.iban = iban;
         this.balance = balance;
-        this.asset = asset;
+        this.assets = assets;
         this.transaction = transaction;
         this.limitSell = limitSell;
-        this.limitBuy = limnitBuy;
+        this.limitBuy = limitBuy;
         this.stoplossSell = stoplossSell;
         this.owner = owner;
     }
 
-    public Wallet(String iban, double balance, Map<Asset, Double> asset) {
+    public Wallet(String iban, double balance, Map<Asset, Double> assets) {
         this.iban = iban;
         this.balance = balance;
-        this.asset = asset;
+        this.assets = assets;
     }
 
     public Wallet(String iban, double balance) {
@@ -50,13 +50,84 @@ public class Wallet implements Cloneable {
         this.balance = balance;
     }
 
+    public void addToBalance(double addedCash){
+        this.balance+= addedCash;
+    }
+
+    public void removeFromBalance(double removedCash){
+        this.balance-= removedCash;
+    }
+
+    public void addToAsset(Asset asset, double addedAmount){
+        this.assets.replace(asset, (this.assets.get(asset) + addedAmount));
+    }
+
+    public void removeFromAsset(Asset asset, double removedAmount){
+        this.assets.replace(asset, (this.assets.get(asset) - removedAmount));
+    }
+
+    /**
+     * Calculates the balance thats still free for the client to spend.
+     * If a client has open buy orders he cannot make other buyorders using the same money. That's why we need to know the amount of the balance thats actually free for use in new orders.
+     * @return double free balance
+     */
+    public double freeBalance(){
+        double reservedBalance = 0.0;
+        for (Limit_Buy limit_buy : limitBuy) {
+            reservedBalance += limit_buy.getOrderLimit();
+            reservedBalance += (limit_buy.getOrderLimit() * BigBangkApplicatie.bigBangk.getFeePercentage());
+        }
+        return balance - reservedBalance;
+    }
+
+    /**
+     * similar to freebalance, if you have an open order to sell an asset it reserves those assets.
+     * For clarity: if you have 100 BTC and an open sell order for 50BTC, you can make another sell order for 50, but not for 100.
+     * @param asset the asset you want to check the amount of
+     * @return amount of assets that aren't reserved for other orders.
+     */
+    public double freeAssetAmount(Asset asset){
+        double reservedAssetAmount = 0.0;
+        for (Limit_Sell limit_sell : limitSell) {
+            if(limit_sell.getAsset() == asset){
+                reservedAssetAmount += limit_sell.getAssetAmount();
+            }
+        }
+        for (Stoploss_Sell stoploss_sell : stoplossSell) {
+            if(stoploss_sell.getAsset() == asset){
+                reservedAssetAmount += stoploss_sell.getAssetAmount();
+            }
+        }
+        return assets.get(asset) - reservedAssetAmount;
+    }
+
+    /**
+     * checks if the wallet has enough free balance against the amount you need.
+     * @param amountNeeded the amount you need
+     * @return boolean
+     */
+    public boolean sufficientBalance(double amountNeeded){
+        return this.freeBalance() >= amountNeeded;
+    }
+
+    /**
+     * checks if a wallet has enough free 'amount of an asset'
+     * @param asset the asset to check the amount of
+     * @param assetAmountNeeded the amount you want to check
+     * @return boolean
+     */
+    public boolean sufficientAsset(Asset asset, double assetAmountNeeded){
+        return this.freeAssetAmount(asset) >= assetAmountNeeded;
+    }
+
+
     @Override
     public String toString() {
         return "Wallet{" +
                 "bank='" + bank + '\'' +
                 ", iban='" + iban + '\'' +
                 ", balance=" + balance +
-                ", assets=" + asset +
+                ", assets=" + assets +
                 ", transactions=" + transaction +
                 ", limitSell=" + limitSell +
                 ", limitBuy=" + limitBuy +
@@ -102,12 +173,12 @@ public class Wallet implements Cloneable {
         this.balance = balance;
     }
 
-    public Map<Asset, Double> getAsset() {
-        return asset;
+    public Map<Asset, Double> getAssets() {
+        return assets;
     }
 
-    public void setAsset(Map<Asset, Double> asset) {
-        this.asset = asset;
+    public void setAssets(Map<Asset, Double> assets) {
+        this.assets = assets;
     }
 
     public List<Transaction> getTransaction() {

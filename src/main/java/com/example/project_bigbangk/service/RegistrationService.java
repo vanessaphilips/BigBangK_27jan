@@ -67,6 +67,14 @@ public class RegistrationService {
         }
     }
 
+    /**
+     * Checks various parameters to see if a Client can be registered.
+     * First checks if an email already exists.
+     * if checkRegistrationInput doesn't return any errors it creates wallet and address objects and finaly a client object
+     * this client object is stored in the database
+     * @param registrationDTO DTO containing all registration parameters
+     * @return string for response entity body.
+     */
     public String registerClient(RegistrationDTO registrationDTO){
         Client existingClient = rootRepository.findClientByEmail(registrationDTO.getEmail());
         if(existingClient != null){
@@ -94,8 +102,8 @@ public class RegistrationService {
      * checks registrationDTO input.
      * failstates are empty strings(except insertion), not matching specific REGEX for postalcode, bsn, email and password,
      * and also if the difference between dateofbirth and now isn't under the
-     * @param registrationDTO
-     * @return
+     * @param registrationDTO DTO containing all registration parameters
+     * @return string built up of all errors found
      */
     public String checkRegistrationInput(RegistrationDTO registrationDTO){
         inputErrorMessage = "";
@@ -132,7 +140,11 @@ public class RegistrationService {
         return yearsBetween < AGE_LIMIT || yearsBetween > UPPER_AGE_LIMIT;
     }
 
-    //voegt alle input die strings zijn aan een list toe en loopt er doorheen om te kijken of ze niet leeg zijn. (behalve insertion die mag leeg zijn)
+    /**
+     * Puts all string inputs(except addition) into a list to quickly check if theyre not empty.
+     * @param registrationDTO DTO containing all registration parameters
+     * @return boolean empties or not
+     */
     private boolean checkForEmptyStrings(RegistrationDTO registrationDTO) {
         List<String> inputNotNullList = Arrays.asList(registrationDTO.getFirstName(), registrationDTO.getLastName(),
                 registrationDTO.getBsn(), registrationDTO.getDateOfBirth(), registrationDTO.getEmail(), registrationDTO.getPassword(), registrationDTO.getStreet(),
@@ -147,7 +159,7 @@ public class RegistrationService {
         return  foundEmpty;
     }
 
-    //controleerd string tegen regular expression
+
     public boolean matchesRegex(String input, String regex) {
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(input);

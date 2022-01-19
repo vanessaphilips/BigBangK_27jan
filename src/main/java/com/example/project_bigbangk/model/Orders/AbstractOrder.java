@@ -10,28 +10,28 @@ import java.util.Objects;
  * Abstract class for "Order/Transaction".
  */
 
-abstract class AbstractOrder {
+public abstract class AbstractOrder {
 
     private long orderId;
     private Asset asset;
-    private double requestedPrice;
-    private double numberOfAssets;
+    private double orderLimit;
+    private double assetAmount;
     private LocalDateTime date;
 
-    public AbstractOrder(long orderId, Asset asset, double requestedPrice, double numberOfAssets, LocalDateTime date) {
+    public AbstractOrder(long orderId, Asset asset, double orderLimit, double assetAmount, LocalDateTime date) {
         this.orderId = orderId;
         this.asset = asset;
-        this.requestedPrice = requestedPrice;
-        this.numberOfAssets = numberOfAssets;
+        this.orderLimit = orderLimit;
+        this.assetAmount = assetAmount;
         this.date = date;
     }
 
-    public AbstractOrder(long orderId, double requestedPrice, double numberOfAssets, LocalDateTime date) {
-        this(orderId, null, requestedPrice, numberOfAssets, date);
+    public AbstractOrder(long orderId, double orderLimit, double assetAmount, LocalDateTime date) {
+        this(orderId, null, orderLimit, assetAmount, date);
     }
 
-    public AbstractOrder(Asset asset, double requestedPrice, double numberOfAssets, LocalDateTime date) {
-        this(0, asset, requestedPrice, numberOfAssets, date);
+    public AbstractOrder(Asset asset, double orderLimit, double assetAmount, LocalDateTime date) {
+        this(0, asset, orderLimit, assetAmount, date);
     }
 
     public long getOrderId() {
@@ -50,20 +50,20 @@ abstract class AbstractOrder {
         this.asset = asset;
     }
 
-    public double getRequestedPrice() {
-        return requestedPrice;
+    public double getOrderLimit() {
+        return orderLimit;
     }
 
-    public void setRequestedPrice(double requestedPrice) {
-        this.requestedPrice = requestedPrice;
+    public void setOrderLimit(double orderLimit) {
+        this.orderLimit = orderLimit;
     }
 
-    public double getNumberOfAssets() {
-        return numberOfAssets;
+    public double getAssetAmount() {
+        return assetAmount;
     }
 
-    public void setNumberOfAssets(int numberOfAssets) {
-        this.numberOfAssets = numberOfAssets;
+    public void setAssetAmount(int assetAmount) {
+        this.assetAmount = assetAmount;
     }
 
     public LocalDateTime getDate() {
@@ -79,8 +79,8 @@ abstract class AbstractOrder {
         return "AbstractOrder{" +
                 "orderId=" + orderId +
                 ", asset=" + asset +
-                ", requestedPrice=" + requestedPrice +
-                ", numberOfAssets=" + numberOfAssets +
+                ", requestedPrice=" + orderLimit +
+                ", numberOfAssets=" + assetAmount +
                 ", date=" + date +
                 '}';
     }

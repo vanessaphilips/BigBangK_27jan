@@ -125,6 +125,7 @@ function prepareRegistration() {
 }
 
 function sendRegistrationData(rData){
+    document.getElementById('emailError').style.display = 'none';
     fetch(`http://localhost:8080/register`, {
         method: "POST",
         headers: acceptHeaders(),
@@ -132,10 +133,14 @@ function sendRegistrationData(rData){
     }).then(response => {
         if (response.status === 201) {
             console.log("Succesfull registration user: " + rData.email)
+            window.alert("Registration Succesful")
+            window.location.href = "LoginPage.html";
         } else if (response.status === 409) {
             console.log("User already in database: " + rData.email)
+            document.getElementById('emailError').style.display = 'block';
+
         } else {
-            console.log("Registration Failed: Missing or incorrect fields.");
+            console.log("Registration Failed: Missing or incorrect fields. Check if your BSN is valid.");
         }
     })
 }

@@ -1,6 +1,7 @@
 package com.example.project_bigbangk.repository;
 
 import com.example.project_bigbangk.model.Asset;
+import com.example.project_bigbangk.model.Orders.TransactionType;
 import com.example.project_bigbangk.model.Wallet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -32,16 +33,72 @@ public class JdbcWalletDAO implements IWalletDAO{
     }
 
     public Wallet findWalletByIban(String iban) {
-        String slq = "Select * From wallet Where IBAN = ?;";
+        String sql = "Select * From wallet Where IBAN = ?;";
         Wallet wallet = null;
         try {
-            wallet = jdbcTemplate.queryForObject(slq, new walletRowMapper(), iban);
+            wallet = jdbcTemplate.queryForObject(sql, new walletRowMapper(), iban);
         } catch (DataAccessException dataAccessException) {
             if (! dataAccessException.getMessage().toString().equals("Incorrect result size: expected 1, actual 0")) {
             System.err.println(dataAccessException.getMessage());}
         }
         return wallet;
     }
+
+    /**
+     * finds the Wallet of the client that placed the order, only works for open orders, not transactions
+     * @param orderId unique id of order
+     * @return Wallet
+     */
+    public Wallet findWalletByOrderId(int orderId){
+        String sql = String.format("Select * From wallet JOIN `order` ON `order`.buyer = wallet.IBAN " +
+                "UNION Select * From wallet JOIN `order` ON `order`.seller = wallet.IBAN" +
+                "WHERE orderId = ? AND NOT type = '%s';", TransactionType.TRANSACTION.toString());
+        Wallet wallet = null;
+        try {
+            wallet = jdbcTemplate.queryForObject(sql, new walletRowMapper(), orderId);
+        } catch (DataAccessException dataAccessException) {
+            if (! dataAccessException.getMessage().toString().equals("findWalletByOrderId: Incorrect result size: expected 1, actual 0")) {
+                System.err.println(dataAccessException.getMessage());}
+        }
+        return wallet;
+    }
+
+    /**
+     * finds the Wallet of the Seller, only for use with 'transactions'
+     * @param orderId unique id of order
+     * @return Wallet
+     */
+    public Wallet FindSellerWalletByOrderId(int orderId){
+        String sql = String.format("Select * From wallet JOIN `order` ON `order`.seller = wallet.IBAN" +
+                "WHERE orderId = ? AND type = '%s';", TransactionType.TRANSACTION.toString());
+        Wallet wallet = null;
+        try {
+            wallet = jdbcTemplate.queryForObject(sql, new walletRowMapper(), orderId);
+        } catch (DataAccessException dataAccessException) {
+            if (! dataAccessException.getMessage().toString().equals("FindSellerWalletByOrderID: Incorrect result size: expected 1, actual 0")) {
+                System.err.println(dataAccessException.getMessage());}
+        }
+        return wallet;
+    }
+
+    /**
+     * finds the Wallet of the Buyer, only for use with 'transactions'
+     * @param orderId unique id of order
+     * @return Wallet
+     */
+    public Wallet FindBuyerWalletByOrderId(int orderId){
+        String sql = String.format("Select * From wallet JOIN `order` ON `order`.buyer = wallet.IBAN" +
+                "WHERE orderId = ? AND type = '%s';", TransactionType.TRANSACTION.toString());
+        Wallet wallet = null;
+        try {
+            wallet = jdbcTemplate.queryForObject(sql, new walletRowMapper(), orderId);
+        } catch (DataAccessException dataAccessException) {
+            if (! dataAccessException.getMessage().toString().equals("FindBuyerWalletByOrderID: Incorrect result size: expected 1, actual 0")) {
+                System.err.println(dataAccessException.getMessage());}
+        }
+        return wallet;
+    }
+
 
     public void updateWalletAssets(Wallet wallet, Asset asset, double amount) {
         String sql = "Update wallet_has_asset Set amount = ? Where IBAN = ? And code = ?;";

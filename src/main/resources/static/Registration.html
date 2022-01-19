@@ -18,6 +18,9 @@
     <label for="email">E-mail</label>
     <input type="email" required="required" id="email" class="Rinput">
     <br><br>
+    <div id="emailError" hidden>
+        <p>This e-mail is already in use.</p>
+    </div>
     <br>
     <label for="password">Password</label>
     <input type="password" required="required" id="password" class="Rinput">
@@ -43,7 +46,6 @@
     <br>
     <label for="bsn">Burgerservicenummer</label>
     <input type="text" required="required" id="bsn" minlength="9" maxlength="9" class="Rinput">
-<!--    bsn verstoppen of vervangen op basis van land?? -->
     <br><br>
     <br>
     <label for="dateOfBirth">Date of Birth</label>
@@ -61,7 +63,6 @@
         <p>Unknown Number/Postcode Combination</p>
     </div>
     <br>
-<!--    op basis van postcode nr straat etc ophalen later.-->
     <label for="street">Street</label>
     <input type="text" required="required" id="street" class="Rinput" placeholder="street" disabled="disabled">
     <br><br>
@@ -79,7 +80,6 @@
     </select>
     <br><br>
     <button onclick="prepareRegistration()">Submit</button>
-<!--    <input id="submitForm" type="submit">-->
 
 </form>
 
