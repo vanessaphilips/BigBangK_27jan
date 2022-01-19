@@ -52,7 +52,7 @@ public class JdbcWalletDAO implements IWalletDAO{
     public Wallet findWalletByOrderId(int orderId){
         String sql = String.format("Select * From wallet JOIN `order` ON `order`.buyer = wallet.IBAN " +
                 "UNION Select * From wallet JOIN `order` ON `order`.seller = wallet.IBAN" +
-                "WHERE orderId = ? AND NOT type = '%s';", TransactionType.TRANSACTION.toString());
+                "WHERE orderId = ? AND NOT orderType = '%s';", TransactionType.TRANSACTION.toString());
         Wallet wallet = null;
         try {
             wallet = jdbcTemplate.queryForObject(sql, new walletRowMapper(), orderId);
@@ -70,7 +70,7 @@ public class JdbcWalletDAO implements IWalletDAO{
      */
     public Wallet FindSellerWalletByOrderId(int orderId){
         String sql = String.format("Select * From wallet JOIN `order` ON `order`.seller = wallet.IBAN" +
-                "WHERE orderId = ? AND type = '%s';", TransactionType.TRANSACTION.toString());
+                "WHERE orderId = ? AND orderType = '%s';", TransactionType.TRANSACTION.toString());
         Wallet wallet = null;
         try {
             wallet = jdbcTemplate.queryForObject(sql, new walletRowMapper(), orderId);
