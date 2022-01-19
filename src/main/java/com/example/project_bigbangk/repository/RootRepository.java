@@ -219,7 +219,7 @@ public class RootRepository {
     //ORDER > LIMIT_SELL
 
     /**
-     * Saves Limit_Sell order temporary. To be completed when there is a match with another client's offer (matchservice).
+     * Saves Limit_Sell order temporary. To be completed when there is a match with another client's offer -> matchservice).
      * @param limit_sell
      * author = Vanessa Philips
      */
@@ -230,7 +230,7 @@ public class RootRepository {
     //ORDER > STOPLOSS_SELL
 
     /**
-     * Saves Stoploss_Sell order temporary. To be completed when there is a match with another offer (bank or client) -> matchservice.
+     * Saves Stoploss_Sell order temporary. To be completed when there is a match with another offer (bank) -> matchservice.
      * @param stoploss_sell
      * author = Vanessa Philips
      */

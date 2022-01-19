@@ -62,7 +62,6 @@ public class JdbcOrderDAO {
 
     /**
      * Saves Limit_Buy order in database, waiting to be matched with another client's offer (matchservice).
-     *
      * @param limit_buy author = Vanessa Philips
      */
     public void saveLimit_Buy(Limit_Buy limit_buy) {
@@ -81,10 +80,8 @@ public class JdbcOrderDAO {
         }
     }
 
-
     /**
      * Saves Limit_Sell order in database, waiting to be matched with another client's offer (matchservice).
-     *
      * @param limit_sell author = Vanessa Philips
      */
     public void saveLimit_Sell(Limit_Sell limit_sell) {

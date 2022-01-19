@@ -30,8 +30,7 @@ public class Orderservice {
         this.rootRepository = rootRepository;
     }
 
-    public enum Messages
-    {
+    public enum Messages {
         FundClient("Order Failed: Client has insufficient funds."),
         FundBank("Order Failed: Bank has insufficient funds."),
         AssetClient("Order Failed: Client has insufficient assets."),
@@ -74,7 +73,6 @@ public class Orderservice {
         }
             return "Incorrect order type in JSON";
     }
-
 
     public String checkBuyOrder(OrderDTO order){
         double priceExcludingFee = order.getAssetAmount() * currentAssetPrice;
@@ -132,15 +130,12 @@ public class Orderservice {
         rootRepository.saveTransaction(transaction);
     }
 
-
-
     // Limit_Buy -> code: Lbuy
 
     /**
-     * Checks if the Limit_Buy order can be done, if yes -> save waitingLimitBuyOrder in database
+     * Checks if the Limit_Buy order can be done, if yes -> save LimitBuyOrder in database
      * @param order
-     * @return
-     * author = Vanessa Philips
+     * @return author = Vanessa Philips
      */
     public String checkLbuyOrder(OrderDTO order) {
         double orderFee = order.getLimit() * BigBangkApplicatie.bigBangk.getFeePercentage();
@@ -158,10 +153,9 @@ public class Orderservice {
     // Limit_Sell -> code: Lsell
 
     /**
-     * Checks if the Limit_Sell order can be done, if yes -> save waitingLimitSellOrder in database
+     * Checks if the Limit_Sell order can be done, if yes -> save LimitSellOrder in database
      * @param order
-     * author = Vanessa Philips
-     * @return
+     * @return author = Vanessa Philips
      */
     public String checkLsellOrder(OrderDTO order){
         if (clientWallet.sufficientAsset(asset, order.getAssetAmount())) {
