@@ -88,7 +88,7 @@ public class JdbcWalletDAO implements IWalletDAO{
      */
     public Wallet FindBuyerWalletByOrderId(int orderId){
         String sql = String.format("Select * From wallet JOIN `order` ON `order`.buyer = wallet.IBAN" +
-                "WHERE orderId = ? AND type = '%s';", TransactionType.TRANSACTION.toString());
+                "WHERE orderId = ? AND orderType = '%s';", TransactionType.TRANSACTION.toString());
         Wallet wallet = null;
         try {
             wallet = jdbcTemplate.queryForObject(sql, new walletRowMapper(), orderId);
