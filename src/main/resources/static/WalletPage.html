@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Wallet Page</title>
+    <script defer src="scripts/GlobalConstants.js"></script>
+    <script defer src="scripts/URLs.js"></script>
+    <script defer src="scripts/Headers.js"></script>
+</head>
+<body>
+<h1>Wallet overview</h1>
+<br>
+<h3>Total value wallet</h3>
+<table style="width:465px">
+    <tr>
+        <th style="text-align:left">Wallet value in euro's</th>
+        <th style="text-align:right">
+            <label for="assetCode"></label>
+            <input type="text" required="required" id="assetCode" disabled="disabled">
+        </th>
+    </tr>
+</table>
+<br>
+<h3>Total wallet cash</h3>
+<table style="width:465px">
+    <tr>
+        <th style="text-align:left">Wallet cash in euro's </th>
+        <th style="text-align:right">
+            <label for="total money"></label>
+            <input type="text" required="required" id="total money" disabled="disabled">
+        </th>
+    </tr>
+</table>
+<br>
+<h3>Wallet content</h3>
+<table style="width:660px">
+    <tr>
+        <th style="text-align:left">Crypto currencies </th>
+        <th style="text-align:right">Total of currencies </th>
+        <th style="text-align:right">Total value in euro's </th>
+    </tr>
+    <tr>
+        <td>(BTC) Bitcoin</td>
+        <td style="text-align:right">
+            <label for="(BTC)"></label>
+            <input type="text" required="required" id="(BTC)" disabled="disabled">
+        </td>
+        <td style="text-align:right">
+            <label for="(BTC) value in euro's"></label>
+            <input type="text" required="required" id="(BTC) value in euro's" disabled="disabled">
+        </td>
+    </tr>
+    <tr>
+        <td>(ETH) Ethereum</td>
+        <td style="text-align:right">
+            <label for="(ETH)"></label>
+            <input type="text" required="required" id="(ETH)" disabled="disabled">
+        </td>
+        <td style="text-align:right">
+            <label for="(ETH) value in euro's"></label>
+            <input type="text" required="required" id="(ETH) value in euro's" disabled="disabled">
+        </td>
+    </tr>
+    <tr>
+        <td>(BNB) Binance Coin</td>
+        <td style="text-align:right">
+            <label for="(BNB)"></label>
+            <input type="text" required="required" id="(BNB)" disabled="disabled">
+        </td>
+        <td style="text-align:right">
+            <label for="(BNB) value in euro's"></label>
+            <input type="text" required="required" id="(BNB) value in euro's" disabled="disabled">
+        </td>
+    </tr>
+    <tr>
+        <td>(SOL) Solana</td>
+        <td style="text-align:right">
+            <label for="(SOL)"></label>
+            <input type="text" required="required" id="(SOL)" disabled="disabled">
+        </td>
+        <td style="text-align:right">
+            <label for="(SOL) value in euro's"></label>
+            <input type="text" required="required" id="(SOL) value in euro's" disabled="disabled">
+        </td>
+    </tr>
+    <tr>
+        <td>(DAI) Dai</td>
+        <td style="text-align:right">
+            <label for="(DAI)"></label>
+            <input type="text" required="required" id="(DAI)" disabled="disabled">
+        </td>
+        <td style="text-align:right">
+            <label for="(DAI) value in euro's"></label>
+            <input type="text" required="required" id="(DAI) value in euro's" disabled="disabled">
+        </td>
+    </tr>
+    <tr>
+        <td>(XRP) XRP</td>
+        <td style="text-align:right">
+            <label for="(XRP)"></label>
+            <input type="text" required="required" id="(XRP)" disabled="disabled">
+        </td>
+        <td style="text-align:right">
+            <label for="(XRP) value in euro's"></label>
+            <input type="text" required="required" id="(XRP) value in euro's" disabled="disabled">
+        </td>
+    </tr>
+    <tr>
+        <td>(DOT) Polkadot</td>
+        <td style="text-align:right">
+            <label for="(DOT)"></label>
+            <input type="text" required="required" id="(DOT)" disabled="disabled">
+        </td>
+        <td style="text-align:right">
+            <label for="(DOT) value in euro's"></label>
+            <input type="text" required="required" id="(DOT) value in euro's" disabled="disabled">
+        </td>
+    </tr>
+    <tr>
+        <td>(UNI) Uniswap</td>
+        <td style="text-align:right">
+            <label for="(UNI)"></label>
+            <input type="text" required="required" id="(UNI)" disabled="disabled">
+        </td>
+        <td style="text-align:right">
+            <label for="(UNI) value in euro's"></label>
+            <input type="text" required="required" id="(UNI) value in euro's" disabled="disabled">
+        </td>
+    </tr>
+    <tr>
+        <td>(LTC) Litecoin</td>
+        <td style="text-align:right">
+            <label for="(LTC)"></label>
+            <input type="text" required="required" id="(LTC)" disabled="disabled">
+        </td>
+        <td style="text-align:right">
+            <label for="(LTC) value in euro's"></label>
+            <input type="text" required="required" id="(LTC) value in euro's" disabled="disabled">
+        </td>
+    </tr>
+    <tr>
+        <td>(CRO) Crypto.com Coin</td>
+        <td style="text-align:right">
+            <label for="(CRO)"></label>
+            <input type="text" required="required" id="(CRO)" disabled="disabled">
+        </td>
+        <td style="text-align:right">
+            <label for="(CRO) value in euro's"></label>
+            <input type="text" required="required" id="(CRO) value in euro's" disabled="disabled">
+        </td>
+    </tr>
+    <tr>
+        <td>(ADA) Cardano</td>
+        <td style="text-align:right">
+            <label for="(ADA)"></label>
+            <input type="text" required="required" id="(ADA)" disabled="disabled">
+        </td>
+        <td style="text-align:right">
+            <label for="(ADA) value in euro's"></label>
+            <input type="text" required="required" id="(ADA) value in euro's" disabled="disabled">
+        </td>
+    </tr>
+    <tr>
+        <td>(SHIB) SHIBA INU</td>
+        <td style="text-align:right">
+            <label for="(SHIB)"></label>
+            <input type="text" required="required" id="(SHIB)" disabled="disabled">
+        </td>
+        <td style="text-align:right">
+            <label for="(SHIB) value in euro's"></label>
+            <input type="text" required="required" id="(SHIB) value in euro's" disabled="disabled">
+        </td>
+    </tr>
+    <tr>
+        <td>(USDT) Tether</td>
+        <td style="text-align:right">
+            <label for="(USDT)"></label>
+            <input type="text" required="required" id="(USDT)" disabled="disabled">
+        </td>
+        <td style="text-align:right">
+            <label for="(USDT) value in euro's"></label>
+            <input type="text" required="required" id="(USDT) value in euro's" disabled="disabled">
+        </td>
+    </tr>
+    <tr>
+        <td>(USDC) USD Coin</td>
+        <td style="text-align:right">
+            <label for="(USDC)"></label>
+            <input type="text" required="required" id="(USDC)" disabled="disabled">
+        </td>
+        <td style="text-align:right">
+            <label for="(USDC) value in euro's"></label>
+            <input type="text" required="required" id="(USDC) value in euro's" disabled="disabled">
+        </td>
+    </tr>
+    <tr>
+        <td>(DOGE) Dogecoin</td>
+        <td style="text-align:right">
+            <label for="(DOGE)"></label>
+            <input type="text" required="required" id="(DOGE)" disabled="disabled">
+        </td>
+        <td style="text-align:right">
+            <label for="(DOGE) value in euro's"></label>
+            <input type="text" required="required" id="(DOGE) value in euro's" disabled="disabled">
+        </td>
+    </tr>
+    <tr>
+        <td>(LUNA) Terra</td>
+        <td style="text-align:right">
+            <label for="(LUNA)"></label>
+            <input type="text" required="required" id="(LUNA)" disabled="disabled">
+        </td>
+        <td style="text-align:right">
+            <label for="(LUNA) value in euro's"></label>
+            <input type="text" required="required" id="(LUNA) value in euro's" disabled="disabled">
+        </td>
+    </tr>
+    <tr>
+        <td>(AVAX) Avalanche</td>
+        <td style="text-align:right">
+            <label for="(AVAX)"></label>
+            <input type="text" required="required" id="(AVAX)" disabled="disabled">
+        </td>
+        <td style="text-align:right">
+            <label for="(AVAX) value in euro's"></label>
+            <input type="text" required="required" id="(AVAX) value in euro's" disabled="disabled">
+        </td>
+    </tr>
+    <tr>
+        <td>(BUSD) Binance USD</td>
+        <td style="text-align:right">
+            <label for="(BUSD)"></label>
+            <input type="text" required="required" id="(BUSD)" disabled="disabled">
+        </td>
+        <td style="text-align:right">
+            <label for="(BUSD) value in euro's"></label>
+            <input type="text" required="required" id="(BUSD) value in euro's" disabled="disabled">
+        </td>
+    </tr>
+    <tr>
+        <td>(MATIC) Polygon</td>
+        <td style="text-align:right">
+            <label for="(MATIC)"></label>
+            <input type="text" required="required" id="(MATIC)" disabled="disabled">
+        </td>
+        <td style="text-align:right">
+            <label for="(MATIC) value in euro's"></label>
+            <input type="text" required="required" id="(MATIC) value in euro's" disabled="disabled">
+        </td>
+    </tr>
+    <tr>
+        <td>(WBTC) Wrapped Bitcoin</td>
+        <td style="text-align:right">
+            <label for="(WBTC)"></label>
+            <input type="text" required="required" id="(WBTC)" disabled="disabled">
+        </td>
+        <td style="text-align:right">
+            <label for="(WBTC) value in euro's"></label>
+            <input type="text" required="required" id="(WBTC) value in euro's" disabled="disabled">
+        </td>
+    <tr>
+        <th style="text-align:left">Total value currencies in euro's</th>
+        <td></td>
+        <td style="text-align:right">
+            <label for="Total value currencies in euro's"></label>
+            <input type="text" required="required" id="Total value currencies in euro's" disabled="disabled">
+        </td>
+</table>
+</body>
+</html>
