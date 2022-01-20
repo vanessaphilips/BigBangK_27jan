@@ -28,25 +28,19 @@ function submitTransaction(){
 
 function sendTransactionData(tData) {
     // niet helemaal duidelijk wat ik hier voor url moet hanteren
-    fetch(`${rootURL}order`, {
+    fetch(`${rootURL}placeorder`, {
         method: "POST",
         headers: acceptHeaders(),
         body: JSON.stringify(tData)
     })
         .then(async response => {
             if (response.ok) {
-                storeToken(await response.json());
                 console.log("transaction successful" + tData.asset);
             }else {
                 console.log("transaction failed");
             }
         })
-}
 
-function storeToken(json) {
-    if (json.authorization !== undefined) {
-        localStorage.setItem(JWT_KEY, json.authorization);
-    }
 }
 
 
