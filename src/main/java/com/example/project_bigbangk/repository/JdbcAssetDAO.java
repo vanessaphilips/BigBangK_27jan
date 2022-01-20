@@ -80,6 +80,18 @@ public class JdbcAssetDAO implements IAssetDAO {
         return asset;
     }
 
+    @Override
+    public Asset findAssetByOrderId(int orderId) {
+        String slq = "SELECT a.* FROM Asset a JOIN bigbangk.order o ON a.code = o.assetCode  WHERE orderId = ?;";
+        Asset asset = null;
+        try {
+            asset = jdbcTemplate.queryForObject(slq, new AssetRowMapper(), orderId);
+        } catch (DataAccessException dataAccessException) {
+            System.err.println(dataAccessException.getMessage());
+        }
+        return asset;
+    }
+
     private class AssetRowMapper implements RowMapper<Asset> {
         @Override
         public Asset mapRow(ResultSet resultSet, int rowNumber) throws SQLException {

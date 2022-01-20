@@ -205,6 +205,16 @@ public class RootRepository {
         walletDAO.updateWalletAssets(transaction.getSellerWallet(), transaction.getAsset(), transaction.getSellerWallet().getAssets().get(transaction.getAsset()));
     }
 
+    public void fillWalletWithTransactions(Client client){
+        Wallet clientWallet = client.getWallet();
+        clientWallet.setTransaction(orderDAO.findAllTransactionsByIban(clientWallet.getIban()));
+        for (Transaction transaction:clientWallet.getTransaction()) {
+            transaction.setBuyerWallet(walletDAO.FindBuyerWalletByOrderId((int) transaction.getOrderId()));
+            transaction.setSellerWallet(walletDAO.FindSellerWalletByOrderId((int) transaction.getOrderId()));
+            transaction.setAsset(assetDAO.findAssetByOrderId((int) transaction.getOrderId()));
+        }
+    }
+
     //ORDER > LIMIT_BUY
 
     /**
