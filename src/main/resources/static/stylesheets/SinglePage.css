@@ -1,0 +1,125 @@
+/* .naam = class #naam = id alleen naam is html element i.e. body   , laatste telt en override alles*/
+
+
+
+body {
+    background-image: url("planethorizon.jpg");
+}
+
+pre {
+    font-family: calibri, sans-serif;
+    font-size: 19px;
+}
+
+input {
+    width: 80%;
+    padding-right: 40px;
+    font-family: Calibri, sans-serif;
+    font-size: 18px;
+}
+
+input:focus {
+    outline: none;
+    border: double rgba(249, 179, 110);
+}
+
+
+
+.contentpanel {
+    border-radius: 25px;
+    font-family: calibri, sans-serif;
+    font-size: 18px;
+    text-align: left;
+    background-color:#459ac7;
+    z-index: 10;
+    min-width: 380px;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    padding: 10px;
+    padding-bottom: 0;
+}
+
+footer {
+    bottom: 0;
+    position: fixed;
+    width: 100%;
+}
+
+.footerDiv {
+    font-family: Calibri, sans-serif;
+    font-size: x-small;
+    color: white;
+    height: 100px;
+    margin: auto;
+    width: 400px;
+    text-align:center;
+}
+
+h1 {
+    color: White;
+    font-family: Candara;
+    margin: 20px;
+    horiz-align: center;
+}
+
+button {
+    background-color:rgba(249, 179, 110);
+    border-radius:28px;
+    min-width: 120px;
+    border:1px solid #6b92e0;
+    display:inline-block;
+    cursor:pointer;
+    color:#ffffff;
+    font-family:Arial;
+    font-size:17px;
+    padding:7px 15px;
+    text-decoration:none;
+}
+
+button:hover {
+    background-color:rgba(255, 199, 130);
+}
+
+.centerButton {
+    display: block;
+    margin: 0 auto;
+}
+
+.centerTitle {
+    margin: auto;
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding-top: 75px;
+}
+
+.errorText {
+    font-size: 15px;
+    padding-left: 20px;
+}
+
+a {
+    color: lightblue;
+    text-decoration: none;
+
+}
+
+a[href^="mailto"] {
+    color: lightblue; }
+
+
+/*functie van html <form> zet style sommige inputs op invalid pseudo klasse bij verkeerde invoer*/
+form :invalid {
+    color: red;
+    outline: red 2px;
+}
+/*komt van postalcode check*/
+.error {
+    color: red;
+}
+/*ook postal code check*/
+.hidden {
+    display: none;
+}
