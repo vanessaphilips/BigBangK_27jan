@@ -12,15 +12,14 @@ header {
     justify-content: center;
     align-content: center;
     margin:auto;
-    font-size: 400%;
+    font-size: 8vh;
+    min-font-size: 10px;
     color: dimgray;
     background-color: var(--blue);
-
-
 }
 
 #navigation {
-    font-size: 100%;
+    font-size: 4vh;
     display: flex;
     flex-direction: row;
     width: 69%;
@@ -47,7 +46,7 @@ header {
 
 #currentContentObject {
     min-width: fit-content;
-    height:80vh;
+    height:65vh;
     max-width: 100%;
 
 }
