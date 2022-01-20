@@ -1,6 +1,6 @@
 const navigation = document.getElementById("navigation")
 const currentContentContainer = document.getElementById("currentContentContainer");
-const navElements =  {}
+const navElements = {}
 
 const stringToHTML = function (str) {
     const parser = new DOMParser();
@@ -16,12 +16,24 @@ function fillNavMap() {
 }
 
 function setCurrentContent(selectedContent) {
+    let height = selectedContent.clientHeight
     if (currentContentContainer.firstChild !== undefined) {
+
         currentContentContainer.replaceChild(selectedContent, currentContentContainer.firstChild)
+
     } else {
         currentContentContainer.appendChild(selectedContent)
     }
+    console.log(height)
+    currentContentContainer.clientHeight = height
 }
+
+window.onload = () => {
+    let height = document.getElementById("currentContentObject").clientHeight
+    console.log(height)
+    currentContentContainer.clientHeight = height
+}
+
 
 function fillNavigationElement() {
     for (const navKey in navElements) {
