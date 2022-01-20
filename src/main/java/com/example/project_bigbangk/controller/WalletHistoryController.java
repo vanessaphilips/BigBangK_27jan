@@ -1,5 +1,7 @@
 package com.example.project_bigbangk.controller;
 
+import com.example.project_bigbangk.model.Orders.Transaction;
+import com.example.project_bigbangk.model.Wallet;
 import com.example.project_bigbangk.service.Security.AuthenticateService;
 import com.example.project_bigbangk.service.WalletHistoryService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -26,22 +28,26 @@ public class WalletHistoryController {
 
     @Autowired
     public WalletHistoryController(AuthenticateService authenticateService, WalletHistoryService walletHistoryService) {
+        super();
         this.authenticateService = authenticateService;
         this.walletHistoryService = walletHistoryService;
     }
 
-    @GetMapping("/wallet/history")
+    @PostMapping("/walletHistory")
     @ResponseBody
     public ResponseEntity<String> gotoWalletHistoryScreen(@RequestHeader String authorization){
         if (authenticateService.authenticate(authorization)){
             try {
-                List lijst = walletHistoryService.getWalletHistoryClient(authorization);
-                String jsonWalletHistory = MAPPER.writeValueAsString(lijst);
+                Wallet wallet = walletHistoryService.getWalletHistoryClient(authorization);
+                System.out.println(wallet);
+                String jsonWalletHistory = MAPPER.writeValueAsString(wallet);
+                System.out.println("test");
                 return ResponseEntity.ok().body(jsonWalletHistory);
             } catch (JsonProcessingException exception) {
                 logger.error(exception.getMessage());
             }
         }
+        System.out.println("ben er nog");
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("token expired");
     }
 }

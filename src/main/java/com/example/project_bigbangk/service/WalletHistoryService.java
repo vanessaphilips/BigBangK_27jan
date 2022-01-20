@@ -2,6 +2,7 @@ package com.example.project_bigbangk.service;
 
 import com.example.project_bigbangk.model.Client;
 import com.example.project_bigbangk.model.Orders.Transaction;
+import com.example.project_bigbangk.model.Wallet;
 import com.example.project_bigbangk.repository.RootRepository;
 import com.example.project_bigbangk.service.Security.AuthenticateService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +26,11 @@ public class WalletHistoryService {
         this.rootRepository = rootRepository;
     }
 
-    public List<Transaction> getWalletHistoryClient(String token){
+    public Wallet getWalletHistoryClient(String token){
         Client client = authenticateService.getClientFromToken(token);
         rootRepository.fillWalletWithTransactions(client);
-        return client.getWallet().getTransaction();
+        //TODO regel 33 verwijderen als de transaction in de controller kan werken.
+        client.getWallet().setTransaction(null);
+        return client.getWallet();
     }
 }
