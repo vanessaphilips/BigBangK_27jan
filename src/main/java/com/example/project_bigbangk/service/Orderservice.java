@@ -169,6 +169,11 @@ public class Orderservice {
 
     // Stoploss_Sell -> code: Sloss
 
+    /**
+     * Checks if the Stoploss_Sell order can be done, if yes -> save StoplossSellOrder in database
+     * @param order
+     * @return author = Vanessa Philips
+     */
     public String checkSlossOrder(OrderDTO order){
         if (clientWallet.sufficientAsset(asset, order.getAssetAmount())) {
             Limit_Sell limit_sell = new Limit_Sell(asset, order.getLimit(), order.getAssetAmount(), LocalDateTime.now(), clientWallet);
