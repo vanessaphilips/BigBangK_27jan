@@ -60,6 +60,16 @@ public class JdbcOrderDAO {
         return null;
     }
 
+    public List<Transaction> findAllTransactionsByIban (String iban) {
+        String sql = "SELECT * FROM bigbangk.Order WHERE orderType = ? && buyer = ? || seller = ?;";
+        try {
+            return jdbcTemplate.query(sql, new TransactionRowMapper(), TransactionType.TRANSACTION.toString(), iban, iban);
+        } catch (DataAccessException dataAccessException) {
+            System.err.println(dataAccessException.getMessage());
+        }
+        return null;
+    }
+
     /**
      * Saves Limit_Buy order in database, waiting to be matched with another client's offer -> matchservice.
      * @param limit_buy author = Vanessa Philips

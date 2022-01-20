@@ -12,4 +12,6 @@ public interface IAssetDAO {
     int getNumberOfAssets();
 
     Asset findAssetByCode(String assetCode);
+
+    Asset findAssetByOrderId(int orderId);
 }
