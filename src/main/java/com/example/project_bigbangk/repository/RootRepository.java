@@ -213,7 +213,6 @@ public class RootRepository {
             transaction.setSellerWallet(walletDAO.FindSellerWalletByOrderId((int) transaction.getOrderId()));
             transaction.setAsset(assetDAO.findAssetByOrderId((int) transaction.getOrderId()));
         }
-        System.out.println(client.getWallet().getTransaction());
     }
 
     //ORDER > LIMIT_BUY
