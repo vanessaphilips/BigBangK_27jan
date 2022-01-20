@@ -126,7 +126,7 @@ function prepareRegistration() {
 
 function sendRegistrationData(rData){
     document.getElementById('emailError').style.display = 'none';
-    fetch(`http://localhost:8080/register`, {
+    fetch(`${rootURL}register`, {
         method: "POST",
         headers: acceptHeaders(),
         body: JSON.stringify(rData)
