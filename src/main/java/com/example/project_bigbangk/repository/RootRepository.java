@@ -188,6 +188,7 @@ public class RootRepository {
         }
         return stoploss_sells;
     }
+
     //ORDER > TRANSACTION
 
     /**
@@ -204,13 +205,11 @@ public class RootRepository {
         walletDAO.updateWalletAssets(transaction.getSellerWallet(), transaction.getAsset(), transaction.getSellerWallet().getAssets().get(transaction.getAsset()));
     }
 
-
     //ORDER > LIMIT_BUY
 
     /**
      * Saves Limit_Buy order temporary. To be completed when there is a match with another client's offer -> matchservice.
-     * @param limit_buy
-     * author = Vanessa Philips
+     * @param limit_buy author = Vanessa Philips
      */
     public void saveLimitBuyOrder(Limit_Buy limit_buy){
         orderDAO.saveLimit_Buy(limit_buy);
@@ -220,8 +219,7 @@ public class RootRepository {
 
     /**
      * Saves Limit_Sell order temporary. To be completed when there is a match with another client's offer -> matchservice).
-     * @param limit_sell
-     * author = Vanessa Philips
+     * @param limit_sell author = Vanessa Philips
      */
     public void saveLimitSellOrder(Limit_Sell limit_sell){
         orderDAO.saveLimit_Sell(limit_sell);
@@ -231,8 +229,7 @@ public class RootRepository {
 
     /**
      * Saves Stoploss_Sell order temporary. To be completed when there is a match with another offer (bank) -> matchservice.
-     * @param stoploss_sell
-     * author = Vanessa Philips
+     * @param stoploss_sell author = Vanessa Philips
      */
     public void saveStoploss_Sell(Stoploss_Sell stoploss_sell){
         orderDAO.saveStoploss_Sell(stoploss_sell);

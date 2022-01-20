@@ -61,7 +61,7 @@ public class JdbcOrderDAO {
     }
 
     /**
-     * Saves Limit_Buy order in database, waiting to be matched with another client's offer (matchservice).
+     * Saves Limit_Buy order in database, waiting to be matched with another client's offer -> matchservice.
      * @param limit_buy author = Vanessa Philips
      */
     public void saveLimit_Buy(Limit_Buy limit_buy) {
@@ -81,7 +81,7 @@ public class JdbcOrderDAO {
     }
 
     /**
-     * Saves Limit_Sell order in database, waiting to be matched with another client's offer (matchservice).
+     * Saves Limit_Sell order in database, waiting to be matched with another client's offer -> matchservice.
      * @param limit_sell author = Vanessa Philips
      */
     public void saveLimit_Sell(Limit_Sell limit_sell) {
@@ -99,6 +99,11 @@ public class JdbcOrderDAO {
             logger.info(dataAccessException.getMessage());
         }
     }
+
+    /**
+     * Saves Stoploss_Sell order in database, waiting to be matched with an offer (bank) -> matchservice.
+     * @param stoploss_sell author = Vanessa Philips
+     */
     public void saveStoploss_Sell(Stoploss_Sell stoploss_sell) {
         String sql = "INSERT INTO bigbangk.order (seller, assetCode, orderType, orderlimit, assetAmount, date) VALUES (?, ?, ?, ?, ?, ?);";
 
