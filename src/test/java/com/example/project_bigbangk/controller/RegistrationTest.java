@@ -30,8 +30,6 @@ class RegistrationTest {
     @MockBean
     LoginService loginService;
     @MockBean
-    WalletHistoryController walletHistoryController;
-    @MockBean
     AuthenticateService authenticateService;
     @MockBean
     WalletController walletController;
