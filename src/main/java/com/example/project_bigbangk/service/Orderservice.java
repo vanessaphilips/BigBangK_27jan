@@ -135,8 +135,9 @@ public class Orderservice {
      * @return | author = Vanessa Philips
      */
     public String checkLbuyOrder(OrderDTO order) {
-        double orderFee = order.getLimit() * BigBangkApplicatie.bigBangk.getFeePercentage();
-        double totalCost = order.getLimit() + (orderFee/2.0);
+        double totalPrice = order.getLimit() * order.getAssetAmount();
+        double orderFee = totalPrice * BigBangkApplicatie.bigBangk.getFeePercentage();
+        double totalCost = totalPrice + (orderFee/2.0);
 
         if (clientWallet.sufficientBalance(totalCost)) {
             Limit_Buy limit_buy = new Limit_Buy(asset, order.getLimit(), order.getAssetAmount(), LocalDateTime.now(), clientWallet);
