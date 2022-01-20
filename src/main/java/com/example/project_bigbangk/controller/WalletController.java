@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,6 +34,9 @@ public class WalletController {
     @GetMapping("/wallet")
     @ResponseBody
     public ResponseEntity<String> gotoWalletScreen(@RequestHeader String authorization){
+        if (!authorization.split(" ")[0].equals("Bearer")) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Got to login");
+        }
         if (authenticateService.authenticate(authorization)){
             try {
                 Wallet wallet = walletService.getWalletClient(authorization);
@@ -43,5 +47,25 @@ public class WalletController {
             }
         }
         return ResponseEntity.status(401).body("token expired");
+    }
+
+    @GetMapping("/walletHistory")
+    @ResponseBody
+    public ResponseEntity<String> gotoWalletHistoryScreen(@RequestHeader String authorization){
+        if (!authorization.split(" ")[0].equals("Bearer")) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Got to login");
+        }
+        if (authenticateService.authenticate(authorization)){
+            try {
+                Wallet wallet = walletService.getWalletHistoryClient(authorization);
+                System.out.println(wallet);
+                String jsonWalletHistory = MAPPER.writeValueAsString(wallet);
+                System.out.println("test");
+                return ResponseEntity.ok().body(jsonWalletHistory);
+            } catch (JsonProcessingException exception) {
+                logger.error(exception.getMessage());
+            }
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("token expired");
     }
 }
