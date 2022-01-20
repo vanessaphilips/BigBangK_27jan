@@ -8,13 +8,17 @@ const stringToHTML = function (str) {
     return doc.body;
 }
 
-
+/**
+ *  Voeg hier je pagina toe en alles komt goed.
+ *  Vorm is
+ *  navElements.{jouw link zoals die in het navigatie menu verschijnt} =
+ *  stringToHTML('<object data="filenaam pagina incl html extensie" id="currentContentObject"></object>')
+ */
 function fillNavMap() {
     navElements.marketplace = stringToHTML('<object data="MarketPlace.html"  id="currentContentObject"></object>')
     navElements.order = stringToHTML('<object  data="BuySellorder.html"  id="currentContentObject"></object>')
     navElements.register = stringToHTML('<object data="Registration.html"  id="currentContentObject"></object>')
     navElements.login = stringToHTML('<object  data="LoginPage.html"  id="currentContentObject"></object>')
-
 }
 
 function setCurrentContent(selectedContent) {
