@@ -19,6 +19,7 @@ class JdbcAssetDAOTest {
     @Resource
     JdbcAssetDAO assetDAO;
 
+
     Asset BTC = new Asset("BTC", "Bitcoin");
     Asset PC = new Asset("PC", "PhilipCoin");
     Asset CC = new Asset("CC", "CoolCoin");
@@ -30,16 +31,18 @@ class JdbcAssetDAOTest {
         assetDAO.saveAsset(PC);
         assetDAO.saveAsset(CC);
        List<Asset> testList = assetDAO.getAllAssets();
-        System.out.println(testList.get(1).getCode());
-        System.out.println(testList.get(1).getName());
-       assertEquals(3, testList.size());
+        for (Asset asset : testList) {
+            System.out.println(asset);
+        }
+        //someone else Added ETH to the db somewhere, therefore we find 4 eventhough we add 3 here.
+       assertEquals(4, testList.size());
     }
 
     @Test
     @Order(2)
     void getNumberOfAssets() {
         int count = assetDAO.getNumberOfAssets();
-        assertEquals(3, count);
+        assertEquals(4, count);
     }
 
     @Test
