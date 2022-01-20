@@ -28,13 +28,15 @@ class RegistrationTest {
     @MockBean
     MarketPlaceController marketPlaceController;
     @MockBean
-    private LoginService loginService;
+    LoginService loginService;
+    @MockBean
+    WalletHistoryController walletHistoryController;
     @MockBean
     AuthenticateService authenticateService;
     @MockBean
     WalletController walletController;
     @MockBean
-    private RegistrationService registrationService;
+    RegistrationService registrationService;
     MockHttpServletRequestBuilder builder;
 
     @Autowired
