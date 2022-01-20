@@ -8,10 +8,7 @@ import com.example.project_bigbangk.BigBangkApplicatie;
 import com.example.project_bigbangk.model.Asset;
 import com.example.project_bigbangk.model.Client;
 import com.example.project_bigbangk.model.DTO.OrderDTO;
-import com.example.project_bigbangk.model.Orders.Limit_Buy;
-import com.example.project_bigbangk.model.Orders.Limit_Sell;
-import com.example.project_bigbangk.model.Orders.Transaction;
-import com.example.project_bigbangk.model.Orders.TransactionType;
+import com.example.project_bigbangk.model.Orders.*;
 import com.example.project_bigbangk.model.Wallet;
 import com.example.project_bigbangk.repository.RootRepository;
 import org.springframework.stereotype.Service;
@@ -135,7 +132,7 @@ public class Orderservice {
     /**
      * Checks if the Limit_Buy order can be done, if yes -> save LimitBuyOrder in database
      * @param order
-     * @return author = Vanessa Philips
+     * @return | author = Vanessa Philips
      */
     public String checkLbuyOrder(OrderDTO order) {
         double orderFee = order.getLimit() * BigBangkApplicatie.bigBangk.getFeePercentage();
@@ -155,7 +152,7 @@ public class Orderservice {
     /**
      * Checks if the Limit_Sell order can be done, if yes -> save LimitSellOrder in database
      * @param order
-     * @return author = Vanessa Philips
+     * @return | author = Vanessa Philips
      */
     public String checkLsellOrder(OrderDTO order){
         if (clientWallet.sufficientAsset(asset, order.getAssetAmount())) {
@@ -172,12 +169,12 @@ public class Orderservice {
     /**
      * Checks if the Stoploss_Sell order can be done, if yes -> save StoplossSellOrder in database
      * @param order
-     * @return author = Vanessa Philips
+     * @return | author = Vanessa Philips
      */
     public String checkSlossOrder(OrderDTO order){
         if (clientWallet.sufficientAsset(asset, order.getAssetAmount())) {
-            Limit_Sell limit_sell = new Limit_Sell(asset, order.getLimit(), order.getAssetAmount(), LocalDateTime.now(), clientWallet);
-            rootRepository.saveLimitSellOrder(limit_sell);
+            Stoploss_Sell stoploss_sell = new Stoploss_Sell(asset, order.getLimit(), order.getAssetAmount(), LocalDateTime.now(), clientWallet);
+            rootRepository.saveStoploss_Sell(stoploss_sell);
         } else {
             return Messages.AssetClient.getBody();
         }
