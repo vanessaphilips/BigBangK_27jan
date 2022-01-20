@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Client Registration</title>
-    <link rel="stylesheet" href="stylesheets/RegistrationCSS.css">
+    <link rel="stylesheet" href="stylesheets/SinglePage.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script defer src="scripts/Headers.js"></script>
     <script defer src="scripts/RegistrationScript.js"></script>
@@ -16,67 +16,37 @@
 
 </head>
 <body>
-<h1>Registration</h1>
-<p>Please ignore the poor formatting.</p>
-<!--alle <BRs> moeten er op termijn uit-->
+
+<div class="contentpanel" id="registrationDiv">
+
 <form id="regForm" onsubmit="return false">
-    <br>
+    <h1>Registration</h1>
+    <pre>
     <label for="emailReg">E-mail</label>
-    <input type="email" required="required" id="emailReg" >
-    <br><br>
-    <div id="emailError" hidden>
-        <p>This e-mail is already in use.</p>
-    </div>
-    <br>
+    <input type="email" required="required" id="emailReg" > <div id="emailError" class="errorText" hidden><p>This e-mail is already in use.</p></div>
     <label for="passwordReg">Password</label>
-    <input type="password" required="required" id="passwordReg">
-    <br><br>
-    <div id="passwordError" hidden>
-        <p>Password must be at least 8 characters and can't contain spaces.</p>
-    </div>
-    <div id="passwordOK" hidden>
-        <p>Password OK!</p>
-    </div>
-    <br>
+    <input type="password" required="required" id="passwordReg"><div id="passwordError" class="errorText" hidden><p>Must be at least 8 characters and can't contain spaces.</p></div><div id="passwordOK" class="errorText" hidden><p>Password OK!</p></div>
+
     <label for="firstName">First Name</label>
     <input type="text" required="required" id="firstName" class="Rinput" minlength="1">
-    <br><br>
-    <br>
     <label for="insertion">Insertion</label>
     <input type="text" id="insertion" class="Rinput" placeholder="">
-    <br><br>
-    <br>
     <label for="lastName">Last Name</label>
     <input type="text" required="required" id="lastName" class="Rinput" minlength="1">
-    <br><br>
-    <br>
     <label for="bsn">Burgerservicenummer</label>
     <input type="text" required="required" id="bsn" minlength="9" maxlength="9">
-    <br><br>
-    <br>
     <label for="dateOfBirth">Date of Birth</label>
     <input type="date" required="required" id="dateOfBirth">
-    <br><br>
-    <br>
+
+
     <label for="postalCode">Postalcode</label>
     <input type="text" required="required" id="postalCode">
-    <br><br>
-    <br>
     <label for="number">Number</label>
-    <input type="number" required="required" min="0" id="number">
-    <br><br>
-    <div id="postalError" hidden>
-        <p>Unknown Number/Postcode Combination</p>
-    </div>
-    <br>
+    <input type="number" required="required" min="0" id="number"><div id="postalError" hidden><p>Unknown Number/Postcode Combination</p></div>
     <label for="street">Street</label>
-    <input type="text" required="required" id="street" placeholder="street" disabled="disabled">
-    <br><br>
-    <br>
+    <input type="text" required="required" id="street" placeholder="Street" disabled="disabled">
     <label for="city">City</label>
-    <input type="text" required="required" id="city" placeholder="city" disabled="disabled">
-    <br><br>
-    <br>
+    <input type="text" required="required" id="city" placeholder="City" disabled="disabled">
     <label for="country">County</label>
     <select id="country" required="required">
         <option value="NLD" selected="selected">The Netherlands</option>
@@ -84,10 +54,20 @@
         <option value="DEU">Germany</option>
         <option value="GBR">Great Britain</option>
     </select>
-    <br><br>
-    <button onclick="prepareRegistration()">Submit</button>
+
+    <button onclick="prepareRegistration()" class="centerButton">Submit</button>
+    </pre>
 
 </form>
 
+</div>
+
 </body>
+
+<footer>
+    <div class="footerDiv">
+    For questions contact   <a href="mailto:support@bigbangk.com">support@bigbangk.com</a>. <br>
+    All rights reserved Bigbangk LLC 2022 etc. etc.
+    </div>
+</footer>
 </html>
