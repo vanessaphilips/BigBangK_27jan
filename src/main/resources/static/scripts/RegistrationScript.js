@@ -22,7 +22,7 @@ const MIN_AGE = 18;
 const MAX_AGE = 150;
 
 $( document ).ready(function() {
-    document.getElementById('password').addEventListener('focusout', checkPassword);
+    document.getElementById('passwordReg').addEventListener('focusout', checkPassword);
 
     document.getElementById('postalCode').addEventListener('focusout', checkAddress);
 
@@ -53,14 +53,14 @@ function dateToString(date){
 
 function checkPassword(){
     let regex = new RegExp(/^\S.{8,}$/);
-    let password = document.getElementById('password').value;
+    let password = document.getElementById('passwordReg').value;
 
     if (regex.test(password)){
-        document.getElementById('password').classList.remove('error');
+        document.getElementById('passwordReg').classList.remove('error');
         document.getElementById('passwordError').style.display = 'none';
         document.getElementById('passwordOK').style.display = 'block';
     }else{
-        document.getElementById('password').classList.add('error');
+        document.getElementById('passwordReg').classList.add('error');
         document.getElementById('passwordOK').style.display = 'none';
         document.getElementById('passwordError').style.display = 'block';
     }
@@ -108,8 +108,8 @@ function processAddress(data) {
 
 function prepareRegistration() {
         let registration = new RegistrationDTO(
-        document.getElementById('email').value.trim(),
-        document.getElementById('password').value,
+        document.getElementById('emailReg').value.trim(),
+        document.getElementById('passwordReg').value,
         document.getElementById('firstName').value.trim(),
         document.getElementById('insertion').value.trim(),
         document.getElementById('lastName').value.trim(),

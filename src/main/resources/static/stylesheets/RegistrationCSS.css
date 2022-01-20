@@ -1,3 +1,6 @@
+/* .naam = class #naam = id alleen naam is html element i.e. body:*/
+
+
 
 /*functie van html <form> zet style sommige inputs op invalid pseudo klasse bij verkeerde invoer*/
 form :invalid {
