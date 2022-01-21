@@ -127,7 +127,7 @@ public class Orderservice {
         rootRepository.saveTransaction(transaction);
     }
 
-    // Limit_Buy -> code: Lbuy
+    // Limit_Buy
 
     /**
      * Checks if the Limit_Buy order can be done, if yes -> save LimitBuyOrder in database
@@ -148,7 +148,7 @@ public class Orderservice {
         return Messages.WaitingLimitBuy.getBody();
     }
 
-    // Limit_Sell -> code: Lsell
+    // Limit_Sell
 
     /**
      * Checks if the Limit_Sell order can be done, if yes -> save LimitSellOrder in database
@@ -165,7 +165,7 @@ public class Orderservice {
         return Messages.WaitingLimitSell.getBody();
     }
 
-    // Stoploss_Sell -> code: Sloss
+    // Stoploss_Sell
 
     /**
      * Checks if the Stoploss_Sell order can be done, if yes -> save StoplossSellOrder in database
