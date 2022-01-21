@@ -41,6 +41,10 @@ public class BigBangkApplicatie implements ApplicationListener<ContextRefreshedE
         this.clientFactory = clientFactory;
     }
 
+    public static Bank getBank() {
+        return bigBangk;
+    }
+
     @Override
     public  void onApplicationEvent(ContextRefreshedEvent event) {
         startPriceHistoryUpdateTimer();
