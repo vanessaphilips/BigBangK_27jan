@@ -41,7 +41,7 @@ public class BigBangkApplicatie implements ApplicationListener<ContextRefreshedE
         this.clientFactory = clientFactory;
     }
 
-    public static Bank getBank() {
+    public Bank getBank() {
         return bigBangk;
     }
 

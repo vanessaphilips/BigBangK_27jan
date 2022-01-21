@@ -166,6 +166,19 @@ public class RootRepository {
     }
 
     //Order
+    public boolean deleteOrderByID(int orderId) {
+        return orderDAO.deleteOrderById(orderId);
+    }
+
+    public boolean updateLimitSell(Limit_Sell limit_sell) {
+        return orderDAO.updateLimitSell(limit_sell);
+    }
+
+    public boolean updateLimitBuy(Limit_Buy limit_buy) {
+        return orderDAO.updateLimitBuy(limit_buy);
+    }
+
+
     public List<Limit_Sell> getAllLimitSell() {
         List<Limit_Sell> limit_sells = orderDAO.getAllLimitSells();
         for (Limit_Sell limit_sell : limit_sells) {

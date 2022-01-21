@@ -13,23 +13,31 @@ import com.example.project_bigbangk.model.Orders.Transaction;
 import com.example.project_bigbangk.model.Wallet;
 import com.example.project_bigbangk.repository.RootRepository;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+
 import static org.junit.jupiter.api.Assertions.*;
+
 import org.junit.jupiter.api.Test;
 
+import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
+import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.annotation.DirtiesContext;
 
 
 import javax.annotation.Resource;
+import javax.print.attribute.standard.PrinterLocation;
 
+import java.io.PrintStream;
 import java.time.LocalDateTime;
 import java.util.*;
 
 @SpringBootTest
-@DirtiesContext(classMode= DirtiesContext.ClassMode.AFTER_CLASS)
+//@DirtiesContext(classMode= DirtiesContext.ClassMode.)
 
 class OrderMatchingServiceTest {
     @MockBean
@@ -40,22 +48,24 @@ class OrderMatchingServiceTest {
 
     @Resource
     OrderMatchingService orderMatchingService;
+
+    @MockBean
+    TransactionService transactionService;
     LocalDateTime now;
 
     Limit_Buy[] limit_buyList = new Limit_Buy[4];
     Limit_Sell[] limit_sellList = new Limit_Sell[7];
-    Map<Limit_Buy, List<Limit_Sell>> matchedOnLimitBuy = new HashMap<>();
+
 
     @BeforeEach
     public void setupMocks() {
         now = LocalDateTime.now();
-        List<Asset> Assets = new ArrayList<>();
         Asset assetBTC = (createmockedAsset(AssetCode_Name.BTC, 40000));
         Asset assetADA = (createmockedAsset(AssetCode_Name.ADA, 1.07));
         limit_buyList[0] = (createMockedLBuy(assetBTC, 40000, 7, now.minusDays(30)));
         limit_buyList[1] = (createMockedLBuy(assetBTC, 40000, 1, now.minusDays(60)));
         limit_buyList[2] = (createMockedLBuy(assetBTC, 11000, 1, now.minusDays(60)));
-        limit_buyList[3] = (createMockedLBuy(assetADA, 1.2, 11, now.minusDays(60)));
+        limit_buyList[3] = (createMockedLBuy(assetADA, 1.2, 11, now.minusDays(90)));
         limit_sellList[0] = (createMockedLSell(assetBTC, 38000, 2.0, now.minusDays(30)));
         limit_sellList[1] = (createMockedLSell(assetBTC, 44000, 2.0, now.minusDays(60)));
         limit_sellList[2] = (createMockedLSell(assetADA, 1.1, 10, now.minusDays(90)));
@@ -63,11 +73,14 @@ class OrderMatchingServiceTest {
         limit_sellList[4] = (createMockedLSell(assetBTC, 15000, 2, now.minusDays(120)));
         limit_sellList[5] = (createMockedLSell(assetBTC, 20000, 1, now.minusDays(30)));
         limit_sellList[6] = (createMockedLSell(assetBTC, 38000, 1.5, now.minusDays(0)));
+        Mockito.when(transactionService.validateTransAction(Mockito.any(Transaction.class))).thenReturn(true);
+        Mockito.when(rootRepository.getAllLimitBuy()).thenReturn(new ArrayList<>(List.of(limit_buyList)));
+        Mockito.when(rootRepository.getAllLimitSell()).thenReturn(new ArrayList<>(List.of(limit_sellList)));
         Bank bigBangk = Mockito.mock(Bank.class);
-        //  MockedStatic<BigBangkApplicatie> bigBangkApplicatie = Mockito.mockStatic(BigBangkApplicatie.class);
-        // bigBangkApplicatie.when(BigBangkApplicatie::getBank).thenReturn(bigBangk);
         Mockito.when(bigBangk.getWallet()).thenReturn(Mockito.mock(Wallet.class));
         Mockito.when(bigBangk.getFeePercentage()).thenReturn(0.25);
+        Mockito.when(bigBangkApplicatie.getBank()).thenReturn(bigBangk);
+
     }
 
     private Asset createmockedAsset(AssetCode_Name assetCodeName, double currentprice) {
@@ -103,17 +116,18 @@ class OrderMatchingServiceTest {
 
     @Test
     void checkForMatchingOrders() {
-        initializeLists();
-        List<Limit_Buy> expectedLBuys = new ArrayList<>(List.of(limit_buyList[0], limit_buyList[1], limit_buyList[3]));
+        List<Limit_Buy> expectedLBuys = new ArrayList<>(List.of(limit_buyList[3], limit_buyList[1], limit_buyList[0]));
+        Map<Limit_Buy, List<Limit_Sell>> matchedOnLimitBuy = orderMatchingService.checkForMatchingOrders();
+        printList(matchedOnLimitBuy);
         for (int i = 0; i < matchedOnLimitBuy.keySet().size(); i++) {
             Limit_Buy actual = new ArrayList<>(matchedOnLimitBuy.keySet()).get(i);
             Limit_Buy expectedLBuy = expectedLBuys.get(i);
             assertTrue(equals(actual, expectedLBuy));
         }
-        printList(matchedOnLimitBuy);
         assertTrue(matchedOnLimitBuy.keySet().containsAll(expectedLBuys));
+        System.out.println(limit_buyList[2].getOrderLimit());
         Limit_Buy expectedLBuy = limit_buyList[2];
-        assertFalse(matchedOnLimitBuy.containsKey(expectedLBuy));
+        assertNull(matchedOnLimitBuy.keySet().stream().filter(k -> equals(k, expectedLBuy)).findFirst().orElse(null));
         List<Limit_Sell> limit_sellsMatched = matchedOnLimitBuy.get(limit_buyList[0]);
         List<Limit_Sell> expectedLSells = new ArrayList<>(List.of(limit_sellList[4], limit_sellList[3], limit_sellList[5], limit_sellList[0], limit_sellList[6]));
         for (int i = 0; i < limit_sellsMatched.size(); i++) {
@@ -125,6 +139,30 @@ class OrderMatchingServiceTest {
         assertEquals(1, matchedOnLimitBuy.get(limit_buyList[3]).size());
     }
 
+    @Test
+    void createTransActionsFromMatches() {
+        Map<Limit_Buy, List<Limit_Sell>> matchedOnLimitBuy = orderMatchingService.checkForMatchingOrders();
+        List<Transaction> transActions = orderMatchingService.createTransActionFromMatches(matchedOnLimitBuy);
+        assertEquals(7, transActions.size());
+        printList(matchedOnLimitBuy);
+    }
+
+    @Test
+    void createTransActionsFromMatchesEmptyList() {
+        Mockito.when(rootRepository.getAllLimitBuy()).thenReturn(new ArrayList<>());
+        Mockito.when(rootRepository.getAllLimitSell()).thenReturn(new ArrayList<>());
+        Map<Limit_Buy, List<Limit_Sell>> matchedOnLimitBuy = orderMatchingService.checkForMatchingOrders();
+        List<Transaction> transActions = orderMatchingService.createTransActionFromMatches(matchedOnLimitBuy);
+        assertTrue(transActions.isEmpty());
+    }
+
+    @Test
+    void procesMatches(){
+        Map<Limit_Buy, List<Limit_Sell>> matchedOnLimitBuy = orderMatchingService.checkForMatchingOrders();
+        List<Transaction> transActions = orderMatchingService.createTransActionFromMatches(matchedOnLimitBuy);
+        printList(orderMatchingService.processOrders(matchedOnLimitBuy));
+    }
+
     private boolean equals(AbstractOrder expectedLBuy, AbstractOrder actual) {
         return expectedLBuy.getDate().equals(actual.getDate()) &&
                 expectedLBuy.getOrderLimit() == (actual.getOrderLimit()) &&
@@ -132,12 +170,6 @@ class OrderMatchingServiceTest {
                 expectedLBuy.getAsset().equals(actual.getAsset());
     }
 
-    private void initializeLists() {
-        Mockito.when(rootRepository.getAllLimitBuy()).thenReturn(new ArrayList<>(List.of(limit_buyList)));
-        Mockito.when(rootRepository.getAllLimitSell()).thenReturn(new ArrayList<>(List.of(limit_sellList)));
-        Map<Limit_Buy, List<Limit_Sell>> matchedOnLimitBuy = orderMatchingService.checkForMatchingOrders();
-
-    }
 
     private void printList(Map<Limit_Buy, List<Limit_Sell>> matchedOnLimitBuy) {
         for (Limit_Buy limit_buy : matchedOnLimitBuy.keySet()) {
@@ -148,26 +180,7 @@ class OrderMatchingServiceTest {
         }
     }
 
-    @Test
-    void processMatches() {
-        Mockito.when(rootRepository.getAllLimitBuy()).thenReturn(new ArrayList<>(List.of(limit_buyList)));
-        Mockito.when(rootRepository.getAllLimitSell()).thenReturn(new ArrayList<>(List.of(limit_sellList)));
-        Map<Limit_Buy, List<Limit_Sell>> matchedOnLimitBuy = orderMatchingService.checkForMatchingOrders();
-        System.out.println(matchedOnLimitBuy);
-        List<Transaction> transActions = orderMatchingService.createTransActionFromMatches(matchedOnLimitBuy);
-        assertEquals( 9,transActions.size());
-        printList(matchedOnLimitBuy);
-    }
 
-    @Test
-    void processMatchesNoOrders() {
-        Mockito.when(rootRepository.getAllLimitBuy()).thenReturn(new ArrayList<>());
-        Mockito.when(rootRepository.getAllLimitSell()).thenReturn(new ArrayList<>());
-        Map<Limit_Buy, List<Limit_Sell>> matchedOnLimitBuy = orderMatchingService.checkForMatchingOrders();
-        List<Transaction> transActions = orderMatchingService.createTransActionFromMatches(matchedOnLimitBuy);
-        assertTrue(transActions.isEmpty());
-
-    }
 }
 
 

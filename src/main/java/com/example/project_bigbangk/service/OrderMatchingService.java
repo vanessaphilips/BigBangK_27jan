@@ -4,9 +4,12 @@
 package com.example.project_bigbangk.service;
 
 import com.example.project_bigbangk.BigBangkApplicatie;
+import com.example.project_bigbangk.model.Bank;
 import com.example.project_bigbangk.model.Orders.*;
 import com.example.project_bigbangk.model.Wallet;
 import com.example.project_bigbangk.repository.RootRepository;
+import com.example.project_bigbangk.service.priceHistoryUpdate.IObserver;
+import com.example.project_bigbangk.service.priceHistoryUpdate.ISubject;
 import org.apache.tomcat.util.threads.LimitLatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,16 +20,32 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class OrderMatchingService {
+public class OrderMatchingService implements IObserver {
 
     RootRepository rootRepository;
-
+    BigBangkApplicatie bigBangkApplicatie;
     private final Logger logger = LoggerFactory.getLogger(OrderMatchingService.class);
+    TransactionService transactionService;
+    ISubject priceHistroyUpdateService;
 
-    public OrderMatchingService(RootRepository rootRepository) {
+    public OrderMatchingService(RootRepository rootRepository, BigBangkApplicatie bigBangkApplicatie, TransactionService transactionService, ISubject priceHistroyUpdateService) {
         super();
         logger.info("New OrderMatchingService");
         this.rootRepository = rootRepository;
+        this.bigBangkApplicatie = bigBangkApplicatie;
+        this.transactionService = transactionService;
+        this.priceHistroyUpdateService = priceHistroyUpdateService;
+        priceHistroyUpdateService.addListener(this);
+    }
+
+    @Override
+    public void update() {
+        Map<Limit_Buy, List<Limit_Sell>> matchingOrders = checkForMatchingOrders();
+        List<Transaction> transactions = createTransActionFromMatches(matchingOrders);
+        for (Transaction transaction : transactions) {
+            transactionService.processTransaction(transaction);
+        }
+        processOrders(matchingOrders);
     }
 
     //limit buy ik wil kopen voor een bedrag niet hoger dan limit
@@ -36,7 +55,7 @@ public class OrderMatchingService {
         List<Limit_Buy> allLimit_BuyOrders = rootRepository.getAllLimitBuy().stream()
                 .sorted(Comparator.comparing(AbstractOrder::getDate).reversed())
                 .collect(Collectors.toList());
-        Map<Limit_Buy, List<Limit_Sell>> matchesByLimitBuy = new HashMap<>();
+        Map<Limit_Buy, List<Limit_Sell>> matchesByLimitBuy = new TreeMap<>(Comparator.comparing(Limit_Buy::getDate));
         for (Limit_Buy limit_buy : allLimit_BuyOrders) {
             List<Limit_Sell> matches = allLimit_SellOrders.stream()
                     .filter(lso -> limit_buy.getOrderLimit() >= lso.getOrderLimit()
@@ -50,7 +69,28 @@ public class OrderMatchingService {
         return matchesByLimitBuy;
     }
 
+    public List<Stoploss_Sell> checkForStopLoss() {
+        List<Stoploss_Sell> stoploss_sells = rootRepository.getAllStopLossSells();
+        List<Limit_Buy> limit_buys = rootRepository.getAllLimitBuy();
+        for (Stoploss_Sell stoploss_sell : stoploss_sells) {
+            if (stoploss_sell.getAsset().getCurrentPrice() >= stoploss_sell.getOrderLimit()) {
+                Limit_Buy matchingLBuy = limit_buys.stream()
+                        .filter(lbo -> lbo.getOrderLimit() > stoploss_sell.getOrderLimit()).min(Comparator.comparing(AbstractOrder::getDate)).orElse(null);
+                if (matchingLBuy != null) {
+                    //match met bestaan Limit buy
+                } else {
+                    //verkoop aan bank
+                }
+            } else {
+                stoploss_sells.remove(stoploss_sell);
+            }
+        }
+        //todo matching list
+        return stoploss_sells;
+    }
+
     public List<Transaction> createTransActionFromMatches(Map<Limit_Buy, List<Limit_Sell>> matchedOnLimitBuy) {
+        Bank bigBangk = bigBangkApplicatie.getBank();
         List<Transaction> transactions = new ArrayList<>();
         for (Limit_Buy limit_buy : matchedOnLimitBuy.keySet()) {
             // System.out.println(limit_buy);
@@ -62,12 +102,12 @@ public class OrderMatchingService {
                 double amountOfAssetsLimitSell = limit_sellMatch.getAssetAmount();
                 double transactionAssetAmount = amountOfAssetsToBuy - amountOfAssetsLimitSell < 0 ? amountOfAssetsToBuy : amountOfAssetsLimitSell;
                 double priceExcludingFee = transactionAssetAmount * limit_sellMatch.getOrderLimit();
-                double transActionfee = transactionAssetAmount * limit_sellMatch.getOrderLimit() * BigBangkApplicatie.getBank().getFeePercentage();
+                double transActionfee = transactionAssetAmount * limit_sellMatch.getOrderLimit() * bigBangk.getFeePercentage();
                 Transaction transactionPending = new Transaction(limit_buy.getAsset(),
                         priceExcludingFee,
                         transactionAssetAmount,
                         LocalDateTime.now(), transActionfee, limit_buy.getBuyer(), limit_sellMatch.getSeller());
-                if (validateTransAction(transactionPending)) {
+                if (transactionService.validateTransAction(transactionPending)) {
                     transactions.add(transactionPending);
                     amountOfAssetsToBuy -= transactionAssetAmount;
                     limit_sellMatch.setAssetAmount(amountOfAssetsLimitSell - transactionAssetAmount);
@@ -82,7 +122,7 @@ public class OrderMatchingService {
         return transactions;
     }
 
-    private void processOrders(Map<Limit_Buy, List<Limit_Sell>> matchedOnLimitBuy) {
+    public Map<Limit_Buy, List<Limit_Sell>> processOrders(Map<Limit_Buy, List<Limit_Sell>> matchedOnLimitBuy) {
         for (Limit_Buy limit_buy : matchedOnLimitBuy.keySet()) {
             if (limit_buy.getAssetAmount() == 0) {
                 rootRepository.deleteOrderByID(limit_buy.getOrderId());
@@ -97,41 +137,9 @@ public class OrderMatchingService {
                 }
             }
         }
+        return matchedOnLimitBuy;
     }
 
-    private boolean validateTransAction(Transaction transaction) {
-        boolean transActionIsValid = transaction.getSellerWallet().sufficientAsset(transaction.getAsset(), transaction.getAssetAmount());
-        if (BigBangkApplicatie.getBank().getWallet().equals(transaction.getSellerWallet())) {
-            if (!transaction.getBuyerWallet().sufficientBalance(transaction.getPriceExcludingFee() + transaction.getFee())) {
-                return false;
-            }
-        } else {
-            if (!transaction.getBuyerWallet().sufficientBalance(transaction.getPriceExcludingFee() + transaction.getFee() / 2)) {
-                return false;
-            }
-        }
-        return transActionIsValid;
-    }
-
-    private void processTransaction(Transaction transaction) {
-        Wallet buyerWallet = transaction.getBuyerWallet();
-        Wallet sellerWallet = transaction.getSellerWallet();
-        Wallet bankWallet = BigBangkApplicatie.getBank().getWallet();
-        buyerWallet.removeFromBalance(transaction.getPriceExcludingFee());
-        sellerWallet.addToBalance(transaction.getPriceExcludingFee());
-        buyerWallet.addToAsset(transaction.getAsset(), transaction.getAssetAmount());
-        sellerWallet.removeFromAsset(transaction.getAsset(), transaction.getAssetAmount());
-        bankWallet.addToBalance(transaction.getFee());
-        if (transaction.getBuyerWallet().equals(bankWallet)) {
-            transaction.getSellerWallet().removeFromBalance(transaction.getFee());
-        } else if (transaction.getSellerWallet().equals(bankWallet)) {
-            transaction.getBuyerWallet().removeFromBalance(transaction.getFee());
-        } else {
-            transaction.getSellerWallet().removeFromBalance(transaction.getFee() / 2.0);
-            transaction.getBuyerWallet().removeFromBalance(transaction.getFee() / 2.0);
-        }
-        rootRepository.saveTransaction(transaction);
-    }
 
     private static class lowestPriceThenOldest implements Comparator<Limit_Sell> {
         @Override
