@@ -58,19 +58,19 @@ class JdbcWalletDAOTest {
         assertThat(expected).isEqualTo(actual);
     }
 
-    //TODO test maken
-    @Test
-    @Order(4)
-    void updateWalletAssets() {
-        fail("Nog te maken test");
-
-    }
-
-    //TODO test maken
-    @Test
-    @Order(5)
-    void findAmountOfAsset() {
-        fail("Nog te maken test");
-
-    }
+//    //TODO test maken
+//    @Test
+//    @Order(4)
+//    void updateWalletAssets() {
+//        fail("Nog te maken test");
+//
+//    }
+//
+//    //TODO test maken
+//    @Test
+//    @Order(5)
+//    void findAmountOfAsset() {
+//        fail("Nog te maken test");
+//
+//    }
 }
