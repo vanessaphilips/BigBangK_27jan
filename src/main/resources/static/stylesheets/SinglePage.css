@@ -6,7 +6,6 @@ body {
     /*background-image: url("bigbangktakeoff.jpg");*/
     /*background-position-y: -250px;*/
     background-image: url("planethorizon.jpg");
-
 }
 
 pre {
@@ -26,8 +25,6 @@ input:focus {
     border: double rgba(249, 179, 110);
 }
 
-
-
 .contentpanel {
     border-radius: 25px;
     font-family: calibri, sans-serif;
@@ -38,9 +35,8 @@ input:focus {
     min-width: 380px;
     position: absolute;
     left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    padding: 10px;
+    transform: translate(-50%, 0%);
+    padding-top: clamp(10px, 30lv, 500px);
     padding-bottom: 0;
 }
 
@@ -136,7 +132,7 @@ form :invalid {
 .container{
     margin: auto;
     position: relative;
-    padding-top: clamp(15px, 10%, 200px);
+    padding-top: clamp(15px, 10lv, 200px);
     alignment: center;
     width: 80%;
     height: 25%;
