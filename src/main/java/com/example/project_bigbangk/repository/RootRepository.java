@@ -209,9 +209,15 @@ public class RootRepository {
         Wallet clientWallet = client.getWallet();
         clientWallet.setTransaction(orderDAO.findAllTransactionsByIban(clientWallet.getIban()));
         for (Transaction transaction:clientWallet.getTransaction()) {
-            transaction.setBuyerWallet(walletDAO.FindBuyerWalletByOrderId((int) transaction.getOrderId()));
-            transaction.setSellerWallet(walletDAO.FindSellerWalletByOrderId((int) transaction.getOrderId()));
             transaction.setAsset(assetDAO.findAssetByOrderId((int) transaction.getOrderId()));
+            transaction.getAsset().setCurrentPrice(priceDateDAO.getPriceDateByCodeOnDate(transaction.getDate(), transaction.getAsset().getCode()));
+            transaction.setBuyerWallet(walletDAO.FindBuyerWalletByOrderId((int) transaction.getOrderId()));
+            if (transaction.getBuyerWallet().getIban().equals(clientWallet.getIban())) {
+                transaction.setSellerWallet(walletDAO.FindSellerWalletByOrderId((int) transaction.getOrderId()));
+                transaction.setBuyerWallet(clientWallet);
+            } else {
+                transaction.setSellerWallet(clientWallet);
+            }
         }
     }
 
