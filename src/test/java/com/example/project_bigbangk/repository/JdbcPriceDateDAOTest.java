@@ -1,12 +1,20 @@
 package com.example.project_bigbangk.repository;
 
+import com.example.project_bigbangk.BigBangkApplicatie;
 import com.example.project_bigbangk.model.Asset;
 import com.example.project_bigbangk.model.AssetCode_Name;
 import com.example.project_bigbangk.model.PriceDate;
 import com.example.project_bigbangk.model.PriceHistory;
+import com.example.project_bigbangk.service.priceHistoryUpdate.PriceHistoryUpdateService;
 import org.junit.jupiter.api.*;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.springframework.boot.jdbc.init.DataSourceScriptDatabaseInitializer;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.MockBeans;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
 import javax.annotation.Resource;
@@ -22,11 +30,26 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 @SpringBootTest
 @ActiveProfiles("test")
 @TestMethodOrder(value = MethodOrderer.OrderAnnotation.class)
+
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
 class JdbcPriceDateDAOTest {
 
-
+@MockBean
+    BigBangkApplicatie bigBangkApplicatie;
     @Resource
     JdbcPriceDateDAO priceDateDAO;
+    @MockBean
+    PriceHistoryUpdateService priceHistoryUpdateService;
+    @MockBean
+    JdbcClientDAO jdbcClientDAO;
+    @MockBean
+    JdbcAddressDAO jdbcAdressDAO;
+    @MockBean
+    RootRepository rootRepository;
+    @MockBean
+    JdbcAssetDAO jdbcAssetDAO;
+
+
 
     private List<Asset> assets = new ArrayList<>();
     private List<PriceHistory> priceHistories = new ArrayList<>();

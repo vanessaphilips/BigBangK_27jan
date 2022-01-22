@@ -62,7 +62,7 @@ public abstract class AbstractOrder {
         return assetAmount;
     }
 
-    public void setAssetAmount(int assetAmount) {
+    public void setAssetAmount(double assetAmount) {
         this.assetAmount = assetAmount;
     }
 

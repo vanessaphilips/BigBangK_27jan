@@ -127,10 +127,15 @@ public class RootRepository {
         List<Asset> assets = assetDAO.getAllAssets();
         if (assets != null) {
             for (Asset asset : assets) {
-                asset.setCurrentPrice(priceDateDAO.getCurrentPriceByAssetCode(asset.getCode()));
+                setCurrentPriceOfAsset(asset);
             }
         }
         return assets;
+    }
+    private Asset findAssetByOrderId(int orderId) {
+       Asset asset = assetDAO.findAssetByOrderId(orderId);
+        setCurrentPriceOfAsset(asset);
+       return asset;
     }
 
     /**
@@ -139,9 +144,15 @@ public class RootRepository {
      * @return an Asset with matching code
      */
     public Asset findAssetByCode(String code) {
-        return assetDAO.findAssetByCode(code);
+        Asset asset = assetDAO.findAssetByCode(code);
+        setCurrentPriceOfAsset(asset);
+        return asset;
     }
-
+private void setCurrentPriceOfAsset(Asset asset){
+    if(asset!=null){
+        asset.setCurrentPrice(priceDateDAO.getCurrentPriceByAssetCode(asset.getCode()));
+    }
+}
     // WALLET
 
     public Wallet findWalletByEmail(String email) {
@@ -197,10 +208,24 @@ public class RootRepository {
      * for retreiving all Limit_Sell orders
      * @return List<Limit_Sell> with all limit_Sell orders
      */
+    public boolean deleteOrderByID(int orderId) {
+        return orderDAO.deleteOrderById(orderId);
+    }
+
+    public boolean updateLimitSell(Limit_Sell limit_sell) {
+        return orderDAO.updateLimitSell(limit_sell);
+    }
+
+    public boolean updateLimitBuy(Limit_Buy limit_buy) {
+        return orderDAO.updateLimitBuy(limit_buy);
+    }
+
+
     public List<Limit_Sell> getAllLimitSell() {
         List<Limit_Sell> limit_sells = orderDAO.getAllLimitSells();
         for (Limit_Sell limit_sell : limit_sells) {
             limit_sell.setSeller(findWalletByOrderID(limit_sell.getOrderId()));
+            limit_sell.setAsset(findAssetByOrderId(limit_sell.getOrderId()));
         }
         return limit_sells;
     }
@@ -212,6 +237,7 @@ public class RootRepository {
         List<Limit_Buy> limit_buys = orderDAO.getAllLimitBuys();
         for (Limit_Buy limit_buy : limit_buys) {
             limit_buy.setBuyer(findWalletByOrderID(limit_buy.getOrderId()));
+            limit_buy.setAsset(findAssetByOrderId(limit_buy.getOrderId()));
         }
         return limit_buys;
     }
@@ -223,6 +249,7 @@ public class RootRepository {
         List<Stoploss_Sell> stoploss_sells = orderDAO.getAllStopLossSells();
         for (Stoploss_Sell stoploss_sell : stoploss_sells) {
             stoploss_sell.setSeller(findWalletByOrderID(stoploss_sell.getOrderId()));
+            stoploss_sell.setAsset(findAssetByOrderId(stoploss_sell.getOrderId()));
         }
         return stoploss_sells;
     }
@@ -243,10 +270,10 @@ public class RootRepository {
         walletDAO.updateWalletAssets(transaction.getSellerWallet(), transaction.getAsset(), transaction.getSellerWallet().getAssets().get(transaction.getAsset()));
     }
 
-    public void fillWalletWithTransactions(Client client) {
+    public void fillWalletWithTransactions(Client client){
         Wallet clientWallet = client.getWallet();
         clientWallet.setTransaction(orderDAO.findAllTransactionsByIban(clientWallet.getIban()));
-        for (Transaction transaction : clientWallet.getTransaction()) {
+        for (Transaction transaction:clientWallet.getTransaction()) {
             transaction.setBuyerWallet(walletDAO.FindBuyerWalletByOrderId((int) transaction.getOrderId()));
             transaction.setSellerWallet(walletDAO.FindSellerWalletByOrderId((int) transaction.getOrderId()));
             transaction.setAsset(assetDAO.findAssetByOrderId((int) transaction.getOrderId()));
@@ -260,7 +287,7 @@ public class RootRepository {
      *
      * @param limit_buy author = Vanessa Philips
      */
-    public void saveLimitBuyOrder(Limit_Buy limit_buy) {
+    public void saveLimitBuyOrder(Limit_Buy limit_buy){
         orderDAO.saveLimit_Buy(limit_buy);
     }
 
@@ -268,10 +295,9 @@ public class RootRepository {
 
     /**
      * Saves Limit_Sell order temporary. To be completed when there is a match with another client's offer -> matchservice).
-     *
      * @param limit_sell author = Vanessa Philips
      */
-    public void saveLimitSellOrder(Limit_Sell limit_sell) {
+    public void saveLimitSellOrder(Limit_Sell limit_sell){
         orderDAO.saveLimit_Sell(limit_sell);
     }
 
@@ -279,10 +305,9 @@ public class RootRepository {
 
     /**
      * Saves Stoploss_Sell order temporary. To be completed when there is a match with another offer (bank) -> matchservice.
-     *
      * @param stoploss_sell author = Vanessa Philips
      */
-    public void saveStoploss_Sell(Stoploss_Sell stoploss_sell) {
+    public void saveStoploss_Sell(Stoploss_Sell stoploss_sell){
         orderDAO.saveStoploss_Sell(stoploss_sell);
     }
 

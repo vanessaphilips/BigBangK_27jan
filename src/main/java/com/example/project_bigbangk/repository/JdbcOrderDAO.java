@@ -184,6 +184,33 @@ public class JdbcOrderDAO {
         }
         return false;
     }
+    public boolean updateLimitSell(Limit_Sell limit_sell){
+        String sql = "UPDATE  bigbangk.order Set seller=?, assetAmount=?, orderLimit=?, assetCode=? WHERE orderID= ?;";
+        try{
+            return jdbcTemplate.update(sql, limit_sell.getSeller().getIban(),
+                    limit_sell.getAssetAmount(),
+                    limit_sell.getOrderLimit(),
+                    limit_sell.getAsset().getCode(),
+                    limit_sell.getOrderId())>0;
+        }catch (DataAccessException dataAccessException) {
+            System.err.println(dataAccessException.getMessage());
+        }
+        return false;
+    }
+    public boolean updateLimitBuy(Limit_Buy limit_buy){
+        String sql = "UPDATE bigbangk.order Set seller=?, assetAmount=?, orderLimit=?, assetCode=? WHERE orderID= ?;";
+        try{
+            return jdbcTemplate.update(sql, limit_buy.getBuyer().getIban(),
+                    limit_buy.getAssetAmount(),
+                    limit_buy.getOrderLimit(),
+                    limit_buy.getAsset().getCode(),
+                    limit_buy.getOrderId())>0;
+        }catch (DataAccessException dataAccessException) {
+            System.err.println(dataAccessException.getMessage());
+        }
+        return false;
+    }
+
 
     private static class TransactionRowMapper implements RowMapper<Transaction> {
 

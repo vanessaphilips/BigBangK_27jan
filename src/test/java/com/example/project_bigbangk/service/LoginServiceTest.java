@@ -26,7 +26,8 @@ class LoginServiceTest {
     static final String PASSWORD = "DeekPW";
 
     @BeforeAll
-    public static void setup() {       Mockito.when(client.getFirstName()).thenReturn("Deek");
+    public static void setup() {
+        Mockito.when(client.getFirstName()).thenReturn("Deek");
         Mockito.when(client.getEmail()).thenReturn("deek@deek.nl");
         Mockito.when(rootRepository.findClientByEmail(EMAIL)).thenReturn(client);
         Mockito.when(tokenService.getToken(EMAIL, client.getFirstName())).thenReturn("token");
