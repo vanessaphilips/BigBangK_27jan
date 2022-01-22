@@ -32,6 +32,12 @@ public class LoginController {
         this.loginService = loginService;
     }
 
+    /**
+     * Handles request to login from the frontend.
+     * Returns an unauthorized when password or username doesn't excist or wrong combination
+     * @param loginDTO class for wrapping combination of email and password
+     * @return with succesful login a jwt is returned in Repsonse body with key "authorization"
+     */
     @PostMapping(value = "/login", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<String> login(@RequestBody LoginDTO loginDTO) {

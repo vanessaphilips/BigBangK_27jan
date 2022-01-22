@@ -69,3 +69,21 @@ CREATE TABLE `address`
     `country` VARCHAR(45) NOT NULL,
     PRIMARY KEY (`postalcode`, `number`)
 );
+CREATE TABLE `order`
+(
+    `orderId`           int         NOT NULL AUTO_INCREMENT,
+    `buyer`             varchar(45) NULL,
+    `seller`            varchar(45) NULL,
+    `assetCode`         varchar(5)  NOT NULL,
+    `orderType`         varchar(45) NOT NULL,
+    `orderlimit`        double NULL,
+    `assetAmount`       double NULL,
+    `date`              timestamp   NOT NULL,
+    `fee`               double NULL,
+    `priceExcludingFee` double NULL,
+    PRIMARY KEY (`orderId`),
+
+    FOREIGN KEY (`buyer`) REFERENCES `wallet` (`IBAN`),
+    FOREIGN KEY (`seller`) REFERENCES `wallet` (`IBAN`),
+    FOREIGN KEY (`assetCode`) REFERENCES `asset` (`code`)
+);
