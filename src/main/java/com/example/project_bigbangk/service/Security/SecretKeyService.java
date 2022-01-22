@@ -4,8 +4,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 /**
- * @author Pieter Jan Bleichrodt
  * Deze service simuleert een secret key
+ * @author Pieter Jan Bleichrodt
+ *
  * reation date 12/3/2021
  */
 @Service

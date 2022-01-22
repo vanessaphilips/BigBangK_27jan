@@ -15,6 +15,23 @@ import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+/**
+ * matches orders by some predefined rules:
+ * limit buy ik wil kopen voor een bedrag niet hoger dan limit
+ * limit sell ik wil kopen voor een bedrag niet lager dan limit
+ *
+ * verkoop
+ *
+ * als sell prijs onder de buyLimit is dan is er een match
+ * Bij meerder matches gaat de laagste Sell Limit eerst
+ * Bij gelijke Sell Limits ggat de oudste eerst
+ * Bij gelijke Buy Limits gaat de oudste eerst
+ *
+ * StopLossSell:
+ * als currentPrice onder limit dan verkopen
+ * als er een match is met een LimitBuy dan die voorrang
+ * anders verkopen aan de bank
+ */
 
 @Service
 public class OrderMatchingService {
@@ -29,11 +46,6 @@ public class OrderMatchingService {
         this.rootRepository = rootRepository;
     }
 
-
-    //public List<AbstractOrder> checkForTriggered
-
-    //limit buy ik wil kopen voor een bedrag niet hoger dan limit
-    //limit sell ik wil kopen voor een bedrag niet lager dan limit
     public void checkForMatchingOrders() {
         List<Limit_Sell> allLimit_SellOrders = rootRepository.getAllLimitSell();
         List<Limit_Buy> allLimit_BuyOrders = rootRepository.getAllLimitBuy();

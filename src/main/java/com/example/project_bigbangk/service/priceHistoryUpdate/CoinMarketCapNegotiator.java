@@ -60,7 +60,10 @@ public class CoinMarketCapNegotiator implements ICryptoApiNegotiator {
         cryptoApiNegotiatorStrategy.addNegotiator(this);
     }
 
-
+/**
+ * checks if the server is online
+ * @return true if online
+ */
     @Override
     public boolean isAvailable() {
         String result = null;
@@ -78,6 +81,11 @@ public class CoinMarketCapNegotiator implements ICryptoApiNegotiator {
         return true;
     }
 
+    /**
+     * retrieves the priceHistoryData
+     * @param currency the currency of the prices returned
+     * @return a list of PriceHistory data for all Assets
+     */
 
     @Override
     public List<PriceHistory> getPriceHistory(String currency) {

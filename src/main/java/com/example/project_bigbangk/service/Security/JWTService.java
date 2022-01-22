@@ -1,8 +1,8 @@
 package com.example.project_bigbangk.service.Security;
 /**
+ * This class generates and valitades JWT
  * @author Pieter Jan Bleichrodt
  * Creation date 12/3/2021
- * This class generates and valitades JWT
  */
 
 import com.auth0.jwt.JWT;

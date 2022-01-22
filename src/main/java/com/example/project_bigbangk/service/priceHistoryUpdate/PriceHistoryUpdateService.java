@@ -57,6 +57,9 @@ public class PriceHistoryUpdateService implements ISubject {
         }
     }
 
+    /**
+     * notify all subscribed listeners
+     */
     public void notifyObservers() {
         for (IObserver observer : observers) {
             observer.update();

@@ -64,6 +64,12 @@ public class RootRepository {
         clientDAO.saveClient(client);
     }
 
+    /**
+     * Saves a List of priceHistory to the DataBase
+     *
+     * @param priceHistories the List of priceHistory to be saved
+     * @author Pieter Jan Bleichrodt
+     */
     //PriceHistory
     public void savePriceHistories(List<PriceHistory> priceHistories) {
         boolean saveAssets = assetDAO.getNumberOfAssets() != AMOUNT_OF_ASSETS;
@@ -77,10 +83,21 @@ public class RootRepository {
         }
     }
 
+    /**
+     * retrieves the currentPrice of a given Asset from the DB
+     *
+     * @param assetCode the code of the Asset to be retrieved
+     * @return the currentPrice as a double
+     * @author Pieter Jan Bleichrodt
+     */
     public double getCurrentPriceByAssetCode(String assetCode) {
         return priceDateDAO.getCurrentPriceByAssetCode(assetCode);
     }
-
+    /**
+     * retrieves the pricehistories for all Assets from the database
+     * @param dateTime date in past for defining the interval for which priceHistoryData is retrieved
+     * @return a list of PriceHistory
+     */
     public List<PriceHistory> getAllPriceHistories(LocalDateTime dateTime) {
         List<Asset> assets = assetDAO.getAllAssets();
         List<PriceHistory> priceHistories = new ArrayList<>();
@@ -101,6 +118,11 @@ public class RootRepository {
     }
 
     //Asset
+    /**
+     * retrieves all Assets from DB
+     *
+     * @author Pieter Jan Bleichrodt
+     */
     public List<Asset> getAllAssets() {
         List<Asset> assets = assetDAO.getAllAssets();
         if (assets != null) {
@@ -111,6 +133,11 @@ public class RootRepository {
         return assets;
     }
 
+    /**
+     * find an Asset by its code
+     * @param code code of the asset in String format
+     * @return an Asset with matching code
+     */
     public Asset findAssetByCode(String code) {
         return assetDAO.findAssetByCode(code);
     }
@@ -166,6 +193,10 @@ public class RootRepository {
     }
 
     //Order
+    /**
+     * for retreiving all Limit_Sell orders
+     * @return List<Limit_Sell> with all limit_Sell orders
+     */
     public List<Limit_Sell> getAllLimitSell() {
         List<Limit_Sell> limit_sells = orderDAO.getAllLimitSells();
         for (Limit_Sell limit_sell : limit_sells) {
@@ -173,7 +204,10 @@ public class RootRepository {
         }
         return limit_sells;
     }
-
+    /**
+     * for retreiving all Limit_buy orders
+     * @return List<Limit_Buy> with all limit_Buy orders
+     */
     public List<Limit_Buy> getAllLimitBuy() {
         List<Limit_Buy> limit_buys = orderDAO.getAllLimitBuys();
         for (Limit_Buy limit_buy : limit_buys) {
@@ -181,9 +215,13 @@ public class RootRepository {
         }
         return limit_buys;
     }
+    /**
+     * for retreiving all Stoploss_Sell orders
+     * @return List<Stoploss_Sell> with all Stoploss_Sell orders
+     */
     public List<Stoploss_Sell> getAllStopLossSells() {
         List<Stoploss_Sell> stoploss_sells = orderDAO.getAllStopLossSells();
-        for (Stoploss_Sell stoploss_sell: stoploss_sells) {
+        for (Stoploss_Sell stoploss_sell : stoploss_sells) {
             stoploss_sell.setSeller(findWalletByOrderID(stoploss_sell.getOrderId()));
         }
         return stoploss_sells;
@@ -205,10 +243,10 @@ public class RootRepository {
         walletDAO.updateWalletAssets(transaction.getSellerWallet(), transaction.getAsset(), transaction.getSellerWallet().getAssets().get(transaction.getAsset()));
     }
 
-    public void fillWalletWithTransactions(Client client){
+    public void fillWalletWithTransactions(Client client) {
         Wallet clientWallet = client.getWallet();
         clientWallet.setTransaction(orderDAO.findAllTransactionsByIban(clientWallet.getIban()));
-        for (Transaction transaction:clientWallet.getTransaction()) {
+        for (Transaction transaction : clientWallet.getTransaction()) {
             transaction.setBuyerWallet(walletDAO.FindBuyerWalletByOrderId((int) transaction.getOrderId()));
             transaction.setSellerWallet(walletDAO.FindSellerWalletByOrderId((int) transaction.getOrderId()));
             transaction.setAsset(assetDAO.findAssetByOrderId((int) transaction.getOrderId()));
@@ -219,9 +257,10 @@ public class RootRepository {
 
     /**
      * Saves Limit_Buy order temporary. To be completed when there is a match with another client's offer -> matchservice.
+     *
      * @param limit_buy author = Vanessa Philips
      */
-    public void saveLimitBuyOrder(Limit_Buy limit_buy){
+    public void saveLimitBuyOrder(Limit_Buy limit_buy) {
         orderDAO.saveLimit_Buy(limit_buy);
     }
 
@@ -229,9 +268,10 @@ public class RootRepository {
 
     /**
      * Saves Limit_Sell order temporary. To be completed when there is a match with another client's offer -> matchservice).
+     *
      * @param limit_sell author = Vanessa Philips
      */
-    public void saveLimitSellOrder(Limit_Sell limit_sell){
+    public void saveLimitSellOrder(Limit_Sell limit_sell) {
         orderDAO.saveLimit_Sell(limit_sell);
     }
 
@@ -239,9 +279,10 @@ public class RootRepository {
 
     /**
      * Saves Stoploss_Sell order temporary. To be completed when there is a match with another offer (bank) -> matchservice.
+     *
      * @param stoploss_sell author = Vanessa Philips
      */
-    public void saveStoploss_Sell(Stoploss_Sell stoploss_sell){
+    public void saveStoploss_Sell(Stoploss_Sell stoploss_sell) {
         orderDAO.saveStoploss_Sell(stoploss_sell);
     }
 

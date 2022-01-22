@@ -52,7 +52,7 @@ public class JdbcAssetDAO implements IAssetDAO {
     }
 
     /**
-     * for checking the number assets already in DB
+     * for checking the numberOfassets already in DB
      *
      * @return number of rows from Asset Table
      */

@@ -1,3 +1,7 @@
+/**
+ * converting the PriceHistories from /marketplace into html
+ * @author Pieter Jan Bleichrodt
+ */
 "use strict"
 //Declare constants
 

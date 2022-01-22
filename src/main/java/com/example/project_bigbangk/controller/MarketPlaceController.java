@@ -35,7 +35,16 @@ public class MarketPlaceController {
         logger.info("New MarketPlaceController");
     }
 
-
+    /**
+     * Handles request for retrieving priceHsitoryData
+     *
+     * Returns status.unauthorized jwt is expired or invalid
+     * @param authorization the jwt token send in the header
+     * @param date in the past for defining period over which the pricehistory is gathered
+     * @return Response with status.ok and priceHistoriesDTO object. This is a List of priceHistory,
+     * which cantains an Asset and a list of priceDateDTO's. PriceDateDTO contains a price and a date in string format
+     * status.unauthorized when bad login
+     */
     @PostMapping("/marketplace")
     @ResponseBody
     public ResponseEntity<String> getPriceHistories(@RequestHeader String authorization, @RequestBody String date) {

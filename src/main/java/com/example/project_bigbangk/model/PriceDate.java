@@ -1,13 +1,12 @@
-// Created by Deek
-// Creation date 1/13/2022
 
 package com.example.project_bigbangk.model;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.time.LocalDateTime;
 
+/**
+ * a price of an asset at a given dateTime
+ * @author Pieter Jan Bleichrodt
+ */
 public class PriceDate implements Comparable<PriceDate> {
 
 

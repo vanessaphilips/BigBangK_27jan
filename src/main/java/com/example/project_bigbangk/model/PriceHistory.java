@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
+ * A collection of priceDates in chronological order for a specific Asset
  * @author Pieter Jan Bleichrodt
  * Creation date 12/12/2021
  */
