@@ -191,8 +191,8 @@ function createDateInPast() {
     return date.toISOString().substring(0, 23);
 }
 
-const getPriceHistoriesByAsset = (token) => {
-    return fetch(`${rootURL}marketplace`,
+const getPriceHistoriesByAsset = async (token) => {
+    return await fetch(`${rootURL}marketplace`,
         {
             method: 'POST',
             headers: acceptHeadersWithToken(token),
@@ -202,6 +202,7 @@ const getPriceHistoriesByAsset = (token) => {
             return promise.json()
         } else if(promise.status===400){
             console.log("Couldn't retrieve pricehistory from the server")
+            window.location.href = loginPageURL
         }else if(promise.status===401){
                        window.location.href = loginPageURL
         }

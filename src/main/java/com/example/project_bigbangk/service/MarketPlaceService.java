@@ -44,7 +44,9 @@ public class MarketPlaceService {
         } else {
             priceHistories = rootRepository.getAllPriceHistories(localDateTime);
         }
-
+        if(priceHistories.isEmpty()){
+            priceHistories = rootRepository.getAllPriceHistories(localDateTime);
+        }
         return convertPriceHistroyToDTO(priceHistories);
     }
 
