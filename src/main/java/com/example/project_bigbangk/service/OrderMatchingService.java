@@ -46,6 +46,7 @@ public class OrderMatchingService implements IObserver {
             transactionService.processTransaction(transaction);
         }
         processOrders(matchingOrders);
+        logger.info(String.format("Order processed, there where %s matches", transactions.size()));
     }
 
     //limit buy ik wil kopen voor een bedrag niet hoger dan limit
@@ -59,7 +60,7 @@ public class OrderMatchingService implements IObserver {
         for (Limit_Buy limit_buy : allLimit_BuyOrders) {
             List<Limit_Sell> matches = allLimit_SellOrders.stream()
                     .filter(lso -> limit_buy.getOrderLimit() >= lso.getOrderLimit()
-                            && limit_buy.getAsset().equals(lso.getAsset()))
+                            && limit_buy.getAsset().equals(lso.getAsset())&&!limit_buy.getBuyer().equals(lso.getSeller()))
                     .sorted(new lowestPriceThenOldest())
                     .collect(Collectors.toList());
             if (matches.size() > 0) {

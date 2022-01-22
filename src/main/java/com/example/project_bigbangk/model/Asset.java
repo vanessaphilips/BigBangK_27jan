@@ -35,12 +35,12 @@ public class Asset {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Asset asset = (Asset) o;
-        return Double.compare(asset.currentPrice, currentPrice) == 0 && code.equals(asset.code) && name.equals(asset.name);
+        return code.equals(asset.code) && name.equals(asset.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(code, name, currentPrice);
+        return Objects.hash(code, name);
     }
 
     public double getCurrentPrice() {

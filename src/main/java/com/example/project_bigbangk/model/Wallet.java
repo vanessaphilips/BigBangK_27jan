@@ -9,20 +9,18 @@ import com.example.project_bigbangk.model.Orders.Limit_Sell;
 import com.example.project_bigbangk.model.Orders.Stoploss_Sell;
 import com.example.project_bigbangk.model.Orders.Transaction;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 public class Wallet implements Cloneable {
 
     private String bank;
     private String iban;
     private double balance;
-    private Map<Asset, Double> assets;
-    private List<Transaction> transaction;
-    private List<Limit_Sell> limitSell;
-    private List<Limit_Buy> limitBuy;
-    private List<Stoploss_Sell> stoplossSell;
+    private Map<Asset, Double> assets = new HashMap<>();
+    private List<Transaction> transaction = new ArrayList<>();
+    private List<Limit_Sell> limitSell = new ArrayList<>();
+    private List<Limit_Buy> limitBuy = new ArrayList<>();
+    private List<Stoploss_Sell> stoplossSell = new ArrayList<>();
     private ICanTrade owner;
 
     public Wallet(String bank, String iban, double balance, Map<Asset, Double> assets, List<Transaction> transaction,

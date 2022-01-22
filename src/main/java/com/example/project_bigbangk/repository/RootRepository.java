@@ -105,16 +105,27 @@ public class RootRepository {
         List<Asset> assets = assetDAO.getAllAssets();
         if (assets != null) {
             for (Asset asset : assets) {
-                asset.setCurrentPrice(priceDateDAO.getCurrentPriceByAssetCode(asset.getCode()));
+                setCurrentPriceOfAsset(asset);
             }
         }
         return assets;
     }
-
-    public Asset findAssetByCode(String code) {
-        return assetDAO.findAssetByCode(code);
+    private Asset findAssetByOrderId(int orderId) {
+       Asset asset = assetDAO.findAssetByOrderId(orderId);
+        setCurrentPriceOfAsset(asset);
+       return asset;
     }
 
+    public Asset findAssetByCode(String code) {
+        Asset asset = assetDAO.findAssetByCode(code);
+        setCurrentPriceOfAsset(asset);
+        return asset;
+    }
+private void setCurrentPriceOfAsset(Asset asset){
+    if(asset!=null){
+        asset.setCurrentPrice(priceDateDAO.getCurrentPriceByAssetCode(asset.getCode()));
+    }
+}
     // WALLET
 
     public Wallet findWalletByEmail(String email) {
@@ -183,14 +194,18 @@ public class RootRepository {
         List<Limit_Sell> limit_sells = orderDAO.getAllLimitSells();
         for (Limit_Sell limit_sell : limit_sells) {
             limit_sell.setSeller(findWalletByOrderID(limit_sell.getOrderId()));
+            limit_sell.setAsset(findAssetByOrderId(limit_sell.getOrderId()));
         }
         return limit_sells;
     }
+
+
 
     public List<Limit_Buy> getAllLimitBuy() {
         List<Limit_Buy> limit_buys = orderDAO.getAllLimitBuys();
         for (Limit_Buy limit_buy : limit_buys) {
             limit_buy.setBuyer(findWalletByOrderID(limit_buy.getOrderId()));
+            limit_buy.setAsset(findAssetByOrderId(limit_buy.getOrderId()));
         }
         return limit_buys;
     }
@@ -198,6 +213,7 @@ public class RootRepository {
         List<Stoploss_Sell> stoploss_sells = orderDAO.getAllStopLossSells();
         for (Stoploss_Sell stoploss_sell: stoploss_sells) {
             stoploss_sell.setSeller(findWalletByOrderID(stoploss_sell.getOrderId()));
+            stoploss_sell.setAsset(findAssetByOrderId(stoploss_sell.getOrderId()));
         }
         return stoploss_sells;
     }

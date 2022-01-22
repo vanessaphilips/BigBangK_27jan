@@ -7,6 +7,7 @@ import com.example.project_bigbangk.model.Asset;
 import com.example.project_bigbangk.model.AssetCode_Name;
 import com.example.project_bigbangk.model.Bank;
 import com.example.project_bigbangk.model.Wallet;
+import com.example.project_bigbangk.repository.RootRepository;
 import com.example.project_bigbangk.service.ClientFactory;
 import com.example.project_bigbangk.service.priceHistoryUpdate.*;
 import org.slf4j.Logger;
@@ -21,7 +22,7 @@ import java.util.*;
 public class BigBangkApplicatie implements ApplicationListener<ContextRefreshedEvent> {
 
     public static final String CURRENT_CURRENCY = "EUR";
-    public static final long DAYS_OF_PRICEHISTORY_CACHE =30 ;
+    public static final long DAYS_OF_PRICEHISTORY_CACHE = 30;
     public static final int UPDATE_INTERVAL_PRICEUPDATESERVICE = 300000;//5min 300000
     private static final int NUMBER_OF_CLIENTS_TO_SEED = 3000;
     private static final int DELAY_PRICEHISTORYUPDATE = 3000;
@@ -31,33 +32,39 @@ public class BigBangkApplicatie implements ApplicationListener<ContextRefreshedE
     private final PriceHistoryUpdateService priceHistoryUpdateService;
     private final ClientFactory clientFactory;
     private final Logger logger = LoggerFactory.getLogger(BigBangkApplicatie.class);
-
+    private RootRepository rootRepository;
 
     public BigBangkApplicatie(PriceHistoryUpdateService priceHistoryUpdateService,
-                              ClientFactory clientFactory) {
+                              ClientFactory clientFactory, RootRepository rootRepository) {
         super();
         logger.info("New BigBangkApplicatie");
         this.priceHistoryUpdateService = priceHistoryUpdateService;
         this.clientFactory = clientFactory;
+        this.rootRepository = rootRepository;
+            }
+
+    private void initializeBank() {
+        bigBangk.setWallet(rootRepository.findWalletbyBankCode(bigBangk.getCode()));
     }
 
     public Bank getBank() {
+        initializeBank();
         return bigBangk;
     }
 
     @Override
-    public  void onApplicationEvent(ContextRefreshedEvent event) {
+    public void onApplicationEvent(ContextRefreshedEvent event) {
         startPriceHistoryUpdateTimer();
         startDateBaseSeeding();
         setupBaseWallet();
     }
 
-    private void setupBaseWallet(){
+    private void setupBaseWallet() {
         Map<Asset, Double> assetMap = new HashMap<>();
         for (AssetCode_Name asset : EnumSet.allOf(AssetCode_Name.class)) {
             assetMap.put(new Asset(asset.getAssetCode(), asset.getAssetName()), 0.0);
         }
-        prototypeWallet = new Wallet("none",bigBangk.getStartingcapital(), assetMap);
+        prototypeWallet = new Wallet("none", bigBangk.getStartingcapital(), assetMap);
     }
 
     private void startPriceHistoryUpdateTimer() {
