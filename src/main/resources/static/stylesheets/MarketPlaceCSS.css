@@ -1,8 +1,8 @@
 :root {
     --orange: #ff8034;
-    --blue: #83b0ea;
+    --blue:  #459ac7;
     --fullwidth: 100%;
-    --selected: #5288b7
+    --selected: #69c7fa;
 }
 
 input::-webkit-outer-spin-button,

@@ -1,5 +1,11 @@
+:root {
+    --orange: #ff8034;
+    --blue:  #459ac7;
+    --fullwidth: 100%;
+    --selected: #69c7fa;
+}
 body {
-    font-family: "Bodoni MT Condensed", sans-serif;
+    font-family: "Calibri", sans-serif;
     width: 99%;
     height: 100%;
     display: flex;
@@ -7,15 +13,19 @@ body {
 }
 
 header {
-    display: block;
-    width: fit-content;
+    display: flex;
+    width: 69%;
+    align-items: center;
+    justify-items: center;
     justify-content: center;
     align-content: center;
     margin:auto;
     font-size: 8vh;
     min-font-size: 10px;
-    color: dimgray;
+    color: white;
+    padding: 0 0   10px 0;
     background-color: var(--blue);
+    border-radius: 28px 28px 0 0 ;
 }
 
 #navigation {
@@ -26,13 +36,14 @@ header {
     justify-content: space-around;
     align-content: center;
     margin:  0 auto 10vh auto;
-    padding: 10px;
+    padding: 0 0 10px 0;
     border-color: var(--blue);
-    border-width: 2px;
     border-bottom-style: solid;
+    background-color:  var(--blue);
+    border-radius: 0 0 28px 28px ;
 }
 #navigation> label:hover {
-   color: #5288b7;
+   color: var(--selected);
     cursor: pointer;
 }
 
