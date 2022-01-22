@@ -1,3 +1,6 @@
+/**
+ * classes used by MarketPlace
+ */
 "use strict"
 
 class Asset {

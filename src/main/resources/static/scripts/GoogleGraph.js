@@ -1,3 +1,8 @@
+/**
+ * creates a graphical representation of data
+ * @author Pieter Jan Bleichrodt
+ *
+ */
 function setData(data, dates, prices) {
     data.addColumn('date', 'date');
     data.addColumn('number', 'price');
@@ -31,6 +36,13 @@ function setOptions(width, height) {
     };
 }
 
+/**
+ * use this function to create a graph.
+ * @param priceDates a list of priceDate. this data is ued to draw the graph
+ * @param width the width in pixels
+ * @param height the height in pixels
+ * @returns {HTMLDivElement} returns a container object with the graph embedded
+ */
 const createGraph = (priceDates, width, height) => {
     let dates = priceDates.map(ph => ph.dateTime)
     let prices = priceDates.map(ph => ph.price)

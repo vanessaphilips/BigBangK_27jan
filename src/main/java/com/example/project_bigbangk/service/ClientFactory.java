@@ -1,6 +1,3 @@
-// Created by Deek
-// Creation date 12/15/2021
-
 package com.example.project_bigbangk.service;
 
 import com.example.project_bigbangk.model.Address;
@@ -19,6 +16,16 @@ import java.text.Normalizer;
 import java.time.LocalDate;
 import java.util.*;
 
+/**
+ * a random client generator. it generates a client and sends it to
+ * registrationService where it is checked and saved to the DB
+ * It uses:
+ * 10.000 different firstnames
+ * 10.000 different lastnames
+ * all places in the Netherlands
+ * some streetnames and email providers/companys
+ * @author Pieter Jan Bleichrodt
+ */
 @Service
 public class ClientFactory {
 
@@ -65,6 +72,10 @@ public class ClientFactory {
                 address.getCountry());
     }
 
+    /**
+     * seeds the dataBase with a number of dummy clients.
+     * @param numberOfClients the number of dummy clients to be generated
+     */
     public void seedDataBase(int numberOfClients) {
         logger.info(String.format("Database seeding started for %s clients", numberOfClients));
         initializeNameArrays();

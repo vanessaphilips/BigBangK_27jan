@@ -1,10 +1,8 @@
-// Created by Deek
-// Creation date 12/14/2021
+
 
 package com.example.project_bigbangk.repository;
 
 import com.example.project_bigbangk.model.PriceDate;
-import com.example.project_bigbangk.model.PriceHistory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
@@ -18,6 +16,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * DAO for the priceDate/PriceHistory class
+ * @author Pieter Jan BLeichrodt
+ */
 @Repository
 public class JdbcPriceDateDAO implements IPricedateDAO {
 
@@ -31,8 +33,11 @@ public class JdbcPriceDateDAO implements IPricedateDAO {
     }
 
 
-
-
+    /**
+     * saves a single priceDate to the database
+     * @param priceDate the priceDate to be saved
+     * @param assetCode the code of the asset in string format
+     */
     @Override
     public void savePriceDate(PriceDate priceDate, String assetCode) {
         String sql = "Insert into PriceHistory values(?,?,?);";
@@ -46,7 +51,11 @@ public class JdbcPriceDateDAO implements IPricedateDAO {
             }
        }
 
-
+    /**
+     * retrieves the currentPrice of a given Asset from the database     *
+     * @param assetCode the code of the asset in string format for which the currentPrice is returned
+     * @return the currentPrice as a double
+     */
     @Override
     public double getCurrentPriceByAssetCode(String assetCode) {
         String sql = "Select * from (SELECT * FROM pricehistory where code = ? )as priceHistoryByCoin ORDER BY dateTime DESC LIMIT 1;";
@@ -61,6 +70,12 @@ public class JdbcPriceDateDAO implements IPricedateDAO {
         return currentPrice;
     }
 
+    /**
+     * retrieves the pricehistory of a given Asset from the database
+     * @param assetCode the code of the asset in string format for which the pricehistory is returned
+     * @param date date in past for defining the interval for which priceData is retrieved
+     * @return the currentPrice as a double
+     */
     @Override
     public List<PriceDate> getPriceDatesByCodeFromDate(LocalDateTime date, String assetCode) {
         String sql = "SELECT * FROM pricehistory where dateTime> ? and code = ?;";

@@ -12,6 +12,10 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
+/**
+ * is notified when a priceHistoryUpdate occurrences and updates the PriceHistoryCache
+ * @author Pieter jan Bleichrodt
+ */
 @Service
 public class PriceHistoryCacheUpdateService implements IObserver {
 

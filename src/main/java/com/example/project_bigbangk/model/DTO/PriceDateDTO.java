@@ -3,12 +3,14 @@
 
 package com.example.project_bigbangk.model.DTO;
 
-import com.example.project_bigbangk.model.PriceDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.time.LocalDateTime;
-
+/**
+ * for sending the priceDate data to the client. LocalDateTime isn't compatible with js
+ * so the dateTime is in String format to be parsed at clientSide.
+ * @author Pieter jan Bleichrodt
+ */
 public class PriceDateDTO {
 
     private final Logger logger = LoggerFactory.getLogger(PriceDateDTO.class);

@@ -17,6 +17,15 @@ import org.springframework.stereotype.Component;
 
 import java.util.*;
 
+/**
+ * defining rules glbal constants and initiating global services:
+ * async priceHistoryUpdateTimer
+ * async dataBase seeder
+ * bigBank instance
+ * @warning bigBangk static instance doe not contain a Wallet!
+ * use getBigBangk() instead.
+ * bigBangK static field is kept public for backwards compatability
+ */
 @Component
 public class BigBangkApplicatie implements ApplicationListener<ContextRefreshedEvent> {
 

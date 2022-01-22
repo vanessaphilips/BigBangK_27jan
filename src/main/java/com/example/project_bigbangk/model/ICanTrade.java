@@ -1,6 +1,8 @@
 package com.example.project_bigbangk.model;
 /**
- * created by Pieter Jan Bleichrodt
+ * for identifying the owner of a wallet, but is not needed anymore
+ * @depricated class should be removed
+ * @author Pieter Jan Bleichrodt
  */
 public interface ICanTrade {
 }

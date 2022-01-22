@@ -130,6 +130,10 @@ public class JdbcOrderDAO {
         }
     }
 
+    /**
+     * for retreiving all Limit_buy orders
+     * @return List<Limit_Buy> with all limit_Buy orders
+     */
     public List<Limit_Buy> getAllLimitBuys() {
         String sql = "SELECT * FROM bigbangk.Order WHERE orderType=?;";
         try {
@@ -139,7 +143,10 @@ public class JdbcOrderDAO {
         }
         return null;
     }
-
+    /**
+     * for retreiving all Limit_Sell orders
+     * @return List<Limit_Sell> with all limit_Sell orders
+     */
     public List<Limit_Sell> getAllLimitSells() {
         String sql = "SELECT * FROM bigbangk.Order WHERE orderType=?;";
         try {
@@ -149,7 +156,10 @@ public class JdbcOrderDAO {
         }
         return null;
     }
-
+    /**
+     * for retreiving all Stoploss_Sell orders
+     * @return List<Stoploss_Sell> with all Stoploss_Sell orders
+     */
     public List<Stoploss_Sell> getAllStopLossSells() {
         String sql = "SELECT * FROM bigbangk.Order WHERE orderType=?;";
         try {
@@ -160,6 +170,11 @@ public class JdbcOrderDAO {
         return null;
     }
 
+    /**
+     * for deleting an order by Id
+     * @param orderId the id of the order to be deleted
+     * @return return true if a row is affected, false when the order didn't exist
+     */
     public boolean deleteOrderById(int orderId){
         String sql = "DELETE FROM bigbangk.Order where orderID=?;";
         try{

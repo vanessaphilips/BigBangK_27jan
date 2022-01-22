@@ -13,7 +13,7 @@ import java.util.Optional;
 
 /**
  *
- * This class is selects the CryptoApiNegotiatorService that is online and injects it in the
+ * This class selects the CryptoApiNegotiatorService that is online and injects it in the
  * PriceHistoryUpdateService
  */
 @Service

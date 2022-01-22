@@ -1,7 +1,10 @@
 package com.example.project_bigbangk.model.DTO;
 
+import java.util.Objects;
+
 /**
- * Created by Pieter Jan
+ * Class containing an cryptocoin with its code, name and currentPrice
+ * @author  Pieter Jan
  */
 
 public class AssetDTO {
@@ -18,6 +21,18 @@ public class AssetDTO {
         this.code = code;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AssetDTO assetDTO = (AssetDTO) o;
+        return code.equals(assetDTO.code) && name.equals(assetDTO.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(code, name);
+    }
 
     @Override
     public String toString() {

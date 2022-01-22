@@ -1,3 +1,7 @@
+/**
+ * registrates a user and uses the registration to login
+ * use this class for development purpose only
+ */
 class LoginDTO {
     constructor(email, password) {
         this.email = email;

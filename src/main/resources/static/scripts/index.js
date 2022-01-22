@@ -1,3 +1,8 @@
+/**
+ * Root page for the bigBankgk website
+ * this is a global menu for navigating the pages defined in fillNavMap
+ *
+ */
 const navigation = document.getElementById("navigation")
 const currentContentContainer = document.getElementById("currentContentContainer");
 const navElements = {}

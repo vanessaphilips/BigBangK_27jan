@@ -3,7 +3,8 @@ package com.example.project_bigbangk.model.DTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 /**
- * created by Pieter Jan Bleichrodt
+ * Class for sending login data between front and backend
+ * @author Pieter Jan Bleichrodt
  * Creation date 12/7/2021
  */
 public class LoginDTO {

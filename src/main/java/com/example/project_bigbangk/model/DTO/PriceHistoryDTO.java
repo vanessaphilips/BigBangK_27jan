@@ -1,5 +1,3 @@
-// Created by Deek
-// Creation date 12/22/2021
 
 package com.example.project_bigbangk.model.DTO;
 
@@ -12,7 +10,10 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
+/**
+ * for sending the priceHistopry data to the client.
+ * @author Pieter jan Bleichrodt
+ */
 public class PriceHistoryDTO {
 
     List<PriceDateDTO> priceDates;
