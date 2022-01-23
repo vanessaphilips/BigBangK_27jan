@@ -219,7 +219,9 @@ private void setCurrentPriceOfAsset(Asset asset){
     public boolean updateLimitBuy(Limit_Buy limit_buy) {
         return orderDAO.updateLimitBuy(limit_buy);
     }
-
+    public boolean updateStopLoss(Stoploss_Sell stoploss_sell) {
+        return orderDAO.updateStopLoss(stoploss_sell);
+    }
 
     public List<Limit_Sell> getAllLimitSell() {
         List<Limit_Sell> limit_sells = orderDAO.getAllLimitSells();
@@ -310,5 +312,6 @@ private void setCurrentPriceOfAsset(Asset asset){
     public void saveStoploss_Sell(Stoploss_Sell stoploss_sell){
         orderDAO.saveStoploss_Sell(stoploss_sell);
     }
+
 
 }

@@ -13,7 +13,6 @@ import com.example.project_bigbangk.model.Orders.Transaction;
 import com.example.project_bigbangk.model.Wallet;
 import com.example.project_bigbangk.repository.RootRepository;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -21,18 +20,14 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
 import org.mockito.Mock;
-import org.mockito.MockedStatic;
 import org.mockito.Mockito;
-import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.util.ReflectionTestUtils;
 
 
 import javax.annotation.Resource;
-import javax.print.attribute.standard.PrinterLocation;
 
-import java.io.PrintStream;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -79,8 +74,7 @@ class OrderMatchingServiceTest {
         Bank bigBangk = Mockito.mock(Bank.class);
         Mockito.when(bigBangk.getWallet()).thenReturn(Mockito.mock(Wallet.class));
         Mockito.when(bigBangk.getFeePercentage()).thenReturn(0.25);
-        Mockito.when(bigBangkApplicatie.getBank()).thenReturn(bigBangk);
-
+        ReflectionTestUtils.setField(orderMatchingService, "bigBangk", bigBangk);
     }
 
     private Asset createmockedAsset(AssetCode_Name assetCodeName, double currentprice) {
@@ -117,7 +111,8 @@ class OrderMatchingServiceTest {
     @Test
     void checkForMatchingOrders() {
         List<Limit_Buy> expectedLBuys = new ArrayList<>(List.of(limit_buyList[3], limit_buyList[1], limit_buyList[0]));
-        Map<Limit_Buy, List<Limit_Sell>> matchedOnLimitBuy = orderMatchingService.checkForMatchingOrders();
+        Map<Limit_Buy, List<AbstractOrder>> matchedOnLimitBuy = orderMatchingService
+                .checkForMatchingOrders(new ArrayList<>(List.of(limit_buyList)), new ArrayList<>(List.of(limit_sellList)));
         printList(matchedOnLimitBuy);
         for (int i = 0; i < matchedOnLimitBuy.keySet().size(); i++) {
             Limit_Buy actual = new ArrayList<>(matchedOnLimitBuy.keySet()).get(i);
@@ -128,11 +123,11 @@ class OrderMatchingServiceTest {
         System.out.println(limit_buyList[2].getOrderLimit());
         Limit_Buy expectedLBuy = limit_buyList[2];
         assertNull(matchedOnLimitBuy.keySet().stream().filter(k -> equals(k, expectedLBuy)).findFirst().orElse(null));
-        List<Limit_Sell> limit_sellsMatched = matchedOnLimitBuy.get(limit_buyList[0]);
-        List<Limit_Sell> expectedLSells = new ArrayList<>(List.of(limit_sellList[4], limit_sellList[3], limit_sellList[5], limit_sellList[0], limit_sellList[6]));
+        List<AbstractOrder> limit_sellsMatched = matchedOnLimitBuy.get(limit_buyList[0]);
+        List<AbstractOrder> expectedLSells = new ArrayList<>(List.of(limit_sellList[4], limit_sellList[3], limit_sellList[5], limit_sellList[0], limit_sellList[6]));
         for (int i = 0; i < limit_sellsMatched.size(); i++) {
-            Limit_Sell actual = limit_sellsMatched.get(i);
-            Limit_Sell expectedLSell = expectedLSells.get(i);
+            AbstractOrder actual = limit_sellsMatched.get(i);
+            AbstractOrder expectedLSell = expectedLSells.get(i);
             assertTrue(equals(expectedLSell, actual));
         }
         assertTrue(matchedOnLimitBuy.get(limit_buyList[0]).containsAll(matchedOnLimitBuy.get(limit_buyList[1])));
@@ -141,7 +136,9 @@ class OrderMatchingServiceTest {
 
     @Test
     void createTransActionsFromMatches() {
-        Map<Limit_Buy, List<Limit_Sell>> matchedOnLimitBuy = orderMatchingService.checkForMatchingOrders();
+        Map<Limit_Buy, List<AbstractOrder>> matchedOnLimitBuy = orderMatchingService
+                .checkForMatchingOrders(new ArrayList<>(List.of(limit_buyList)), new ArrayList<>(List.of(limit_sellList)));
+        printList(matchedOnLimitBuy);
         List<Transaction> transActions = orderMatchingService.createTransActionFromMatches(matchedOnLimitBuy);
         assertEquals(7, transActions.size());
         printList(matchedOnLimitBuy);
@@ -149,18 +146,20 @@ class OrderMatchingServiceTest {
 
     @Test
     void createTransActionsFromMatchesEmptyList() {
-        Mockito.when(rootRepository.getAllLimitBuy()).thenReturn(new ArrayList<>());
-        Mockito.when(rootRepository.getAllLimitSell()).thenReturn(new ArrayList<>());
-        Map<Limit_Buy, List<Limit_Sell>> matchedOnLimitBuy = orderMatchingService.checkForMatchingOrders();
+        Map<Limit_Buy, List<AbstractOrder>> matchedOnLimitBuy = orderMatchingService
+                .checkForMatchingOrders(new ArrayList<>(), new ArrayList<>());
+        printList(matchedOnLimitBuy);
         List<Transaction> transActions = orderMatchingService.createTransActionFromMatches(matchedOnLimitBuy);
         assertTrue(transActions.isEmpty());
     }
 
     @Test
-    void procesMatches(){
-        Map<Limit_Buy, List<Limit_Sell>> matchedOnLimitBuy = orderMatchingService.checkForMatchingOrders();
+    void procesMatches() {
+        Map<Limit_Buy, List<AbstractOrder>> matchedOnLimitBuy = orderMatchingService
+                .checkForMatchingOrders(new ArrayList<>(List.of(limit_buyList)), new ArrayList<>(List.of(limit_sellList)));
+        printList(matchedOnLimitBuy);
         List<Transaction> transActions = orderMatchingService.createTransActionFromMatches(matchedOnLimitBuy);
-        printList(orderMatchingService.processOrders(matchedOnLimitBuy));
+        printList(orderMatchingService.updateOrders(matchedOnLimitBuy));
     }
 
     private boolean equals(AbstractOrder expectedLBuy, AbstractOrder actual) {
@@ -171,10 +170,10 @@ class OrderMatchingServiceTest {
     }
 
 
-    private void printList(Map<Limit_Buy, List<Limit_Sell>> matchedOnLimitBuy) {
+    private void printList(Map<Limit_Buy, List<AbstractOrder>> matchedOnLimitBuy) {
         for (Limit_Buy limit_buy : matchedOnLimitBuy.keySet()) {
             System.out.printf("LimitBuy: assetCode: %s assetAmount: %s orderLimit: %s, date %s\n", limit_buy.getAsset().getCode(), limit_buy.getAssetAmount(), limit_buy.getOrderLimit(), limit_buy.getDate());
-            for (Limit_Sell limit_sell : matchedOnLimitBuy.get(limit_buy)) {
+            for (AbstractOrder limit_sell : matchedOnLimitBuy.get(limit_buy)) {
                 System.out.printf("\tLimitSell: assetCode: %s assetAmount: %s orderLimit: %s, date %s\n", limit_sell.getAsset().getCode(), limit_sell.getAssetAmount(), limit_sell.getOrderLimit(), limit_sell.getDate());
             }
         }

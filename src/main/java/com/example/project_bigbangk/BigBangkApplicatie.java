@@ -34,7 +34,7 @@ public class BigBangkApplicatie implements ApplicationListener<ContextRefreshedE
     public static final long DAYS_OF_PRICEHISTORY_CACHE = 30;
     public static final int UPDATE_INTERVAL_PRICEUPDATESERVICE = 300000;//5min 300000
     private static final int NUMBER_OF_CLIENTS_TO_SEED = 3000;
-    private static final int INITIAL_DELAY_PRICEHISTORYUPDATE = 600000;
+    private static final int INITIAL_DELAY_PRICEHISTORYUPDATE = 10000;
     private static final int DELAY_DATABASES_SEEDING = 6000;
     public static final Bank bigBangk = new Bank("BigBangk", "BGBK", 0.01, 10000);
     public static Wallet prototypeWallet;

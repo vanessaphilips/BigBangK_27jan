@@ -8,6 +8,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
+
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -60,7 +61,7 @@ public class JdbcOrderDAO {
         return null;
     }
 
-    public List<Transaction> findAllTransactionsByIban (String iban) {
+    public List<Transaction> findAllTransactionsByIban(String iban) {
         String sql = "SELECT * FROM bigbangk.Order WHERE orderType = ? && buyer = ? || seller = ?;";
         try {
             return jdbcTemplate.query(sql, new TransactionRowMapper(), TransactionType.TRANSACTION.toString(), iban, iban);
@@ -72,6 +73,7 @@ public class JdbcOrderDAO {
 
     /**
      * Saves Limit_Buy order in database, waiting to be matched with another client's offer -> matchservice.
+     *
      * @param limit_buy author = Vanessa Philips
      */
     public void saveLimit_Buy(Limit_Buy limit_buy) {
@@ -92,6 +94,7 @@ public class JdbcOrderDAO {
 
     /**
      * Saves Limit_Sell order in database, waiting to be matched with another client's offer -> matchservice.
+     *
      * @param limit_sell author = Vanessa Philips
      */
     public void saveLimit_Sell(Limit_Sell limit_sell) {
@@ -112,6 +115,7 @@ public class JdbcOrderDAO {
 
     /**
      * Saves Stoploss_Sell order in database, waiting to be matched with an offer (bank) -> matchservice.
+     *
      * @param stoploss_sell author = Vanessa Philips
      */
     public void saveStoploss_Sell(Stoploss_Sell stoploss_sell) {
@@ -132,6 +136,7 @@ public class JdbcOrderDAO {
 
     /**
      * for retreiving all Limit_buy orders
+     *
      * @return List<Limit_Buy> with all limit_Buy orders
      */
     public List<Limit_Buy> getAllLimitBuys() {
@@ -143,8 +148,10 @@ public class JdbcOrderDAO {
         }
         return null;
     }
+
     /**
      * for retreiving all Limit_Sell orders
+     *
      * @return List<Limit_Sell> with all limit_Sell orders
      */
     public List<Limit_Sell> getAllLimitSells() {
@@ -156,8 +163,10 @@ public class JdbcOrderDAO {
         }
         return null;
     }
+
     /**
      * for retreiving all Stoploss_Sell orders
+     *
      * @return List<Stoploss_Sell> with all Stoploss_Sell orders
      */
     public List<Stoploss_Sell> getAllStopLossSells() {
@@ -172,40 +181,57 @@ public class JdbcOrderDAO {
 
     /**
      * for deleting an order by Id
+     *
      * @param orderId the id of the order to be deleted
      * @return return true if a row is affected, false when the order didn't exist
      */
-    public boolean deleteOrderById(int orderId){
+    public boolean deleteOrderById(int orderId) {
         String sql = "DELETE FROM bigbangk.Order where orderID=?;";
-        try{
-            return jdbcTemplate.update(sql, orderId)>0;
+        try {
+            return jdbcTemplate.update(sql, orderId) > 0;
         } catch (DataAccessException dataAccessException) {
             System.err.println(dataAccessException.getMessage());
         }
         return false;
     }
-    public boolean updateLimitSell(Limit_Sell limit_sell){
+
+    public boolean updateLimitSell(Limit_Sell limit_sell) {
         String sql = "UPDATE  bigbangk.order Set seller=?, assetAmount=?, orderLimit=?, assetCode=? WHERE orderID= ?;";
-        try{
+        try {
             return jdbcTemplate.update(sql, limit_sell.getSeller().getIban(),
                     limit_sell.getAssetAmount(),
                     limit_sell.getOrderLimit(),
                     limit_sell.getAsset().getCode(),
-                    limit_sell.getOrderId())>0;
-        }catch (DataAccessException dataAccessException) {
+                    limit_sell.getOrderId()) > 0;
+        } catch (DataAccessException dataAccessException) {
             System.err.println(dataAccessException.getMessage());
         }
         return false;
     }
-    public boolean updateLimitBuy(Limit_Buy limit_buy){
+
+    public boolean updateLimitBuy(Limit_Buy limit_buy) {
         String sql = "UPDATE bigbangk.order Set seller=?, assetAmount=?, orderLimit=?, assetCode=? WHERE orderID= ?;";
-        try{
+        try {
             return jdbcTemplate.update(sql, limit_buy.getBuyer().getIban(),
                     limit_buy.getAssetAmount(),
                     limit_buy.getOrderLimit(),
                     limit_buy.getAsset().getCode(),
-                    limit_buy.getOrderId())>0;
-        }catch (DataAccessException dataAccessException) {
+                    limit_buy.getOrderId()) > 0;
+        } catch (DataAccessException dataAccessException) {
+            System.err.println(dataAccessException.getMessage());
+        }
+        return false;
+    }
+
+    public boolean updateStopLoss(Stoploss_Sell stoploss_sell) {
+        String sql = "UPDATE bigbangk.order Set seller=?, assetAmount=?, orderLimit=?, assetCode=? WHERE orderID= ?;";
+        try {
+            return jdbcTemplate.update(sql, stoploss_sell.getSeller().getIban(),
+                    stoploss_sell.getAssetAmount(),
+                    stoploss_sell.getOrderLimit(),
+                    stoploss_sell.getAsset().getCode(),
+                    stoploss_sell.getOrderId()) > 0;
+        } catch (DataAccessException dataAccessException) {
             System.err.println(dataAccessException.getMessage());
         }
         return false;
