@@ -64,19 +64,20 @@ public class OrderMatchingService implements IObserver {
         List<Limit_Buy> limit_buys = rootRepository.getAllLimitBuy();
         limit_buys = sortByDateReversed(limit_buys);
         validateOrders(limitSells, limit_buys, stopLossSells);
-        limitSells.addAll(filterTriggeredStopLoss(stopLossSells));
+        stopLossSells = filterTriggeredStopLoss(stopLossSells);
+        limitSells.addAll(stopLossSells);
         Map<Limit_Buy, List<AbstractOrder>> matchingOrders = checkForMatchingOrders(limit_buys, limitSells);
         List<Transaction> transactions = createTransActionFromMatches(matchingOrders);
         updateOrders(matchingOrders);
-        transactions.addAll(matchRemainingStopLossWithBank(matchingOrders));
+        transactions.addAll(matchRemainingStopLossWithBank(stopLossSells));
+        updateLimitSells(stopLossSells);
         procesTransactions(transactions);
         logger.info(String.format("Order processed, there where %s matches", transactions.size()));
     }
 
-    private List<Transaction> matchRemainingStopLossWithBank(Map<Limit_Buy, List<AbstractOrder>> matchingOrders) {
+    private List<Transaction> matchRemainingStopLossWithBank(List<AbstractOrder> stopLossSells) {
         List<Transaction> transactions = new ArrayList<>();
-        for (List<AbstractOrder> limitSells : matchingOrders.values()) {
-            for (AbstractOrder abstractOrder : limitSells) {
+            for (AbstractOrder abstractOrder : stopLossSells) {
                 if (abstractOrder instanceof Stoploss_Sell) {
                     Stoploss_Sell stoploss_sell = (Stoploss_Sell) abstractOrder;
                     //eigenlijk nog een validate van de order???
@@ -95,7 +96,6 @@ public class OrderMatchingService implements IObserver {
                     }
                 }
             }
-        }
         return transactions;
     }
 
@@ -172,7 +172,7 @@ public class OrderMatchingService implements IObserver {
 
     public List<AbstractOrder> filterTriggeredStopLoss(List<AbstractOrder> stopLossSells) {
         return stopLossSells.stream()
-                .filter(sl -> sl.getAsset().getCurrentPrice() >= sl.getOrderLimit())
+                .filter(sl -> sl.getAsset().getCurrentPrice() <= sl.getOrderLimit())
                 .collect(Collectors.toList());
     }
 
@@ -215,19 +215,23 @@ public class OrderMatchingService implements IObserver {
             } else {
                 rootRepository.updateLimitBuy(limit_buy);
             }
-            for (AbstractOrder limit_sell : matchedOnLimitBuy.get(limit_buy)) {
-                if (limit_sell.getAssetAmount() == 0) {
-                    rootRepository.deleteOrderByID(limit_sell.getOrderId());
+           updateLimitSells(matchedOnLimitBuy.get(limit_buy));
+        }
+        return matchedOnLimitBuy;
+    }
+
+    private void updateLimitSells(List<AbstractOrder> limitSells) {
+        for (AbstractOrder limit_sell : limitSells) {
+            if (limit_sell.getAssetAmount() == 0) {
+                rootRepository.deleteOrderByID(limit_sell.getOrderId());
+            } else {
+                if (limit_sell instanceof Limit_Sell) {
+                    rootRepository.updateLimitSell((Limit_Sell) limit_sell);
                 } else {
-                    if (limit_sell instanceof Limit_Sell) {
-                        rootRepository.updateLimitSell((Limit_Sell) limit_sell);
-                    } else {
-                        rootRepository.updateStopLoss((Stoploss_Sell) limit_sell);
-                    }
+                    rootRepository.updateStopLoss((Stoploss_Sell) limit_sell);
                 }
             }
         }
-        return matchedOnLimitBuy;
     }
 
 
