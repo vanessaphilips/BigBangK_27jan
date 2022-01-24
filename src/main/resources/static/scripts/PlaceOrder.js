@@ -25,8 +25,6 @@ if (asset == null){
 
 document.getElementById("coinName").innerHTML = asset.name;
 getPrice();
-document.getElementById("currentPrice").innerHTML = asset.currentPrice;
-
 
 document.getElementById('orderType').addEventListener('change', checkOrderType);
 document.getElementById('assetAmount').addEventListener('change', assetToCash);
@@ -76,10 +74,14 @@ function sendOrder(tData) {
         body: JSON.stringify(tData)
     })
         .then(async response => {
-            if (response.ok) {
-                console.log("transaction successful" + tData.asset);
-            }else {
-                console.log("transaction failed");
+            if (response.status == 201) {
+                console.log(response.body + tData.asset);
+            }else if(response.status == 400) {
+                //error in body (insufficient funds/assets)
+                console.log(response.body);
+            }else if (response.status == 401) {
+                //token expired
+                console.log(response.body);
             }
         })
 }
@@ -92,12 +94,12 @@ function getPrice() {
     })
         .then(async response => {
             if (response.ok) {
-                asset.currentPrice = response.body;
-                console.log(asset.currentPrice);
+                response.json().then((price) => {asset.currentPrice = price});
             }else {
                 console.log("token expired");
             }
-        })
+        });
+    document.getElementById("currentPrice").innerHTML = asset.currentPrice;
 }
 
 
