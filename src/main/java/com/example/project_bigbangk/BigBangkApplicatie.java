@@ -64,7 +64,7 @@ public class BigBangkApplicatie implements ApplicationListener<ContextRefreshedE
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
         startPriceHistoryUpdateTimer();
-        startDateBaseSeeding();
+        //startDateBaseSeeding();
         setupBaseWallet();
     }
 
