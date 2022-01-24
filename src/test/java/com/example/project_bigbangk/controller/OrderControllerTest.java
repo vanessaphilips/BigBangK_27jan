@@ -5,6 +5,7 @@ import com.example.project_bigbangk.model.Client;
 import com.example.project_bigbangk.model.DTO.LoginDTO;
 import com.example.project_bigbangk.model.DTO.OrderDTO;
 import com.example.project_bigbangk.model.DTO.RegistrationDTO;
+import com.example.project_bigbangk.repository.RootRepository;
 import com.example.project_bigbangk.service.*;
 import com.example.project_bigbangk.service.Security.AuthenticateService;
 import com.example.project_bigbangk.service.Security.HashService;
@@ -42,6 +43,8 @@ class OrderControllerTest {
     WalletController walletController; // gebruikt de test
     @MockBean
     AuthenticateService authenticateService; // gebruikt de test
+    @MockBean
+    RootRepository rootRepository;
     @MockBean
     private RegistrationService registrationService; // gebruikt de test
     @MockBean
@@ -85,10 +88,10 @@ class OrderControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON);
         Mockito.when(authenticateService.authenticate("token")).thenReturn(true);
-        Mockito.when(orderService.handleOrderByType(orderDTO, client)).thenReturn(ResponseEntity.status(201).body("Sell order Successful"));
+        Mockito.when(orderService.handleOrderByType(orderDTO, client)).thenReturn(ResponseEntity.status(200).body("Sell order Successful"));
         try {
             mockMvc.perform(builder)
-                    .andExpect(MockMvcResultMatchers.status().is(201));
+                    .andExpect(MockMvcResultMatchers.status().is(200));
         } catch (Exception e) {
             e.printStackTrace();
         }
