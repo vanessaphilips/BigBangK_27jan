@@ -22,14 +22,13 @@ import java.util.stream.Collectors;
  * matches orders by some predefined rules:
  * limit buy ik wil kopen voor een bedrag niet hoger dan limit
  * limit sell ik wil kopen voor een bedrag niet lager dan limit
- * <p>
- * verkoop
- * <p>
+ *
+ * verkoop:
  * als sell prijs onder de buyLimit is dan is er een match
  * Bij meerder matches gaat de laagste Sell Limit eerst
  * Bij gelijke Sell Limits ggat de oudste eerst
  * Bij gelijke Buy Limits gaat de oudste eerst
- * <p>
+ *
  * StopLossSell:
  * als currentPrice onder limit dan verkopen
  * als er een match is met een LimitBuy dan die voorrang

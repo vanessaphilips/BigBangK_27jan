@@ -5,6 +5,7 @@ import com.example.project_bigbangk.model.Asset;
 import com.example.project_bigbangk.model.AssetCode_Name;
 import com.example.project_bigbangk.model.PriceDate;
 import com.example.project_bigbangk.model.PriceHistory;
+import com.example.project_bigbangk.service.OrderMatchingService;
 import com.example.project_bigbangk.service.priceHistoryUpdate.PriceHistoryUpdateService;
 import org.junit.jupiter.api.*;
 import org.mockito.Mock;
@@ -33,7 +34,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
 class JdbcPriceDateDAOTest {
-
+    @MockBean
+    OrderMatchingService orderMatchingService;
 @MockBean
     BigBangkApplicatie bigBangkApplicatie;
     @Resource

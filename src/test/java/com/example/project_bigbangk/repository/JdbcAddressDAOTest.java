@@ -6,6 +6,7 @@ package com.example.project_bigbangk.repository;
 
 import com.example.project_bigbangk.model.Address;
 import com.example.project_bigbangk.model.Client;
+import com.example.project_bigbangk.service.OrderMatchingService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
@@ -13,6 +14,7 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,7 +24,8 @@ import static org.junit.jupiter.api.Assertions.*;
 //@TestMethodOrder(value = MethodOrderer.OrderAnnotation.class)
 
 class JdbcAddressDAOTest {
-
+    @MockBean
+    OrderMatchingService orderMatchingService;
     private final JdbcAddressDAO addressDAOTest;
     private final Client mockClient1 = Mockito.mock(Client.class);
     private Address newAddress1;

@@ -2,11 +2,13 @@ package com.example.project_bigbangk.repository;
 
 import com.example.project_bigbangk.model.Bank;
 import com.example.project_bigbangk.model.Wallet;
+import com.example.project_bigbangk.service.OrderMatchingService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.ArrayList;
@@ -23,6 +25,8 @@ import static org.assertj.core.api.Assertions.*;
 @SpringBootTest
 @ActiveProfiles("test")
 class JdbcBankDAOTest {
+    @MockBean
+    OrderMatchingService orderMatchingService;
 
     private final JdbcBankDAO jdbcBankDAOTest;
     private final Wallet mockWallet = Mockito.mock(Wallet.class);

@@ -1,12 +1,14 @@
 package com.example.project_bigbangk.repository;
 
 import com.example.project_bigbangk.model.Wallet;
+import com.example.project_bigbangk.service.OrderMatchingService;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import static org.assertj.core.api.Assertions.*;
 
@@ -14,7 +16,8 @@ import static org.assertj.core.api.Assertions.*;
 @ActiveProfiles("test")
 @TestMethodOrder(value = MethodOrderer.OrderAnnotation.class)
 class JdbcWalletDAOTest {
-
+    @MockBean
+    OrderMatchingService orderMatchingService;
     private IWalletDAO walletDAOUnderTest;
 
     @Autowired

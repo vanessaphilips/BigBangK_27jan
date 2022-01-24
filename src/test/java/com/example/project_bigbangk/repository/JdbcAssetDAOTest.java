@@ -1,9 +1,11 @@
 package com.example.project_bigbangk.repository;
 
 import com.example.project_bigbangk.model.Asset;
+import com.example.project_bigbangk.service.OrderMatchingService;
 import org.junit.jupiter.api.*;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -19,7 +21,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
 class JdbcAssetDAOTest {
-
+    @MockBean
+    OrderMatchingService orderMatchingService;
     @Resource
     JdbcAssetDAO assetDAO;
 

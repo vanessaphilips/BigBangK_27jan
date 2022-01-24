@@ -3,11 +3,13 @@ package com.example.project_bigbangk.repository;
 import com.example.project_bigbangk.model.Address;
 import com.example.project_bigbangk.model.Client;
 import com.example.project_bigbangk.model.Wallet;
+import com.example.project_bigbangk.service.OrderMatchingService;
 import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import java.time.LocalDate;
@@ -25,6 +27,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
 class JdbcClientDAOTest {
+
+    @MockBean
+    OrderMatchingService orderMatchingService;
 
     private final JdbcClientDAO clientDAOTest;
     private final Wallet mockWallet = Mockito.mock(Wallet.class);

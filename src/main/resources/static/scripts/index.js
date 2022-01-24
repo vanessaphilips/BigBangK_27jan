@@ -19,7 +19,7 @@ const stringToHTML = function (str) {
  *  navElements.{jouw link zoals die in het navigatie menu verschijnt} =
  *  stringToHTML('<object data="filenaam pagina incl html extensie" id="currentContentObject"></object>')
  */
-function fillNavMap() {
+function declareSubPages() {
     navElements.marketplace = stringToHTML('<object data="MarketPlace.html"  id="currentContentObject"></object>')
     navElements.history = stringToHTML('<object data="TransactionHistory.html"  id="currentContentObject"></object>')
     navElements.order = stringToHTML('<object  data="BuySellorder.html"  id="currentContentObject"></object>')
@@ -59,6 +59,6 @@ function fillNavigationElement() {
 }
 
 
-fillNavMap()
+declareSubPages()
 fillNavigationElement()
 setCurrentContent(navElements['login'])
