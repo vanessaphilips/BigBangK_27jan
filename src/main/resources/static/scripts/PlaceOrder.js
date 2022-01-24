@@ -13,6 +13,7 @@ class BuySellorderDTO {
 }
 
 let asset = localStorage.getItem(CURRENT_ASSET_KEY);
+let token = localStorage.getItem(JWT_KEY);
 
 if (asset == null){
     asset = {
@@ -23,6 +24,7 @@ if (asset == null){
 }
 
 document.getElementById("coinName").innerHTML = asset.name;
+getPrice();
 document.getElementById("currentPrice").innerHTML = asset.currentPrice;
 
 
@@ -42,7 +44,7 @@ function cashToAsset(){
 function checkOrderType() {
     let type = document.getElementById('orderType').value;
 
-    if (type == "BUY" || type == "SELL"){
+    if (type === "BUY" || type === "SELL"){
         console.log("buy or sell");
         document.getElementById('limit').value = 0;
         document.getElementById('limit').disabled = true;
@@ -52,7 +54,6 @@ function checkOrderType() {
         document.getElementById('limit').disabled = false;
     }
 }
-
 
 function submitTransaction(){
     let assetCode = asset.code;
@@ -64,15 +65,14 @@ function submitTransaction(){
         window.alert("Please fill in all fields.")
     }else {
         const buysellorderDTO = new BuySellorderDTO(assetCode, orderType, limit, assetAmount);
-        sendTransactionData(buysellorderDTO);
+        sendOrder(buysellorderDTO);
     }
 }
 
-function sendTransactionData(tData) {
-    // niet helemaal duidelijk wat ik hier voor url moet hanteren
+function sendOrder(tData) {
     fetch(`${rootURL}placeorder`, {
         method: "POST",
-        headers: acceptHeaders(),
+        headers: acceptHeadersWithToken(token),
         body: JSON.stringify(tData)
     })
         .then(async response => {
@@ -82,7 +82,22 @@ function sendTransactionData(tData) {
                 console.log("transaction failed");
             }
         })
+}
 
+function getPrice() {
+    fetch(`${rootURL}getcurrentprice`, {
+        method: "POST",
+        headers: acceptHeadersWithToken(token),
+        body: asset.code
+    })
+        .then(async response => {
+            if (response.ok) {
+                asset.currentPrice = response.body;
+                console.log(asset.currentPrice);
+            }else {
+                console.log("token expired");
+            }
+        })
 }
 
 
