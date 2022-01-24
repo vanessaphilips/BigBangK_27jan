@@ -1,0 +1,49 @@
+<!-- Author RayS -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>BuySellorder</title>
+    <link rel="stylesheet" type="text/css" href="stylesheets/InternalPage.css">
+    <script defer src="scripts/GlobalConstants.js"></script>
+    <script defer src="scripts/URLs.js"></script>
+    <script defer src="scripts/Headers.js"></script>
+    <script defer src="scripts/MarketPlaceClasses.js"></script>
+    <script defer src="scripts/PlaceOrder.js"></script>
+
+</head>
+<body>
+
+<article class="contentpanel">
+<h1 id="coinName">Order [COIN]</h1>
+
+    <br>
+    Current Price<br>
+    <p id="currentPrice">2</p>
+    <label for="assetAmount">Coin Amount</label><br>
+    <input type="number" required="required" id="assetAmount" >
+    <br><br>
+    <label for="cashAmount">€ Amount</label><br>
+    <input type="number" required="required" id="cashAmount" >
+    <br><br>
+    <label for="orderType">Order type</label><br>
+    <select id="orderType" required="required" >
+        <option value="BUY" selected>Buy</option>
+        <option value="SELL">Sell</option>
+        <option value="LIMIT_BUY">Limit Buy</option>
+        <option value="LIMIT_SELL">Limit Sell</option>
+        <option value="STOPLOSS_SELL">Stoploss</option>
+    </select>
+    <br><br>
+    <label for="limit">Limit</label><br>
+    <input type="number" required="required" id="limit" value="0" disabled>
+    <br><br>
+
+    <div class="contentpanelRight">
+    <button onclick="submitTransaction()">Confirm order</button>
+    </div>
+
+</article>
+</body>
+</html>

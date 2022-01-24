@@ -5,6 +5,7 @@ package com.example.project_bigbangk.controller;
 
 import com.example.project_bigbangk.model.Client;
 import com.example.project_bigbangk.model.DTO.OrderDTO;
+import com.example.project_bigbangk.repository.RootRepository;
 import com.example.project_bigbangk.service.Orderservice;
 import com.example.project_bigbangk.service.Security.AuthenticateService;
 import org.springframework.http.ResponseEntity;
@@ -16,11 +17,13 @@ public class OrderController{
 
     private Orderservice orderservice;
     private AuthenticateService authenticateService;
+    private RootRepository rootRepository;
 
-    public OrderController(Orderservice orderservice, AuthenticateService authenticateService){
+    public OrderController(Orderservice orderservice, AuthenticateService authenticateService, RootRepository rootRepository){
         super();
         this.orderservice = orderservice;
         this.authenticateService = authenticateService;
+        this.rootRepository = rootRepository;
     }
 
     /**
@@ -35,10 +38,23 @@ public class OrderController{
     public ResponseEntity<?> placeOrder(@RequestHeader String authorization, @RequestBody OrderDTO orderDTO) {
         if (authenticateService.authenticate(authorization)) {
             Client client = authenticateService.getClientFromToken(authorization);
-            String orderMessage = orderservice.handleOrderByType(orderDTO, client);
-                return ResponseEntity.status(201).body(orderMessage);
+            return orderservice.handleOrderByType(orderDTO, client);
             }
         return ResponseEntity.status(401).body("token expired");
     }
+
+    @PostMapping("/getcurrentprice")
+    public ResponseEntity<?> getLatestPrice(@RequestHeader String authorization, @RequestBody String assetCode) {
+        if (authenticateService.authenticate(authorization)) {
+            double price = rootRepository.getCurrentPriceByAssetCode(assetCode);
+            if (price == -1){
+                return ResponseEntity.status(500).body("Server failed to update price");
+            }
+            return ResponseEntity.status(201).body(price);
+        }
+        return ResponseEntity.status(401).body("token expired");
+    }
+
+
 
 }

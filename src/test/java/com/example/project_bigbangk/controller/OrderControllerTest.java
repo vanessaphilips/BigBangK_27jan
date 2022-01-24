@@ -5,6 +5,7 @@ import com.example.project_bigbangk.model.Client;
 import com.example.project_bigbangk.model.DTO.LoginDTO;
 import com.example.project_bigbangk.model.DTO.OrderDTO;
 import com.example.project_bigbangk.model.DTO.RegistrationDTO;
+import com.example.project_bigbangk.repository.RootRepository;
 import com.example.project_bigbangk.service.*;
 import com.example.project_bigbangk.service.Security.AuthenticateService;
 import com.example.project_bigbangk.service.Security.HashService;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -42,6 +44,8 @@ class OrderControllerTest {
     @MockBean
     AuthenticateService authenticateService; // gebruikt de test
     @MockBean
+    RootRepository rootRepository;
+    @MockBean
     private RegistrationService registrationService; // gebruikt de test
     @MockBean
     private LoginService loginService; // gebruikt de test
@@ -65,7 +69,7 @@ class OrderControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON);
         Mockito.when(authenticateService.authenticate("token")).thenReturn(false);
-        Mockito.when(orderService.handleOrderByType(orderDTO, client)).thenReturn("TestOrderFail");
+        Mockito.when(orderService.handleOrderByType(orderDTO, client)).thenReturn(ResponseEntity.status(401).body("token expired"));
         try {
             mockMvc.perform(builder)
                     .andExpect(MockMvcResultMatchers.status().is(401));
@@ -84,10 +88,10 @@ class OrderControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON);
         Mockito.when(authenticateService.authenticate("token")).thenReturn(true);
-        Mockito.when(orderService.handleOrderByType(orderDTO, client)).thenReturn("TestOrderSucces");
+        Mockito.when(orderService.handleOrderByType(orderDTO, client)).thenReturn(ResponseEntity.status(200).body("Sell order Successful"));
         try {
             mockMvc.perform(builder)
-                    .andExpect(MockMvcResultMatchers.status().is(201));
+                    .andExpect(MockMvcResultMatchers.status().is(200));
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -22,7 +22,7 @@ const stringToHTML = function (str) {
 function declareSubPages() {
     navElements.marketplace = stringToHTML('<object data="MarketPlace.html"  id="currentContentObject"></object>')
     navElements.history = stringToHTML('<object data="TransactionHistory.html"  id="currentContentObject"></object>')
-    navElements.order = stringToHTML('<object  data="BuySellorder.html"  id="currentContentObject"></object>')
+    navElements.order = stringToHTML('<object  data="PlaceOrder.html"  id="currentContentObject"></object>')
     navElements.register = stringToHTML('<object data="Registration.html"  id="currentContentObject"></object>')
     navElements.login = stringToHTML('<object  data="LoginPage.html"  id="currentContentObject"></object>')
 }
