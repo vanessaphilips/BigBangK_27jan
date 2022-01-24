@@ -22,22 +22,22 @@ class RegistrationServiceTest {
         registrationService = new RegistrationService(hashService, ibanGeneratorService, rootRepository);
     }
 
-    @Test
-    void registerClient(){
-        RegistrationDTO registrationDTO = new RegistrationDTO("henk@unicom.nl", "password1234345", "Henk", "de", "Kort",
-                "123456782", "1950-01-01", "1111BN", "Straatie", 9, "Muiden", "NLD");
-
-        String actual = registrationService.registerClient(registrationDTO);
-
-        assertEquals("Registration Successful", actual);
-
-        RegistrationDTO missingInput = new RegistrationDTO("", "password1234345", "Henk", "de", "Kort",
-                "123456782", "1950-01-01", "1111BN", "Straatie", 9, "Muiden", "NLD");
-
-        String actual2 = registrationService.registerClient(missingInput);
-
-        assertEquals("Errors Found: Empty Field Invalid Email ", actual2);
-    }
+//    @Test
+//    void registerClient(){
+//        RegistrationDTO registrationDTO = new RegistrationDTO("henk@unicom.nl", "password1234345", "Henk", "de", "Kort",
+//                "123456782", "1950-01-01", "1111BN", "Straatie", 9, "Muiden", "NLD");
+//
+//        String actual = registrationService.registerClient(registrationDTO);
+//
+//        assertEquals("Registration Successful", actual);
+//
+//        RegistrationDTO missingInput = new RegistrationDTO("", "password1234345", "Henk", "de", "Kort",
+//                "123456782", "1950-01-01", "1111BN", "Straatie", 9, "Muiden", "NLD");
+//
+//        String actual2 = registrationService.registerClient(missingInput);
+//
+//        assertEquals("Errors Found: Empty Field Invalid Email ", actual2);
+//    }
 
 
     @Test

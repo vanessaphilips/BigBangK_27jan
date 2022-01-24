@@ -4,6 +4,7 @@ import com.example.project_bigbangk.model.Asset;
 import com.example.project_bigbangk.model.AssetCode_Name;
 import com.example.project_bigbangk.model.PriceDate;
 import com.example.project_bigbangk.model.PriceHistory;
+import com.example.project_bigbangk.service.OrderMatchingService;
 import com.example.project_bigbangk.service.WalletService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,6 +31,8 @@ import static org.mockito.Mockito.when;
 @SpringBootTest
 class RootRepositoryPriceHistoryTest {
 
+    @MockBean
+    OrderMatchingService orderMatchingService;
     @Resource
     private RootRepository rootRepository;
 
