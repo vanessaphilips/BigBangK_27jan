@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <title>BuySellorder</title>
-    <!--link rel="stylesheet" type="text/css" href="stylesheets/BuySellorderCSS.css"-->
+    <link rel="stylesheet" type="text/css" href="stylesheets/InternalPage.css">
     <script defer src="scripts/GlobalConstants.js"></script>
     <script defer src="scripts/URLs.js"></script>
     <script defer src="scripts/Headers.js"></script>
@@ -14,35 +14,31 @@
 </head>
 <body>
 
-<h1> Enter your transaction-order here</h1>
+<article class="contentpanel">
+<h1>Order [COIN]</h1>
 
-    <h2>Order</h2>
     <br>
-    <label for="assetCode">Asset code</label>
+    <label for="assetCode">Asset code</label><br>
     <input type="text" required="required" id="assetCode">
     <br><br>
-    <br>
-    <label for="orderType">Transaction type</label>
+    <label for="orderType">Transaction type</label><br>
     <select id="orderType" required="required" >
         <option value="none" selected disabled hidden>Select an Option</option>
         <option value="BUY">Purchase order</option>
         <option value="SELL">Selling order</option>
     </select>
     <br><br>
-    <br>
-    <label for="limit">Limit</label>
+    <label for="limit">Limit</label><br>
     <input type="number" required="required" id="limit" value="0" readonly >
     <br><br>
-    <br>
 <!--geen mooie oplossing zo, maar ik kwam geen wijs uit een voorwaardelijke weergave, afhankelijk van aan -of verkoop optie-->
-    <label for="assetAmount">Purchase-amount or number to sell</label>
+    <label for="assetAmount">Purchase-amount or number to sell</label><br>
     <input type="number" required="required" id="assetAmount" >
     <br><br>
-    <br>
-    <br><br>
+    <div class="contentpanelRight">
     <button onclick="submitTransaction()">Confirm order</button>
-    <br><br>
+    </div>
 
-
+</article>
 </body>
 </html>

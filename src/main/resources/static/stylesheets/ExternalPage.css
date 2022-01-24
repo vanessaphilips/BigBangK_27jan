@@ -29,14 +29,12 @@ input:focus {
     border-radius: 25px;
     font-family: calibri, sans-serif;
     font-size: 18px;
-    text-align: left;
     background-color:#459ac7;
-    z-index: 10;
     min-width: 380px;
     position: absolute;
     left: 50%;
-    transform: translate(-50%, 0%);
-    padding-top: clamp(10px, 30lv, 500px);
+    transform: translate(-50%);
+    margin-top: clamp(10px, 30vh, 800px);
     padding-bottom: 0;
 }
 
@@ -58,7 +56,6 @@ footer {
 
 h1 {
     color: White;
-    font-family: Candara;
     margin: 20px;
     horiz-align: center;
 }
@@ -71,7 +68,6 @@ button {
     display:inline-block;
     cursor:pointer;
     color:#ffffff;
-    font-family:Arial;
     font-size:17px;
     padding:7px 15px;
     text-decoration:none;
