@@ -26,7 +26,7 @@ public class JdbcAddressDAO implements IAddressDAO {
 
     @Override
     public void saveAddress(Address mpAddress) {
-        String sql = "Insert Ignore into Address values(?,?,?,?,?)";
+        String sql = "Insert Ignore into address values(?,?,?,?,?)";
         try {
             jdbcTemplate.update(sql, mpAddress.getPostalCode(), mpAddress.getStreet(), mpAddress.getNumber(),
                     mpAddress.getCity(), mpAddress.getCountry());
@@ -37,7 +37,7 @@ public class JdbcAddressDAO implements IAddressDAO {
 
     @Override
     public Address findAddressByEmail(String email) {
-        String sql = "Select * From AddressWithClientEmail Where email = ?";
+        String sql = "Select * From addresswithclientemail Where email = ?";
         Address address = null;
         try {
             address = jdbcTemplate.queryForObject(sql, new JdbcAddressDAO.AddressRowMapper(), email);

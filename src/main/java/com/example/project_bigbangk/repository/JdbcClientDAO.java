@@ -23,7 +23,7 @@ public class JdbcClientDAO implements IClientDAO {
 
     @Override
     public void saveClient(Client mpClient) {
-        String sql = "Insert into Client values(?,?,?,?,?,?,?,?,?,?);";//10 ?s
+        String sql = "Insert into client values(?,?,?,?,?,?,?,?,?,?);";//10 ?s
         try {
             jdbcTemplate.update(sql,
                     mpClient.getEmail(),
@@ -43,7 +43,7 @@ public class JdbcClientDAO implements IClientDAO {
 
     @Override
     public Client findClientByEmail(String email) {
-        String sql = "SELECT * FROM Client WHERE email = ?;";
+        String sql = "SELECT * FROM client WHERE email = ?;";
         Client client = null;
         try {
             client = jdbcTemplate.queryForObject(sql, new ClientRowMapper(), email);
@@ -57,7 +57,7 @@ public class JdbcClientDAO implements IClientDAO {
 
     @Override
     public List<Client> findAllClients() {
-        String sql = "SELECT * FROM Client;";
+        String sql = "SELECT * FROM client;";
         try {
             return jdbcTemplate.query(sql, new ClientRowMapper());
         } catch (DataAccessException dataAccessException) {
@@ -68,8 +68,8 @@ public class JdbcClientDAO implements IClientDAO {
 
     @Override
     public void updateClient(Client client) {
-        String sql = "UPDATE Client Set email = ?, firstName = ?, insertion = ?, " +
-                "lastName = ?, dateOfBirth = ?, bsn = ?, passWord = ?, " +
+        String sql = "UPDATE client Set email = ?, firstName = ?, insertion = ?, " +
+                "lastname = ?, dateofbirth = ?, bsn = ?, password = ?, " +
                 "address = ? wallet = ?, WHERE email = ?;";
         try {
             jdbcTemplate.update(sql, client.getEmail(), client.getFirstName(), client.getInsertion(),
@@ -82,7 +82,7 @@ public class JdbcClientDAO implements IClientDAO {
 
     @Override
     public List<Client> findClientByLastName(String lastName) {
-        String sql = "SELECT * FROM Client WHERE lastName = ?;";
+        String sql = "SELECT * FROM client WHERE lastname = ?;";
         try {
             return jdbcTemplate.query(sql, new ClientRowMapper(), lastName);
         } catch (DataAccessException dataAccessException) {
@@ -97,12 +97,12 @@ public class JdbcClientDAO implements IClientDAO {
         public Client mapRow(ResultSet resultSet, int rowNumber) throws SQLException {
             return new Client(
                     resultSet.getString("email"),
-                    resultSet.getString("firstName"),
+                    resultSet.getString("firstname"),
                     resultSet.getString("insertion"),
-                    resultSet.getString("lastName"),
-                    resultSet.getDate("dateOfBirth").toLocalDate(),
+                    resultSet.getString("lastname"),
+                    resultSet.getDate("dateofbirth").toLocalDate(),
                     resultSet.getString("bsn"),
-                    resultSet.getString("passWord"));
+                    resultSet.getString("password"));
         }
     }
 }

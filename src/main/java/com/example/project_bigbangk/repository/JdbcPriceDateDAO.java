@@ -40,7 +40,7 @@ public class JdbcPriceDateDAO implements IPricedateDAO {
      */
     @Override
     public void savePriceDate(PriceDate priceDate, String assetCode) {
-        String sql = "Insert into PriceHistory values(?,?,?);";
+        String sql = "Insert into pricehistory values(?,?,?);";
                     try {
                 jdbcTemplate.update(sql,
                         priceDate.getDateTime(),
@@ -58,7 +58,7 @@ public class JdbcPriceDateDAO implements IPricedateDAO {
      */
     @Override
     public double getCurrentPriceByAssetCode(String assetCode) {
-        String sql = "Select * from (SELECT * FROM pricehistory where code = ? )as priceHistoryByCoin ORDER BY dateTime DESC LIMIT 1;";
+        String sql = "Select * from (SELECT * FROM pricehistory where code = ? )as pricehistorybycoin ORDER BY datetime DESC LIMIT 1;";
         double currentPrice = -1;
         try {
             PriceDate priceDate = jdbcTemplate.queryForObject(sql,
@@ -78,7 +78,7 @@ public class JdbcPriceDateDAO implements IPricedateDAO {
      */
     @Override
     public List<PriceDate> getPriceDatesByCodeFromDate(LocalDateTime date, String assetCode) {
-        String sql = "SELECT * FROM pricehistory where dateTime> ? and code = ?;";
+        String sql = "SELECT * FROM pricehistory where datetime> ? and code = ?;";
         List<PriceDate> priceDates = null;
         try {
             priceDates = jdbcTemplate.query(sql, new PriceDateRowMapper(), date, assetCode);

@@ -28,12 +28,12 @@ public class JdbcWalletDAO implements IWalletDAO{
     }
 
     public void updateBalance(Wallet wallet) {
-        String slq = "Update wallet Set balance = ? WHERE IBAN = ?";
+        String slq = "Update wallet Set balance = ? WHERE iban = ?";
         jdbcTemplate.update(slq, wallet.getBalance(), wallet.getIban());
     }
 
     public Wallet findWalletByIban(String iban) {
-        String sql = "Select * From wallet Where IBAN = ?;";
+        String sql = "Select * From wallet Where iban = ?;";
         Wallet wallet = null;
         try {
             wallet = jdbcTemplate.queryForObject(sql, new walletRowMapper(), iban);
@@ -50,9 +50,9 @@ public class JdbcWalletDAO implements IWalletDAO{
      * @return Wallet
      */
     public Wallet findWalletByOrderId(int orderId){
-        String sql = String.format("Select * From wallet JOIN `order` ON `order`.buyer = wallet.IBAN " +
-                "UNION Select * From wallet JOIN `order` ON `order`.seller = wallet.IBAN" +
-                "WHERE orderId = ? AND NOT orderType = '%s';", TransactionType.TRANSACTION.toString());
+        String sql = String.format("select * from wallet join `order` on `order`.buyer = wallet.iban " +
+                "union select * from wallet join `order` on `order`.seller = wallet.iban" +
+                "where orderid = ? and not ordertype = '%s';", TransactionType.TRANSACTION.toString());
         Wallet wallet = null;
         try {
             wallet = jdbcTemplate.queryForObject(sql, new walletRowMapper(), orderId);
@@ -69,7 +69,7 @@ public class JdbcWalletDAO implements IWalletDAO{
      * @return Wallet
      */
     public Wallet FindSellerWalletByOrderId(int orderId){
-        String sql = "Select w.* From wallet w JOIN `order` o ON o.buyer = w.IBAN WHERE orderId = ?;";
+        String sql = "select w.* from wallet w join `order` o on o.buyer = w.iban where orderid = ?;";
         Wallet wallet = null;
         try {
             wallet = jdbcTemplate.queryForObject(sql, new walletRowMapper(), orderId);
@@ -86,7 +86,7 @@ public class JdbcWalletDAO implements IWalletDAO{
      * @return Wallet
      */
     public Wallet FindBuyerWalletByOrderId(int orderId){
-        String sql = "Select w.* From wallet w JOIN `order` o ON o.seller = w.IBAN WHERE orderId = ?;";
+        String sql = "select w.* from wallet w join `order` o on o.seller = w.iban where orderid = ?;";
         Wallet wallet = null;
         try {
             wallet = jdbcTemplate.queryForObject(sql, new walletRowMapper(), orderId);
@@ -99,18 +99,18 @@ public class JdbcWalletDAO implements IWalletDAO{
 
 
     public void updateWalletAssets(Wallet wallet, Asset asset, double amount) {
-        String sql = "Update wallet_has_asset Set amount = ? Where IBAN = ? And code = ?;";
+        String sql = "update wallet_has_asset set amount = ? where iban = ? and code = ?;";
         jdbcTemplate.update(sql, amount, wallet.getIban(), asset.getCode());
     }
 
     public void createWalletAsset(Wallet wallet, Asset asset, double amount) {
-        String sql = "Insert into wallet_has_asset values(?,?,?);";
+        String sql = "insert into wallet_has_asset values(?,?,?);";
         jdbcTemplate.update(sql, asset.getCode(), amount, wallet.getIban());
     }
 
     @Override
     public Double findAmountOfAsset(String iban, String assetCode) {
-        String sql = "SELECT * FROM wallet_has_asset WHERE IBAN = ? AND code = ?;";
+        String sql = "select * from wallet_has_asset where iban = ? and code = ?;";
 
         try {
             return jdbcTemplate.queryForObject(sql, new Wallet_has_assetRowMapper(), iban, assetCode);
@@ -122,7 +122,7 @@ public class JdbcWalletDAO implements IWalletDAO{
 
 
     public Wallet findWalletByEmail(String email) {
-        String slq = "Select * From wallet JOIN client ON client.IBAN = wallet.IBAN Where email = ?;";
+        String slq = "select * from wallet join client on client.iban = wallet.iban where email = ?;";
         Wallet wallet = null;
         try {
             wallet = jdbcTemplate.queryForObject(slq, new walletRowMapper(), email);
@@ -135,7 +135,7 @@ public class JdbcWalletDAO implements IWalletDAO{
 
 
     public Wallet findWalletByBankCode(String bankCode) {
-        String slq = "Select * From wallet JOIN bank ON bank.IBAN = wallet.IBAN Where code = ?;";
+        String slq = "select * from wallet join bank on bank.iban = wallet.iban where code = ?;";
         Wallet wallet = null;
         try {
             wallet = jdbcTemplate.queryForObject(slq, new walletRowMapper(), bankCode);
@@ -151,7 +151,7 @@ public class JdbcWalletDAO implements IWalletDAO{
 
         @Override
         public Wallet mapRow(ResultSet resultSet, int rowNum) throws SQLException {
-            return new Wallet( resultSet.getString("IBAN"), resultSet.getInt("balance"));
+            return new Wallet( resultSet.getString("iban"), resultSet.getInt("balance"));
         }
     }
 

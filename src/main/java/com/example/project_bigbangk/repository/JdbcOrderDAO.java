@@ -33,7 +33,7 @@ public class JdbcOrderDAO {
 
     //Transaction
     public void saveTransaction(Transaction transaction) {
-        String sql = "INSERT INTO bigbangk.order (buyer, seller, assetCode, orderType, assetAmount, date, fee, priceExcludingFee) VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
+        String sql = "insert into bigbangk.order (buyer, seller, assetcode, ordertype, assetamount, date, fee, priceexcludingfee) values (?, ?, ?, ?, ?, ?, ?, ?);";
 
         try {
             jdbcTemplate.update(sql,
@@ -52,7 +52,7 @@ public class JdbcOrderDAO {
     }
 
     public Transaction findTransactionById(Long orderId) {
-        String sql = "SELECT * FROM Order WHERE id=?;";
+        String sql = "SELECT * FROM bigbangk.order WHERE id=?;";
         try {
             return jdbcTemplate.queryForObject(sql, new TransactionRowMapper(), orderId);
         } catch (DataAccessException dataAccessException) {
@@ -62,7 +62,7 @@ public class JdbcOrderDAO {
     }
 
     public List<Transaction> findAllTransactionsByIban(String iban) {
-        String sql = "SELECT * FROM bigbangk.Order WHERE orderType = ? && buyer = ? || seller = ?;";
+        String sql = "SELECT * FROM bigbangk.order WHERE ordertype = ? && buyer = ? || seller = ?;";
         try {
             return jdbcTemplate.query(sql, new TransactionRowMapper(), TransactionType.TRANSACTION.toString(), iban, iban);
         } catch (DataAccessException dataAccessException) {
@@ -77,7 +77,7 @@ public class JdbcOrderDAO {
      * @param limit_buy author = Vanessa Philips
      */
     public void saveLimit_Buy(Limit_Buy limit_buy) {
-        String sql = "INSERT INTO bigbangk.order (buyer, assetCode, orderType, orderlimit, assetAmount, date) VALUES (?, ?, ?, ?, ?, ?);";
+        String sql = "insert into bigbangk.order (buyer, assetcode, ordertype, orderlimit, assetamount, date) values (?, ?, ?, ?, ?, ?);";
 
         try {
             jdbcTemplate.update(sql,
@@ -98,7 +98,7 @@ public class JdbcOrderDAO {
      * @param limit_sell author = Vanessa Philips
      */
     public void saveLimit_Sell(Limit_Sell limit_sell) {
-        String sql = "INSERT INTO bigbangk.order (seller, assetCode, orderType, orderlimit, assetAmount, date) VALUES (?, ?, ?, ?, ?, ?);";
+        String sql = "insert into bigbangk.order (seller, assetcode, ordertype, orderlimit, assetamount, date) values (?, ?, ?, ?, ?, ?);";
 
         try {
             jdbcTemplate.update(sql,
@@ -119,7 +119,7 @@ public class JdbcOrderDAO {
      * @param stoploss_sell author = Vanessa Philips
      */
     public void saveStoploss_Sell(Stoploss_Sell stoploss_sell) {
-        String sql = "INSERT INTO bigbangk.order (seller, assetCode, orderType, orderlimit, assetAmount, date) VALUES (?, ?, ?, ?, ?, ?);";
+        String sql = "insert into bigbangk.order (seller, assetcode, ordertype, orderlimit, assetamount, date) values (?, ?, ?, ?, ?, ?);";
 
         try {
             jdbcTemplate.update(sql,
@@ -140,7 +140,7 @@ public class JdbcOrderDAO {
      * @return List<Limit_Buy> with all limit_Buy orders
      */
     public List<Limit_Buy> getAllLimitBuys() {
-        String sql = "SELECT * FROM bigbangk.Order WHERE orderType=?;";
+        String sql = "SELECT * FROM bigbangk.order WHERE ordertype=?;";
         try {
             return jdbcTemplate.query(sql, new LimitBuyRowMapper(), TransactionType.LIMIT_BUY.toString());
         } catch (DataAccessException dataAccessException) {
@@ -155,7 +155,7 @@ public class JdbcOrderDAO {
      * @return List<Limit_Sell> with all limit_Sell orders
      */
     public List<Limit_Sell> getAllLimitSells() {
-        String sql = "SELECT * FROM bigbangk.Order WHERE orderType=?;";
+        String sql = "SELECT * FROM bigbangk.order WHERE ordertype=?;";
         try {
             return jdbcTemplate.query(sql, new LimitSellRowMapper(), TransactionType.LIMIT_SELL.toString());
         } catch (DataAccessException dataAccessException) {
@@ -170,7 +170,7 @@ public class JdbcOrderDAO {
      * @return List<Stoploss_Sell> with all Stoploss_Sell orders
      */
     public List<Stoploss_Sell> getAllStopLossSells() {
-        String sql = "SELECT * FROM bigbangk.Order WHERE orderType=?;";
+        String sql = "SELECT * FROM bigbangk.order WHERE ordertype=?;";
         try {
             return jdbcTemplate.query(sql, new StopLossRowMapper(), TransactionType.STOPLOSS_SELL.toString());
         } catch (DataAccessException dataAccessException) {
@@ -186,7 +186,7 @@ public class JdbcOrderDAO {
      * @return return true if a row is affected, false when the order didn't exist
      */
     public boolean deleteOrderById(int orderId) {
-        String sql = "DELETE FROM bigbangk.Order where orderID=?;";
+        String sql = "DELETE FROM bigbangk.order where orderid=?;";
         try {
             return jdbcTemplate.update(sql, orderId) > 0;
         } catch (DataAccessException dataAccessException) {
@@ -196,7 +196,7 @@ public class JdbcOrderDAO {
     }
 
     public boolean updateLimitSell(Limit_Sell limit_sell) {
-        String sql = "UPDATE  bigbangk.order Set seller=?, assetAmount=?, orderLimit=?, assetCode=? WHERE orderID= ?;";
+        String sql = "UPDATE  bigbangk.order Set seller=?, assetamount=?, orderlimit=?, assetcode=? WHERE orderid= ?;";
         try {
             return jdbcTemplate.update(sql, limit_sell.getSeller().getIban(),
                     limit_sell.getAssetAmount(),
@@ -210,7 +210,7 @@ public class JdbcOrderDAO {
     }
 
     public boolean updateLimitBuy(Limit_Buy limit_buy) {
-        String sql = "UPDATE bigbangk.order Set seller=?, assetAmount=?, orderLimit=?, assetCode=? WHERE orderID= ?;";
+        String sql = "update bigbangk.order set seller=?, assetamount=?, orderlimit=?, assetcode=? where orderid= ?;";
         try {
             return jdbcTemplate.update(sql, limit_buy.getBuyer().getIban(),
                     limit_buy.getAssetAmount(),
@@ -224,7 +224,7 @@ public class JdbcOrderDAO {
     }
 
     public boolean updateStopLoss(Stoploss_Sell stoploss_sell) {
-        String sql = "UPDATE bigbangk.order Set seller=?, assetAmount=?, orderLimit=?, assetCode=? WHERE orderID= ?;";
+        String sql = "update bigbangk.order set seller=?, assetamount=?, orderlimit=?, assetcode=? where orderid= ?;";
         try {
             return jdbcTemplate.update(sql, stoploss_sell.getSeller().getIban(),
                     stoploss_sell.getAssetAmount(),
@@ -242,9 +242,9 @@ public class JdbcOrderDAO {
 
         @Override
         public Transaction mapRow(ResultSet resultSet, int rowNum) throws SQLException {
-            int orderId = resultSet.getInt("orderId");
-            double priceExcludingFee = resultSet.getDouble("priceExcludingFee");
-            double assetAmount = resultSet.getDouble("assetAmount");
+            int orderId = resultSet.getInt("orderid");
+            double priceExcludingFee = resultSet.getDouble("priceexcludingfee");
+            double assetAmount = resultSet.getDouble("assetamount");
             LocalDateTime date = resultSet.getObject("date", LocalDateTime.class);
             double fee = resultSet.getDouble("fee");
             return new Transaction(orderId, priceExcludingFee, assetAmount, date, fee);
@@ -276,9 +276,9 @@ public class JdbcOrderDAO {
     }
 
     static private <T> T createOrderOfType(ResultSet resultSet, TransactionType type) throws SQLException {
-        int orderId = resultSet.getInt("orderId");
-        double limit = resultSet.getDouble("orderLimit");
-        double assetAmount = resultSet.getDouble("assetAmount");
+        int orderId = resultSet.getInt("orderid");
+        double limit = resultSet.getDouble("orderlimit");
+        double assetAmount = resultSet.getDouble("assetamount");
         LocalDateTime date = resultSet.getObject("date", LocalDateTime.class);
         switch (type) {
             case LIMIT_BUY:

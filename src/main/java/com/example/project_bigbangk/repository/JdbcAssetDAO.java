@@ -31,7 +31,7 @@ public class JdbcAssetDAO implements IAssetDAO {
 
     @Override
     public List<Asset> getAllAssets() {
-        String sql = "Select * from Asset;";
+        String sql = "Select * from asset;";
         List<Asset> assets = new ArrayList<>();
         try {
            assets = jdbcTemplate.query(sql, new AssetRowMapper());
@@ -43,7 +43,7 @@ public class JdbcAssetDAO implements IAssetDAO {
 
     @Override
     public void saveAsset(Asset asset) {
-        String sql = "Insert into Asset values(?,?);";
+        String sql = "Insert into asset values(?,?);";
         try {
             jdbcTemplate.update(sql, asset.getCode(),
                     asset.getName());
@@ -59,7 +59,7 @@ public class JdbcAssetDAO implements IAssetDAO {
      */
     @Override
     public int getNumberOfAssets() {
-        String sql = "SELECT count(code) FROM Asset";
+        String sql = "SELECT count(code) FROM asset";
         try {
             return jdbcTemplate.queryForObject(sql, Integer.class);
 
@@ -71,7 +71,7 @@ public class JdbcAssetDAO implements IAssetDAO {
 
     @Override
     public Asset findAssetByCode(String assetCode) {
-        String slq = "SELECT * FROM Asset WHERE code = ?;";
+        String slq = "SELECT * FROM asset WHERE code = ?;";
         Asset asset = null;
         try {
             asset = jdbcTemplate.queryForObject(slq, new AssetRowMapper(), assetCode);
@@ -83,7 +83,7 @@ public class JdbcAssetDAO implements IAssetDAO {
 
     @Override
     public Asset findAssetByOrderId(int orderId) {
-        String slq = "SELECT a.* FROM Asset a JOIN bigbangk.order o ON a.code = o.assetCode  WHERE orderId = ?;";
+        String slq = "SELECT a.* FROM asset a JOIN bigbangk.order o ON a.code = o.assetCode  WHERE orderId = ?;";
         Asset asset = null;
         try {
             asset = jdbcTemplate.queryForObject(slq, new AssetRowMapper(), orderId);
