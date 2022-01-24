@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository
@@ -31,7 +32,7 @@ public class JdbcAssetDAO implements IAssetDAO {
     @Override
     public List<Asset> getAllAssets() {
         String sql = "Select * from Asset;";
-        List<Asset> assets = null;
+        List<Asset> assets = new ArrayList<>();
         try {
            assets = jdbcTemplate.query(sql, new AssetRowMapper());
         } catch (DataAccessException dataAccessException) {
