@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -65,7 +66,7 @@ class OrderControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON);
         Mockito.when(authenticateService.authenticate("token")).thenReturn(false);
-        Mockito.when(orderService.handleOrderByType(orderDTO, client)).thenReturn("TestOrderFail");
+        Mockito.when(orderService.handleOrderByType(orderDTO, client)).thenReturn(ResponseEntity.status(401).body("token expired"));
         try {
             mockMvc.perform(builder)
                     .andExpect(MockMvcResultMatchers.status().is(401));
@@ -84,7 +85,7 @@ class OrderControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON);
         Mockito.when(authenticateService.authenticate("token")).thenReturn(true);
-        Mockito.when(orderService.handleOrderByType(orderDTO, client)).thenReturn("TestOrderSucces");
+        Mockito.when(orderService.handleOrderByType(orderDTO, client)).thenReturn(ResponseEntity.status(201).body("Sell order Successful"));
         try {
             mockMvc.perform(builder)
                     .andExpect(MockMvcResultMatchers.status().is(201));

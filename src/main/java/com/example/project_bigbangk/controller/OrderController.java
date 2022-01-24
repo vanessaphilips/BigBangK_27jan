@@ -38,8 +38,7 @@ public class OrderController{
     public ResponseEntity<?> placeOrder(@RequestHeader String authorization, @RequestBody OrderDTO orderDTO) {
         if (authenticateService.authenticate(authorization)) {
             Client client = authenticateService.getClientFromToken(authorization);
-            String orderMessage = orderservice.handleOrderByType(orderDTO, client);
-                return ResponseEntity.status(201).body(orderMessage);
+            return orderservice.handleOrderByType(orderDTO, client);
             }
         return ResponseEntity.status(401).body("token expired");
     }
@@ -48,6 +47,9 @@ public class OrderController{
     public ResponseEntity<?> getLatestPrice(@RequestHeader String authorization, @RequestBody String assetCode) {
         if (authenticateService.authenticate(authorization)) {
             double price = rootRepository.getCurrentPriceByAssetCode(assetCode);
+            if (price == -1){
+                return ResponseEntity.status(500).body("Server failed to update price");
+            }
             return ResponseEntity.status(201).body(price);
         }
         return ResponseEntity.status(401).body("token expired");
