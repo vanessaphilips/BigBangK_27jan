@@ -49,9 +49,9 @@ DEFAULT CHARACTER SET = utf8mb3;
 -- Table `bigbangk`.`wallet`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `bigbangk`.`wallet` (
-  `IBAN` VARCHAR(45) NOT NULL,
+  `iban` VARCHAR(45) NOT NULL,
   `balance` DECIMAL(25,2) NOT NULL,
-  PRIMARY KEY (`IBAN`))
+  PRIMARY KEY (`iban`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb3;
 
@@ -62,12 +62,12 @@ DEFAULT CHARACTER SET = utf8mb3;
 CREATE TABLE IF NOT EXISTS `bigbangk`.`bank` (
   `code` VARCHAR(45) NOT NULL,
   `name` VARCHAR(64) NOT NULL,
-  `IBAN` VARCHAR(45) NULL,
+  `iban` VARCHAR(45) NULL,
   PRIMARY KEY (`code`),
-  INDEX `verzinzelf6_idx` (`IBAN` ASC) VISIBLE,
+  INDEX `verzinzelf6_idx` (`iban` ASC) VISIBLE,
   CONSTRAINT `verzinzelf6`
-    FOREIGN KEY (`IBAN`)
-    REFERENCES `bigbangk`.`wallet` (`IBAN`)
+    FOREIGN KEY (`iban`)
+    REFERENCES `bigbangk`.`wallet` (`iban`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
@@ -82,8 +82,8 @@ CREATE TABLE IF NOT EXISTS `bigbangk`.`pricehistory` (
   `code` VARCHAR(5) NOT NULL,
   `price` DOUBLE NOT NULL,
   PRIMARY KEY (`datetime`, `code`),
-  INDEX `fk_Price_Coin1_idx` (`code` ASC) VISIBLE,
-  CONSTRAINT `fk_Price_Coin1`
+  INDEX `fk_price_coin1_idx` (`code` ASC) VISIBLE,
+  CONSTRAINT `fk_price_coin1`
     FOREIGN KEY (`code`)
     REFERENCES `bigbangk`.`asset` (`code`))
 ENGINE = InnoDB
@@ -96,16 +96,16 @@ DEFAULT CHARACTER SET = utf8mb3;
 CREATE TABLE IF NOT EXISTS `bigbangk`.`wallet_has_asset` (
   `code` VARCHAR(5) NOT NULL,
   `amount` DECIMAL(40,30) NOT NULL,
-  `IBAN` VARCHAR(45) NOT NULL,
-  PRIMARY KEY (`code`, `IBAN`),
-  INDEX `fk_Coin_has_Wallet_Coin1_idx` (`code` ASC) VISIBLE,
-  INDEX `verzinzelf3_idx` (`IBAN` ASC) VISIBLE,
-  CONSTRAINT `fk_Coin_has_Wallet_Coin1`
+  `iban` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`code`, `iban`),
+  INDEX `fk_coin_has_wallet_coin1_idx` (`code` ASC) VISIBLE,
+  INDEX `verzinzelf3_idx` (`iban` ASC) VISIBLE,
+  CONSTRAINT `fk_coin_has_wallet_coin1`
     FOREIGN KEY (`code`)
     REFERENCES `bigbangk`.`asset` (`code`),
   CONSTRAINT `verzinzelf3`
-    FOREIGN KEY (`IBAN`)
-    REFERENCES `bigbangk`.`wallet` (`IBAN`)
+    FOREIGN KEY (`iban`)
+    REFERENCES `bigbangk`.`wallet` (`iban`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
@@ -121,22 +121,22 @@ CREATE TABLE IF NOT EXISTS `bigbangk`.`client` (
   `insertion` VARCHAR(45) NULL,
   `lastname` VARCHAR(45) NOT NULL,
   `dateofbirth` DATE NOT NULL,
-  `BSN` VARCHAR(45) NOT NULL,
+  `bsn` VARCHAR(45) NOT NULL,
   `password` VARCHAR(100) NOT NULL,
   `postalcode` VARCHAR(10) NULL,
   `number` INT NULL,
-  `IBAN` VARCHAR(45) NULL,
+  `iban` VARCHAR(45) NULL,
   PRIMARY KEY (`email`),
   INDEX `verzinzelf1_idx` (`postalcode` ASC, `number` ASC) VISIBLE,
-  INDEX `verzinzelf4_idx` (`IBAN` ASC) VISIBLE,
+  INDEX `verzinzelf4_idx` (`iban` ASC) VISIBLE,
   CONSTRAINT `verzinzelf1`
     FOREIGN KEY (`postalcode` , `number`)
     REFERENCES `bigbangk`.`address` (`postalcode` , `number`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `verzinzelf4`
-    FOREIGN KEY (`IBAN`)
-    REFERENCES `bigbangk`.`wallet` (`IBAN`)
+    FOREIGN KEY (`iban`)
+    REFERENCES `bigbangk`.`wallet` (`iban`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -146,32 +146,32 @@ ENGINE = InnoDB;
 -- Table `bigbangk`.`order`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `bigbangk`.`order` (
-  `orderId` INT NOT NULL AUTO_INCREMENT,
+  `orderid` INT NOT NULL AUTO_INCREMENT,
   `buyer` VARCHAR(45) NULL,
   `seller` VARCHAR(45) NULL,
-  `assetCode` VARCHAR(5) NOT NULL,
-  `orderType` VARCHAR(45) NOT NULL,
+  `assetcode` VARCHAR(5) NOT NULL,
+  `ordertype` VARCHAR(45) NOT NULL,
   `orderlimit` DOUBLE NULL,
-  `assetAmount` DOUBLE NULL,
+  `assetamount` DOUBLE NULL,
   `date` TIMESTAMP NOT NULL,
   `fee` DOUBLE NULL,
-  `priceExcludingFee` DOUBLE NULL,
-  PRIMARY KEY (`orderId`),
+  `priceexcludingfee` DOUBLE NULL,
+  PRIMARY KEY (`orderid`),
   INDEX `verzinzelf2_idx` (`buyer` ASC) VISIBLE,
   INDEX `verzinzelf5_idx` (`seller` ASC) VISIBLE,
-  INDEX `verzinzelf7_idx` (`assetCode` ASC) VISIBLE,
+  INDEX `verzinzelf7_idx` (`assetcode` ASC) VISIBLE,
   CONSTRAINT `verzinzelf2`
     FOREIGN KEY (`buyer`)
-    REFERENCES `bigbangk`.`wallet` (`IBAN`)
+    REFERENCES `bigbangk`.`wallet` (`iban`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `verzinzelf5`
     FOREIGN KEY (`seller`)
-    REFERENCES `bigbangk`.`wallet` (`IBAN`)
+    REFERENCES `bigbangk`.`wallet` (`iban`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `verzinzelf7`
-    FOREIGN KEY (`assetCode`)
+    FOREIGN KEY (`assetcode`)
     REFERENCES `bigbangk`.`asset` (`code`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
@@ -183,8 +183,8 @@ SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 
 
-INSERT INTO `bigbangk`.`wallet` (`IBAN`, `balance`) VALUES ('NL10BGBK0000000001', '5000000');
-INSERT INTO `bigbangk`.`bank` (`code`, `name`, `IBAN`) VALUES ('BGBK', 'BigBangk', 'NL10BGBK0000000001');
+INSERT INTO `bigbangk`.`wallet` (`iban`, `balance`) VALUES ('NL10BGBK0000000001', '5000000');
+INSERT INTO `bigbangk`.`bank` (`code`, `name`, `iban`) VALUES ('BGBK', 'BigBangk', 'NL10BGBK0000000001');
 INSERT INTO `asset` VALUES ('ADA','Cardano'),('AVAX','Avalanche'),('BNB','BNB'),('BTC','Bitcoin'),('BUSD','Binance USD'),('CRO','Crypto.com Coin'),('DAI','Dai'),('DOGE','Dogecoin'),('DOT','Polkadot'),('ETH','Ethereum'),('LTC','Litecoin'),('LUNA','Terra'),('MATIC','Polygon'),('SHIB','Shiba Inu'),('SOL','Solana'),('UNI','Uniswap'),('USDC','USD Coin'),('USDT','Tether'),('WBTC','Wrapped Bitcoin'),('XRP','XRP');
 INSERT INTO `wallet_has_asset` VALUES ('ADA',500.000000000000000000000000000000,'NL10BGBK0000000001'),('AVAX',5000.000000000000000000000000000000,'NL10BGBK0000000001'),('BNB',5000.000000000000000000000000000000,'NL10BGBK0000000001'),('BTC',50.000000000000000000000000000000,'NL10BGBK0000000001'),('BUSD',500.000000000000000000000000000000,'NL10BGBK0000000001'),('CRO',500.000000000000000000000000000000,'NL10BGBK0000000001'),('DAI',500.000000000000000000000000000000,'NL10BGBK0000000001'),('DOGE',500.000000000000000000000000000000,'NL10BGBK0000000001'),('DOT',500.000000000000000000000000000000,'NL10BGBK0000000001'),('ETH',500.000000000000000000000000000000,'NL10BGBK0000000001'),('LTC',500.000000000000000000000000000000,'NL10BGBK0000000001'),('LUNA',500.000000000000000000000000000000,'NL10BGBK0000000001'),('MATIC',500.000000000000000000000000000000,'NL10BGBK0000000001'),('SHIB',500.000000000000000000000000000000,'NL10BGBK0000000001'),('SOL',500.000000000000000000000000000000,'NL10BGBK0000000001'),('UNI',500.000000000000000000000000000000,'NL10BGBK0000000001'),('USDC',500.000000000000000000000000000000,'NL10BGBK0000000001'),('USDT',500.000000000000000000000000000000,'NL10BGBK0000000001'),('WBTC',500.000000000000000000000000000000,'NL10BGBK0000000001'),('XRP',500.000000000000000000000000000000,'NL10BGBK0000000001');
 
