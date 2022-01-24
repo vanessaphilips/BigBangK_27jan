@@ -1,5 +1,3 @@
-// Created by vip
-// Creation date 02/12/2021
 package com.example.project_bigbangk.repository;
 
 import com.example.project_bigbangk.model.Client;
@@ -10,6 +8,10 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import java.sql.*;
 import java.util.List;
+
+/**
+ * JdbcClientDAO created by Vanessa Philips.
+ */
 
 @Repository
 public class JdbcClientDAO implements IClientDAO {
