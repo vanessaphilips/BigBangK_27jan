@@ -59,11 +59,9 @@ function orderSelectedAsset(assetText){
         code: assetCode,
         currentPrice: '0'
     }
-
     let assetObject = new Asset(asset);
-
-    localStorage.setItem(CURRENT_ASSET_KEY, assetObject);
-    console.log(localStorage.getItem(CURRENT_ASSET_KEY.toString()))
+    localStorage.setItem(CURRENT_ASSET_KEY, JSON.stringify(assetObject));
 
     window.location.href = "PlaceOrder.html"; //blijft deze in menu?
 }
+
