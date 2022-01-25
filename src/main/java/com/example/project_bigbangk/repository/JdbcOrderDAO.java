@@ -1,6 +1,7 @@
 package com.example.project_bigbangk.repository;
 
 import com.example.project_bigbangk.model.Orders.*;
+import com.example.project_bigbangk.model.Wallet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -139,6 +141,21 @@ public class JdbcOrderDAO {
      *
      * @return List<Limit_Buy> with all limit_Buy orders
      */
+
+    public List<AbstractOrder> findOrdersByWallet(Wallet wallet) {
+        String sql = "SELECT * FROM bigbangk.order WHERE ordertype=?;";
+        List<AbstractOrder> abstractOrders = new ArrayList<>();
+        try {
+            abstractOrders.addAll(jdbcTemplate.query(sql, new LimitSellRowMapper(), TransactionType.LIMIT_SELL.toString()));
+            abstractOrders.addAll(jdbcTemplate.query(sql, new LimitBuyRowMapper(), TransactionType.LIMIT_BUY.toString()));
+            abstractOrders.addAll(jdbcTemplate.query(sql, new StopLossRowMapper(), TransactionType.STOPLOSS_SELL.toString()));
+            return abstractOrders;
+        } catch (DataAccessException dataAccessException) {
+            logger.info(dataAccessException.getMessage());
+        }
+        return null;
+    }
+
     public List<Limit_Buy> getAllLimitBuys() {
         String sql = "SELECT * FROM bigbangk.order WHERE ordertype=?;";
         try {

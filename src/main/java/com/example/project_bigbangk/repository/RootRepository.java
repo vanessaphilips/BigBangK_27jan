@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Repository
 public class RootRepository {
@@ -93,8 +94,10 @@ public class RootRepository {
     public double getCurrentPriceByAssetCode(String assetCode) {
         return priceDateDAO.getCurrentPriceByAssetCode(assetCode);
     }
+
     /**
      * retrieves the pricehistories for all Assets from the database
+     *
      * @param dateTime date in past for defining the interval for which priceHistoryData is retrieved
      * @return a list of PriceHistory
      */
@@ -118,6 +121,7 @@ public class RootRepository {
     }
 
     //Asset
+
     /**
      * retrieves all Assets from DB
      *
@@ -132,14 +136,16 @@ public class RootRepository {
         }
         return assets;
     }
+
     private Asset findAssetByOrderId(int orderId) {
-       Asset asset = assetDAO.findAssetByOrderId(orderId);
+        Asset asset = assetDAO.findAssetByOrderId(orderId);
         setCurrentPriceOfAsset(asset);
-       return asset;
+        return asset;
     }
 
     /**
      * find an Asset by its code
+     *
      * @param code code of the asset in String format
      * @return an Asset with matching code
      */
@@ -148,25 +154,69 @@ public class RootRepository {
         setCurrentPriceOfAsset(asset);
         return asset;
     }
-private void setCurrentPriceOfAsset(Asset asset){
-    if(asset!=null){
-        asset.setCurrentPrice(priceDateDAO.getCurrentPriceByAssetCode(asset.getCode()));
+
+    private void setCurrentPriceOfAsset(Asset asset) {
+        if (asset != null) {
+            asset.setCurrentPrice(priceDateDAO.getCurrentPriceByAssetCode(asset.getCode()));
+        }
     }
-}
     // WALLET
 
     public Wallet findWalletByEmail(String email) {
         Wallet wallet = walletDAO.findWalletByEmail(email);
+        fillWalletWithTransactions(wallet);
+        fillOrderListsInWallet(wallet);
+        fillWalletWithAssetsAmount(wallet);
         return findWalletWithAssetByIban(wallet.getIban());
     }
 
+    private void fillWalletWithTransactions(Wallet wallet) {
+        List<Transaction> transactions = orderDAO.findAllTransactionsByIban(wallet.getIban());
+        for (Transaction transaction : transactions) {
+            transaction.setAsset(findAssetByOrderId((int) transaction.getOrderId()));
+            Wallet sellerWallet = walletDAO.FindSellerWalletByOrderId((int) transaction.getOrderId());
+            Wallet buyerWallet = walletDAO.FindBuyerWalletByOrderId((int) transaction.getOrderId());
+                if(sellerWallet.equals(wallet)){
+                    transaction.setSellerWallet(wallet);
+                    transaction.setBuyerWallet(buyerWallet);
+                }else{
+                    transaction.setSellerWallet(sellerWallet);
+                    transaction.setBuyerWallet(wallet);
+                }
+            transaction.setBuyerWallet(walletDAO.FindBuyerWalletByOrderId((int) transaction.getOrderId()));
+        }
+        wallet.setTransaction(transactions);
+    }
+
+    private void fillOrderListsInWallet(Wallet wallet) {
+        List<AbstractOrder> abstractOrders = orderDAO.findOrdersByWallet(wallet);
+        abstractOrders.forEach(ao -> ao.setAsset(findAssetByOrderId(ao.getOrderId())));
+        List<Limit_Buy> limit_buys = abstractOrders.stream().filter(ao -> ao instanceof Limit_Buy).map(ao -> (Limit_Buy) ao).collect(Collectors.toList());
+        List<Limit_Sell> limit_sells = abstractOrders.stream().filter(ao -> ao instanceof Limit_Sell).map(ao -> (Limit_Sell) ao).collect(Collectors.toList());
+        List<Stoploss_Sell> stoploss_sells = abstractOrders.stream().filter(ao -> ao instanceof Stoploss_Sell).map(ao -> (Stoploss_Sell) ao).collect(Collectors.toList());
+        limit_buys.forEach(lb -> lb.setBuyer(wallet));
+        limit_sells.forEach(ls -> ls.setSeller(wallet));
+        stoploss_sells.forEach(sl -> sl.setSeller(wallet));
+        wallet.setLimitBuy(limit_buys);
+        wallet.setLimitSell(limit_sells);
+        wallet.setStoplossSell(stoploss_sells);
+    }
+
+
     public Wallet findWalletbyBankCode(String bankCode) {
         Wallet wallet = walletDAO.findWalletByBankCode(bankCode);
+        fillWalletWithTransactions(wallet);
+        fillOrderListsInWallet(wallet);
+        fillWalletWithAssetsAmount(wallet);
         return findWalletWithAssetByIban(wallet.getIban());
     }
 
     public Wallet findWalletByIban(String iban) {
-        return walletDAO.findWalletByIban(iban);
+        Wallet wallet =  walletDAO.findWalletByIban(iban);
+        fillWalletWithTransactions(wallet);
+        fillOrderListsInWallet(wallet);
+        fillWalletWithAssetsAmount(wallet);
+        return wallet;
     }
 
     public void updateWalletBalanceAndAsset(Wallet wallet, Asset asset, double amount) {
@@ -179,22 +229,26 @@ private void setCurrentPriceOfAsset(Asset asset){
         if (wallet == null) {
             return wallet;
         }
-        fillWalletWithAssets(wallet);
+        fillWalletWithTransactions(wallet);
+        fillOrderListsInWallet(wallet);
+        fillWalletWithAssetsAmount(wallet);
         return wallet;
     }
 
-    public Wallet findWalletByOrderID(int orderId) {
+    public Wallet findWalletByTransactionID(int orderId) {
         Wallet wallet = walletDAO.FindBuyerWalletByOrderId(orderId);
         if (wallet == null) {
             wallet = walletDAO.FindSellerWalletByOrderId(orderId);
         }
         if (wallet != null) {
-            fillWalletWithAssets(wallet);
+            fillWalletWithTransactions(wallet);
+            fillOrderListsInWallet(wallet);
+            fillWalletWithAssetsAmount(wallet);
         }
         return wallet;
     }
 
-    private void fillWalletWithAssets(Wallet wallet) {
+    private void fillWalletWithAssetsAmount(Wallet wallet) {
         Map<Asset, Double> assetWithAmountMap = new HashMap<>();
         List<Asset> assets = assetDAO.getAllAssets();
         for (Asset asset : assets) {
@@ -204,8 +258,10 @@ private void setCurrentPriceOfAsset(Asset asset){
     }
 
     //Order
+
     /**
      * for retreiving all Limit_Sell orders
+     *
      * @return List<Limit_Sell> with all limit_Sell orders
      */
     public boolean deleteOrderByID(int orderId) {
@@ -219,6 +275,7 @@ private void setCurrentPriceOfAsset(Asset asset){
     public boolean updateLimitBuy(Limit_Buy limit_buy) {
         return orderDAO.updateLimitBuy(limit_buy);
     }
+
     public boolean updateStopLoss(Stoploss_Sell stoploss_sell) {
         return orderDAO.updateStopLoss(stoploss_sell);
     }
@@ -226,31 +283,35 @@ private void setCurrentPriceOfAsset(Asset asset){
     public List<Limit_Sell> getAllLimitSell() {
         List<Limit_Sell> limit_sells = orderDAO.getAllLimitSells();
         for (Limit_Sell limit_sell : limit_sells) {
-            limit_sell.setSeller(findWalletByOrderID(limit_sell.getOrderId()));
+            limit_sell.setSeller(findWalletByTransactionID(limit_sell.getOrderId()));
             limit_sell.setAsset(findAssetByOrderId(limit_sell.getOrderId()));
         }
         return limit_sells;
     }
+
     /**
      * for retreiving all Limit_buy orders
+     *
      * @return List<Limit_Buy> with all limit_Buy orders
      */
     public List<Limit_Buy> getAllLimitBuy() {
         List<Limit_Buy> limit_buys = orderDAO.getAllLimitBuys();
         for (Limit_Buy limit_buy : limit_buys) {
-            limit_buy.setBuyer(findWalletByOrderID(limit_buy.getOrderId()));
+            limit_buy.setBuyer(findWalletByTransactionID(limit_buy.getOrderId()));
             limit_buy.setAsset(findAssetByOrderId(limit_buy.getOrderId()));
         }
         return limit_buys;
     }
+
     /**
      * for retreiving all Stoploss_Sell orders
+     *
      * @return List<Stoploss_Sell> with all Stoploss_Sell orders
      */
     public List<Stoploss_Sell> getAllStopLossSells() {
         List<Stoploss_Sell> stoploss_sells = orderDAO.getAllStopLossSells();
         for (Stoploss_Sell stoploss_sell : stoploss_sells) {
-            stoploss_sell.setSeller(findWalletByOrderID(stoploss_sell.getOrderId()));
+            stoploss_sell.setSeller(findWalletByTransactionID(stoploss_sell.getOrderId()));
             stoploss_sell.setAsset(findAssetByOrderId(stoploss_sell.getOrderId()));
         }
         return stoploss_sells;
@@ -272,16 +333,16 @@ private void setCurrentPriceOfAsset(Asset asset){
         walletDAO.updateWalletAssets(transaction.getSellerWallet(), transaction.getAsset(), transaction.getSellerWallet().getAssets().get(transaction.getAsset()));
     }
 
-    public void fillWalletWithTransactions(Client client){
+
+    public void fillWalletWithTransactions(Client client) {
         List<Transaction> transactions = orderDAO.findAllTransactionsByIban(client.getWallet().getIban());
 
-        for (Transaction transaction:transactions) {
+        for (Transaction transaction : transactions) {
             int orderId = (int) transaction.getOrderId();
             transaction.setAsset(assetDAO.findAssetByOrderId(orderId));
             transaction.setSellerWallet(walletDAO.FindSellerWalletByOrderId(orderId));
             transaction.setBuyerWallet(walletDAO.FindBuyerWalletByOrderId(orderId));
         }
-
         client.getWallet().setTransaction(transactions);
     }
 
@@ -292,7 +353,7 @@ private void setCurrentPriceOfAsset(Asset asset){
      *
      * @param limit_buy author = Vanessa Philips
      */
-    public void saveLimitBuyOrder(Limit_Buy limit_buy){
+    public void saveLimitBuyOrder(Limit_Buy limit_buy) {
         orderDAO.saveLimit_Buy(limit_buy);
     }
 
@@ -300,9 +361,10 @@ private void setCurrentPriceOfAsset(Asset asset){
 
     /**
      * Saves Limit_Sell order temporary. To be completed when there is a match with another client's offer -> matchservice).
+     *
      * @param limit_sell author = Vanessa Philips
      */
-    public void saveLimitSellOrder(Limit_Sell limit_sell){
+    public void saveLimitSellOrder(Limit_Sell limit_sell) {
         orderDAO.saveLimit_Sell(limit_sell);
     }
 
@@ -310,9 +372,10 @@ private void setCurrentPriceOfAsset(Asset asset){
 
     /**
      * Saves Stoploss_Sell order temporary. To be completed when there is a match with another offer (bank) -> matchservice.
+     *
      * @param stoploss_sell author = Vanessa Philips
      */
-    public void saveStoploss_Sell(Stoploss_Sell stoploss_sell){
+    public void saveStoploss_Sell(Stoploss_Sell stoploss_sell) {
         orderDAO.saveStoploss_Sell(stoploss_sell);
     }
 
