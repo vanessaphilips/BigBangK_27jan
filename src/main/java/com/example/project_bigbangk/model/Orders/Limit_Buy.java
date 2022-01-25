@@ -4,6 +4,7 @@ import com.example.project_bigbangk.model.Asset;
 import com.example.project_bigbangk.model.Wallet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.time.LocalDateTime;
 
 /**
@@ -11,7 +12,7 @@ import java.time.LocalDateTime;
  * Object "Limit_Buy" > Buy transaction if the price reaches below a desired level.
  */
 
-public class Limit_Buy extends AbstractOrder{
+public class Limit_Buy extends AbstractOrder {
 
     private final Logger logger = LoggerFactory.getLogger(Limit_Buy.class);
 
@@ -37,13 +38,10 @@ public class Limit_Buy extends AbstractOrder{
     }
 
 
-
     @Override
     public String toString() {
         return super.toString() +
-                "Limit_Buy{" +
-                ", buyerWallet=" + buyer +
-                '}';
+                ", buyerWallet=" + buyer;
     }
 
 
