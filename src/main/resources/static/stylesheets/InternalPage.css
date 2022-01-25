@@ -46,6 +46,16 @@ input:focus {
     border: double rgba(249, 179, 110);
 }
 
+.smallDisplay {
+    border-radius: 3px;
+    border: solid 1px black;
+    width: 80%;
+    padding: 1px 20px;
+    background-color: white;
+    font-family: Calibri, sans-serif;
+    font-size: 18px;
+}
+
 button {
     background-color:rgba(249, 179, 110);
     border-radius:28px;
