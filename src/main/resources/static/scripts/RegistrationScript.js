@@ -133,8 +133,11 @@ function sendRegistrationData(rData){
     }).then(response => {
         if (response.status === 201) {
             console.log("Succesfull registration user: " + rData.email)
-            window.alert("Registration Succesful")
-            window.location.href = "LoginPage.html";
+            document.getElementById('registrationPopup').style.display = 'block';
+            setTimeout(() => {
+                window.location.href = "LoginPage.html";
+            }, 500);
+
         } else if (response.status === 409) {
             console.log("User already in database: " + rData.email)
             document.getElementById('emailError').style.display = 'block';
