@@ -35,15 +35,18 @@ function getWallet(){
             for (let assetEntry of Object.entries(wallet.assets)){
                 if(assetEntry[1] > 0) {
                     let assetDiv = document.createElement('div');
+                    assetDiv.className = 'asset';
+                    assetDiv.innerHTML = assetEntry[0] + " : " + assetEntry[1];
                     let orderButton = document.createElement('button');
                     orderButton.addEventListener("click", function(){
                         orderSelectedAsset(assetEntry[0]);});
                     orderButton.className = "smallButton";
                     orderButton.innerHTML = "Trade";
-                    assetDiv.className = 'asset';
-                    assetDiv.innerHTML = assetEntry[0] + " : " + assetEntry[1];
+                    let buttonDiv = document.createElement('div');
+                    buttonDiv.className = "contentpanelRight";
+                    buttonDiv.appendChild(orderButton);
                     document.getElementById('assetContainer').appendChild(assetDiv);
-                    document.getElementById('assetContainer').appendChild(orderButton);
+                    document.getElementById('assetContainer').appendChild(buttonDiv);
                 }
             }
         })
