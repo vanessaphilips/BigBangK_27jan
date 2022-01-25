@@ -135,7 +135,7 @@ function sendRegistrationData(rData){
             console.log("Succesfull registration user: " + rData.email)
             document.getElementById('registrationPopup').style.display = 'block';
             setTimeout(() => {
-                window.location.href = "LoginPage.html";
+                window.location.href = "index.html";
             }, 500);
 
         } else if (response.status === 409) {

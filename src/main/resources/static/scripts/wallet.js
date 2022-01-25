@@ -19,8 +19,6 @@ let token = localStorage.getItem(JWT_KEY);
 
 let wallet = getWallet();
 
-//todo: trade links bij elke asset.
-
 function getWallet(){
     fetch(`${rootURL}wallet`, {
         method: "GET",
