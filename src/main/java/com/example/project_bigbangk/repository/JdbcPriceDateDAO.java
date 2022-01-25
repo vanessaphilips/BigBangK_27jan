@@ -93,7 +93,7 @@ public class JdbcPriceDateDAO implements IPricedateDAO {
 
     @Override
     public Double getPriceDateByCodeOnDate(LocalDateTime date, String assetCode) {
-        String sql = "SELECT * FROM pricehistory where dateTime > ? and datTime < ? and code = ?;";
+        String sql = "SELECT * FROM pricehistory where datetime > ? and datetime < ? and code = ?;";
         List<PriceDate> priceDates = null;
         LocalDateTime eerder = date.minusMinutes(2).minusSeconds(6);
         LocalDateTime later = date.plusMinutes(2).plusSeconds(5);
