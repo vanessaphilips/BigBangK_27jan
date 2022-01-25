@@ -13,6 +13,7 @@ class BuySellorderDTO {
 }
 
 let asset = localStorage.getItem(CURRENT_ASSET_KEY);
+console.log(asset.code);
 let token = localStorage.getItem(JWT_KEY);
 
 if (asset == null){
@@ -74,12 +75,12 @@ function sendOrder(tData) {
         body: JSON.stringify(tData)
     })
         .then(async response => {
-            if (response.status == 201) {
+            if (response.status === 201) {
                 console.log(response.body + tData.asset);
-            }else if(response.status == 400) {
+            }else if(response.status === 400) {
                 //error in body (insufficient funds/assets)
                 console.log(response.body);
-            }else if (response.status == 401) {
+            }else if (response.status === 401) {
                 //token expired
                 console.log(response.body);
             }

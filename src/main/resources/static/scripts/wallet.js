@@ -19,6 +19,7 @@ let token = localStorage.getItem(JWT_KEY);
 
 let wallet = getWallet();
 
+//todo: trade links bij elke asset.
 
 function getWallet(){
     fetch(`${rootURL}wallet`, {
@@ -31,6 +32,38 @@ function getWallet(){
             let wallet = json;
             document.getElementById("iban").innerHTML = wallet.iban;
             document.getElementById("balance").innerHTML = wallet.balance;
+            for (let assetEntry of Object.entries(wallet.assets)){
+                if(assetEntry[1] > 0) {
+                    let assetDiv = document.createElement('div');
+                    let orderButton = document.createElement('button');
+                    orderButton.addEventListener("click", function(){
+                        orderSelectedAsset(assetEntry[0]);});
+                    orderButton.className = "smallButton";
+                    orderButton.innerHTML = "Trade";
+                    assetDiv.className = 'asset';
+                    assetDiv.innerHTML = assetEntry[0] + " : " + assetEntry[1];
+                    document.getElementById('assetContainer').appendChild(assetDiv);
+                    document.getElementById('assetContainer').appendChild(orderButton);
+                }
+            }
         })
         .catch((error) => { console.error('Error', error) });
+}
+
+
+function orderSelectedAsset(assetText){
+    let assetCode = assetText.substr(0,assetText.indexOf(' '));
+    let assetName = assetText.split('(').pop().split(')')[0];
+    asset = {
+        name: assetName,
+        code: assetCode,
+        currentPrice: '0'
+    }
+
+    let assetObject = new Asset(asset);
+
+    localStorage.setItem(CURRENT_ASSET_KEY, assetObject);
+    console.log(localStorage.getItem(CURRENT_ASSET_KEY.toString()))
+
+    window.location.href = "PlaceOrder.html"; //blijft deze in menu?
 }
