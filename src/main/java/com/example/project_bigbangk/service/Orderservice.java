@@ -49,8 +49,8 @@ public class Orderservice {
         }
     }
 
-    public ResponseEntity handleOrderByType(OrderDTO order, Client clientFromToken){
-        clientWallet = clientFromToken.getWallet();
+    public ResponseEntity handleOrderByType(OrderDTO order, Client client){
+        clientWallet = client.getWallet();
         bankWallet = rootRepository.findWalletbyBankCode(BigBangkApplicatie.bigBangk.getCode());
         currentAssetPrice = rootRepository.getCurrentPriceByAssetCode(order.getAssetCode());
         asset = rootRepository.findAssetByCode(order.getAssetCode());
@@ -76,6 +76,10 @@ public class Orderservice {
             return response;
         }
         response = ResponseEntity.status(500).body("Unknown order type");
+        return response;
+    }
+
+    public ResponseEntity getResponse(){
         return response;
     }
 
