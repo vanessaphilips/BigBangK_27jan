@@ -64,7 +64,7 @@ public class JdbcOrderDAO {
     }
 
     public List<Transaction> findAllTransactionsByIban(String iban) {
-        String sql = "SELECT * FROM bigbangk.order WHERE ordertype = ? && buyer = ? || seller = ?;";
+        String sql = "SELECT * FROM bigbangk.order WHERE ordertype = ? && (buyer = ? || seller = ?);";
         try {
             return jdbcTemplate.query(sql, new TransactionRowMapper(), TransactionType.TRANSACTION.toString(), iban, iban);
         } catch (DataAccessException dataAccessException) {

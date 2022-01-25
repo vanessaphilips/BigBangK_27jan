@@ -128,8 +128,8 @@ public class Transaction{
                 ", assetAmount=" + assetAmount +
                 ", date=" + date +
                 ", fee=" + fee +
-                ", buyerWallet=" + buyerWallet +
-                ", sellerWallet=" + sellerWallet +
+                ", buyerWallet=" + getBuyerWallet().getIban() +
+                ", sellerWallet=" + getSellerWallet().getIban() +
                 ", orderId=" + orderId +
                 '}';
     }

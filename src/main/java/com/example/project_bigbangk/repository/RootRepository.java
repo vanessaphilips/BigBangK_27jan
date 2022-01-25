@@ -176,13 +176,13 @@ public class RootRepository {
             transaction.setAsset(findAssetByOrderId((int) transaction.getOrderId()));
             Wallet sellerWallet = walletDAO.FindSellerWalletByOrderId((int) transaction.getOrderId());
             Wallet buyerWallet = walletDAO.FindBuyerWalletByOrderId((int) transaction.getOrderId());
-                if(sellerWallet.equals(wallet)){
-                    transaction.setSellerWallet(wallet);
-                    transaction.setBuyerWallet(buyerWallet);
-                }else{
-                    transaction.setSellerWallet(sellerWallet);
-                    transaction.setBuyerWallet(wallet);
-                }
+            if (sellerWallet.equals(wallet)) {
+                transaction.setSellerWallet(wallet);
+                transaction.setBuyerWallet(buyerWallet);
+            } else {
+                transaction.setSellerWallet(sellerWallet);
+                transaction.setBuyerWallet(wallet);
+            }
             transaction.setBuyerWallet(walletDAO.FindBuyerWalletByOrderId((int) transaction.getOrderId()));
         }
         wallet.setTransaction(transactions);
@@ -212,7 +212,7 @@ public class RootRepository {
     }
 
     public Wallet findWalletByIban(String iban) {
-        Wallet wallet =  walletDAO.findWalletByIban(iban);
+        Wallet wallet = walletDAO.findWalletByIban(iban);
         fillWalletWithTransactions(wallet);
         fillOrderListsInWallet(wallet);
         fillWalletWithAssetsAmount(wallet);

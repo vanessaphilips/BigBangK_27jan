@@ -40,7 +40,7 @@ public class Limit_Sell extends AbstractOrder{
     public String toString() {
         return super.toString() +
                 "Limit_Sell{" +
-                ", sellerWallet=" + seller +
+                ", sellerWallet=" + seller.getIban() +
                 '}';
     }
 }
