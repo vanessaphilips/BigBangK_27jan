@@ -79,6 +79,12 @@ button {
     text-decoration:none;
 }
 
+.smallButton {
+    min-width: 30px;
+    font-size:12px;
+    padding:3px 6px;
+}
+
 button:hover {
     background-color:rgba(255, 199, 130);
 }

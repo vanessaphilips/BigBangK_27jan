@@ -1,64 +1,43 @@
-/**
- * Root page for the bigBankgk website
- * this is a global menu for navigating the pages defined in fillNavMap
- *
- */
-const navigation = document.getElementById("navigation")
-const currentContentContainer = document.getElementById("currentContentContainer");
-const navElements = {}
+"use strict"
 
-const stringToHTML = function (str) {
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(str, 'text/html');
-    return doc.body;
-}
-
-/**
- *  Voeg hier je pagina toe en alles komt goed.
- *  Vorm is
- *  navElements.{jouw link zoals die in het navigatie menu verschijnt} =
- *  stringToHTML('<object data="filenaam pagina incl html extensie" id="currentContentObject"></object>')
- */
-function declareSubPages() {
-    navElements.marketplace = stringToHTML('<object data="MarketPlace.html"  id="currentContentObject"></object>')
-    navElements.history = stringToHTML('<object data="TransactionHistory.html"  id="currentContentObject"></object>')
-    navElements.order = stringToHTML('<object  data="PlaceOrder.html"  id="currentContentObject"></object>')
-    navElements.register = stringToHTML('<object data="Registration.html"  id="currentContentObject"></object>')
-    navElements.login = stringToHTML('<object  data="LoginPage.html"  id="currentContentObject"></object>')
-}
-
-function setCurrentContent(selectedContent) {
-    let height = selectedContent.clientHeight
-    if (currentContentContainer.firstChild !== undefined) {
-
-        currentContentContainer.replaceChild(selectedContent, currentContentContainer.firstChild)
-
-    } else {
-        currentContentContainer.appendChild(selectedContent)
+class LoginDTO {
+    constructor(email, password) {
+        this.email = email;
+        this.password = password;
     }
-    console.log(height)
-    currentContentContainer.clientHeight = height
 }
 
-window.onload = () => {
-    let height = document.getElementById("currentContentContainer").firstChild.clientHeight
-    console.log(height)
-    currentContentContainer.clientHeight = height
+function submitLogin(){
+   let email = document.getElementById('email').value;
+   let password = document.getElementById('password').value;
+
+   if(!email || !password){
+       window.alert("Please fill in both fields.")
+   }else {
+       const loginDTO = new LoginDTO(email, password);
+       sendLoginData(loginDTO);
+   }
 }
 
-
-function fillNavigationElement() {
-    for (const navKey in navElements) {
-        const navLink = document.createElement("label")
-        navLink.innerText = navKey;
-        navLink.addEventListener("click", () => {
-            setCurrentContent(navElements[navKey])
+function sendLoginData(lData) {
+    fetch(`${rootURL}login`, {
+        method: "POST",
+        headers: acceptHeaders(),
+        body: JSON.stringify(lData)
+    })
+        .then(async response => {
+            if (response.ok) {
+                storeToken(await response.json());
+                console.log("login successful" + lData.email);
+                window.location.href = "menu.html";
+            }else {
+                console.log("login failed");
+            }
         })
-        navigation.appendChild(navLink)
-    }
 }
 
-
-declareSubPages()
-fillNavigationElement()
-setCurrentContent(navElements['login'])
+function storeToken(json) {
+    if (json.authorization !== undefined) {
+        localStorage.setItem(JWT_KEY, json.authorization);
+    }
+}

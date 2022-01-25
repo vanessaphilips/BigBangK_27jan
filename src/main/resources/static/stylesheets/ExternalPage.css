@@ -38,6 +38,18 @@ input:focus {
     padding-bottom: 0;
 }
 
+.popup {
+    border-radius: 25px;
+    font-family: calibri, sans-serif;
+    font-size: 18px;
+    background-color:rgba(249, 179, 110);
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+}
+
 footer {
     bottom: 0;
     position: fixed;
