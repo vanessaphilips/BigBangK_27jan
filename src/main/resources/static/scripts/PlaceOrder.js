@@ -12,19 +12,16 @@ class BuySellorderDTO {
     }
 }
 
-let asset = localStorage.getItem(CURRENT_ASSET_KEY);
+let asset = JSON.parse(localStorage.getItem(CURRENT_ASSET_KEY));
 let token = localStorage.getItem(JWT_KEY);
 
-if (asset == null){
-    asset = {
-        name: "Bitcoin",
-        code: "BTC",
-        currentPrice: '3'
-    }
-}
+document.getElementById("coinName").innerHTML = "Trade " + asset.name;
 
-document.getElementById("coinName").innerHTML = asset.name;
 getPrice();
+
+setTimeout(() => {
+    document.getElementById("currentPrice").innerHTML = asset.currentPrice
+}, 100);
 
 document.getElementById('orderType').addEventListener('change', checkOrderType);
 document.getElementById('assetAmount').addEventListener('change', assetToCash);
@@ -68,18 +65,19 @@ function submitTransaction(){
 }
 
 function sendOrder(tData) {
+    //input validatie
     fetch(`${rootURL}placeorder`, {
         method: "POST",
         headers: acceptHeadersWithToken(token),
         body: JSON.stringify(tData)
     })
         .then(async response => {
-            if (response.status == 201) {
+            if (response.status === 201) {
                 console.log(response.body + tData.asset);
-            }else if(response.status == 400) {
+            }else if(response.status === 400) {
                 //error in body (insufficient funds/assets)
                 console.log(response.body);
-            }else if (response.status == 401) {
+            }else if (response.status === 401) {
                 //token expired
                 console.log(response.body);
             }
@@ -99,7 +97,7 @@ function getPrice() {
                 console.log("token expired");
             }
         });
-    document.getElementById("currentPrice").innerHTML = asset.currentPrice;
 }
+
 
 

@@ -13,4 +13,6 @@ public interface IPricedateDAO {
     double getCurrentPriceByAssetCode(String assetCode);
 
     List<PriceDate> getPriceDatesByCodeFromDate(LocalDateTime date, String assetCode);
+
+    Double getPriceDateByCodeOnDate(LocalDateTime date, String assetCode);
 }

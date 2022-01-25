@@ -1,5 +1,6 @@
 package com.example.project_bigbangk.controller;
 
+import com.example.project_bigbangk.model.DTO.GraphicsWalletDTO;
 import com.example.project_bigbangk.model.Wallet;
 import com.example.project_bigbangk.service.Security.AuthenticateService;
 import com.example.project_bigbangk.service.WalletService;
@@ -11,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * @Author Kelly Speelman - de Jonge
@@ -57,10 +60,8 @@ public class WalletController {
         }
         if (authenticateService.authenticate(authorization)){
             try {
-                Wallet wallet = walletService.getWalletHistoryClient(authorization);
-                System.out.println(wallet);
-                String jsonWalletHistory = MAPPER.writeValueAsString(wallet);
-                System.out.println("test");
+                List<GraphicsWalletDTO> historyClient = walletService.getWalletHistoryClient(authorization);
+                String jsonWalletHistory = MAPPER.writeValueAsString(historyClient);
                 return ResponseEntity.ok().body(jsonWalletHistory);
             } catch (JsonProcessingException exception) {
                 logger.error(exception.getMessage());

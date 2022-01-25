@@ -76,13 +76,10 @@ public abstract class AbstractOrder {
 
     @Override
     public String toString() {
-        return "AbstractOrder{" +
-                "orderId=" + orderId +
-                ", asset=" + asset +
-                ", requestedPrice=" + orderLimit +
-                ", numberOfAssets=" + assetAmount +
-                ", date=" + date +
-                '}';
+        return  ", asset=" + getAsset().getCode() +
+                ", limit=" + getOrderLimit() +
+                ", numberOfAssets=" + getAssetAmount() +
+                ", date=" + getDate()+' ';
     }
 
     @Override

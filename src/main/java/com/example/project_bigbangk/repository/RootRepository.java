@@ -273,13 +273,16 @@ private void setCurrentPriceOfAsset(Asset asset){
     }
 
     public void fillWalletWithTransactions(Client client){
-        Wallet clientWallet = client.getWallet();
-        clientWallet.setTransaction(orderDAO.findAllTransactionsByIban(clientWallet.getIban()));
-        for (Transaction transaction:clientWallet.getTransaction()) {
-            transaction.setBuyerWallet(walletDAO.FindBuyerWalletByOrderId((int) transaction.getOrderId()));
-            transaction.setSellerWallet(walletDAO.FindSellerWalletByOrderId((int) transaction.getOrderId()));
-            transaction.setAsset(assetDAO.findAssetByOrderId((int) transaction.getOrderId()));
+        List<Transaction> transactions = orderDAO.findAllTransactionsByIban(client.getWallet().getIban());
+
+        for (Transaction transaction:transactions) {
+            int orderId = (int) transaction.getOrderId();
+            transaction.setAsset(assetDAO.findAssetByOrderId(orderId));
+            transaction.setSellerWallet(walletDAO.FindSellerWalletByOrderId(orderId));
+            transaction.setBuyerWallet(walletDAO.FindBuyerWalletByOrderId(orderId));
         }
+
+        client.getWallet().setTransaction(transactions);
     }
 
     //ORDER > LIMIT_BUY

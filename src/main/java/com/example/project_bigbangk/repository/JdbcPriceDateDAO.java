@@ -91,6 +91,23 @@ public class JdbcPriceDateDAO implements IPricedateDAO {
         return priceDates;
     }
 
+    @Override
+    public Double getPriceDateByCodeOnDate(LocalDateTime date, String assetCode) {
+        String sql = "SELECT * FROM pricehistory where datetime > ? and datetime < ? and code = ?;";
+        List<PriceDate> priceDates = null;
+        LocalDateTime eerder = date.minusMinutes(2).minusSeconds(6);
+        LocalDateTime later = date.plusMinutes(2).plusSeconds(5);
+        try {
+            priceDates = jdbcTemplate.query(sql, new PriceDateRowMapper(), eerder, later, assetCode);
+            if (priceDates.size() == 0) {
+                priceDates = null;
+            }
+        } catch (DataAccessException dataAccessException) {
+            logger.info(dataAccessException.getMessage());
+        }
+        return priceDates.get(0).getPrice();
+    }
+
     private class PriceDateRowMapper implements RowMapper<PriceDate> {
         @Override
         public PriceDate mapRow(ResultSet resultSet, int rowNumber) throws SQLException {
