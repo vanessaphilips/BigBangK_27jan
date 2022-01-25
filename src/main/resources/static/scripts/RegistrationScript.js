@@ -82,7 +82,7 @@ function checkAddress(){
                 'Authorization': 'Bearer 9565619a-9760-47d8-8f6d-e789d63b60ca',
             },
         })
-            .then(response => response.json())//kan hier ook checken wat de response is.
+            .then(response => response.json())
             .then(json => {
                 processAddress(json)
             })
