@@ -8,17 +8,19 @@ import com.example.project_bigbangk.model.Orders.Limit_Buy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class OrderMatch {
+public class MatchedOrder {
 
-    private final Logger logger = LoggerFactory.getLogger(OrderMatch.class);
+    private final Logger logger = LoggerFactory.getLogger(MatchedOrder.class);
 
 
     private Limit_Buy limit_buy;
     private AbstractOrder limitSell;
 
-    public OrderMatch() {
+    public MatchedOrder(Limit_Buy limit_buy, AbstractOrder limitSell) {
         super();
-        logger.info("New OrderMatch");
+        this.limit_buy = limit_buy;
+        this.limitSell = limitSell;
+        logger.info("New MatchedOrder");
     }
 
     public Limit_Buy getLimit_buy() {
@@ -37,4 +39,11 @@ public class OrderMatch {
         this.limitSell = limitSell;
     }
 
+    @Override
+    public String toString() {
+        return "MatchedOrder{" +
+                "limit_buy=" + limit_buy +
+                ", limitSell=" + limitSell +
+                '}';
+    }
 }

@@ -5,6 +5,7 @@ package com.example.project_bigbangk.service;
 
 import com.example.project_bigbangk.BigBangkApplicatie;
 import com.example.project_bigbangk.model.Bank;
+import com.example.project_bigbangk.model.MatchedOrder;
 import com.example.project_bigbangk.model.Orders.*;
 import com.example.project_bigbangk.model.Wallet;
 import com.example.project_bigbangk.repository.RootRepository;
@@ -33,12 +34,13 @@ import java.util.stream.Collectors;
  * als currentPrice onder limit dan verkopen
  * als er een match is met een LimitBuy dan die voorrang
  * anders verkopen aan de bank
- *
+ * <p>
  * Trnasaction:
  * Als een tranasaction met de klant is wordt de helft van de fee opgeslagen.
  * Als een transaction met de bank is word de hele fee opgeslagen
+ *
  * @author Pieter jan bleichrodt
- * */
+ */
 
 @Service
 public class OrderMatchingService implements IObserver {
@@ -73,18 +75,31 @@ public class OrderMatchingService implements IObserver {
         List<AbstractOrder> stopLossSells = rootRepository.getAllStopLossSells().stream().map(lso -> (AbstractOrder) lso).collect(Collectors.toList());
         List<Limit_Buy> limit_buys = rootRepository.getAllLimitBuy();
         limit_buys = sortByDateReversed(limit_buys);
-
+        System.out.println(limit_buys);
         validateOrders(limitSells, limit_buys, stopLossSells);
         stopLossSells = filterTriggeredStopLoss(stopLossSells);
         limitSells.addAll(stopLossSells);
 
-        Map<Limit_Buy, List<AbstractOrder>> matchingOrders = checkForMatchingOrders(limit_buys, limitSells);
-        List<Transaction> transactions = createTransActionsFromAllMatches(matchingOrders);
+        List<MatchedOrder> matchingOrders = checkForMatchingOrders(limit_buys, limitSells);
+        List<Transaction> transactions = createTransActionsFromMatches(matchingOrders);
         updateOrders(matchingOrders);
+
+        updateLimitSells(stopLossSells);
         transactions.addAll(matchStopLossWithBank(stopLossSells));
-        updateLimitSellsAndStopLoss(stopLossSells);
+        updateLimitSells(stopLossSells);
         procesTransactions(transactions);
         logger.info(String.format("Order processed, there where %s matches", transactions.size()));
+    }
+
+
+    private void updateLimitSells(List<AbstractOrder> stopLossSells) {
+        List<AbstractOrder> stopLossToDelete = new ArrayList<>();
+        for (AbstractOrder abstractOrder : stopLossSells) {
+            if(updateLimitSell(abstractOrder)){
+                stopLossToDelete.add(abstractOrder);
+            }
+        }
+        stopLossSells.removeAll(stopLossToDelete);
     }
 
     private List<Transaction> matchStopLossWithBank(List<AbstractOrder> stopLossSells) {
@@ -161,20 +176,21 @@ public class OrderMatchingService implements IObserver {
         allLimit_Sells.removeAll(inValidOrders);
     }
 
-    private Map<Limit_Buy, List<AbstractOrder>> checkForMatchingOrders
-            (List<Limit_Buy> allLimit_BuyOrders, List<AbstractOrder> allLimit_SellOrders) {
-        Map<Limit_Buy, List<AbstractOrder>> matchesByLimitBuy = new TreeMap<>(Comparator.comparing(Limit_Buy::getDate));
+    private List<MatchedOrder> checkForMatchingOrders(List<Limit_Buy> allLimit_BuyOrders, List<AbstractOrder> allLimit_SellOrders) {
+        List<MatchedOrder> matchedOrders = new ArrayList<>();
         for (Limit_Buy limit_buy : allLimit_BuyOrders) {
-            List<AbstractOrder> matches = allLimit_SellOrders.stream()
+            List<AbstractOrder> matchingSells = allLimit_SellOrders.stream()
                     .filter(lso -> limit_buy.getOrderLimit() >= lso.getOrderLimit()
                             && limit_buy.getAsset().equals(lso.getAsset()) && !limit_buy.getBuyer().equals(getWallet(lso)))
                     .sorted(new lowestPriceThenOldest())
                     .collect(Collectors.toList());
-            if (matches.size() > 0) {
-                matchesByLimitBuy.put(limit_buy, matches);
+            if (matchingSells.size() > 0) {
+                for (AbstractOrder abstractOrder : matchingSells)
+                    matchedOrders.add(new MatchedOrder(limit_buy, abstractOrder));
             }
         }
-        return matchesByLimitBuy;
+        matchedOrders.sort(new lowestPriceThenOldest2());
+        return matchedOrders;
     }
 
     private Wallet getWallet(AbstractOrder order) {
@@ -193,70 +209,74 @@ public class OrderMatchingService implements IObserver {
                 .collect(Collectors.toList());
     }
 
-    private List<Transaction> createTransActionsFromAllMatches(Map<Limit_Buy, List<AbstractOrder>> matchedOnLimitBuy) {
+    private List<Transaction> createTransActionsFromMatches(List<MatchedOrder> matchedOrders) {
         List<Transaction> transactions = new ArrayList<>();
-        for (Limit_Buy limit_buy : matchedOnLimitBuy.keySet()) {
-            List<AbstractOrder> matchedLimitSells = matchedOnLimitBuy.get(limit_buy);
-            transactions.addAll(createTransActionsFromKeyValue(limit_buy, matchedLimitSells));
+        for (MatchedOrder matchedOrder : matchedOrders) {
+            if (matchedOrder.getLimit_buy().getAssetAmount() > 0 && matchedOrder.getLimitSell().getAssetAmount() > 0) {
+                transactions.add(createTransactionFromMatch(matchedOrder));
+            }
         }
         return transactions;
     }
 
-    private List<Transaction> createTransActionsFromKeyValue(Limit_Buy limit_buy, List<AbstractOrder> matchedLimitSells) {
-        int indexLimitSell = 0;
-        List<Transaction> transactions = new ArrayList<>();
-        while (limit_buy.getAssetAmount() > 0 && indexLimitSell < matchedLimitSells.size()) {
-            AbstractOrder limit_sellMatch = matchedLimitSells.get(indexLimitSell);
-            transactions.add(createTransactionFromMatch(limit_buy, limit_sellMatch));
-            indexLimitSell++;
-        }
-        return transactions;
-    }
-
-    private Transaction createTransactionFromMatch(Limit_Buy limit_buy, AbstractOrder limit_sellMatch) {
-        double thisTransactionAssetAmount = limit_buy.getAssetAmount() - limit_sellMatch.getAssetAmount() < 0 ? limit_buy.getAssetAmount() : limit_sellMatch.getAssetAmount();
-        double priceExcludingFee = thisTransactionAssetAmount * limit_sellMatch.getOrderLimit();
-        double transActionfee = thisTransactionAssetAmount * limit_sellMatch.getOrderLimit() * bigBangk.getFeePercentage() / 2;
+    private Transaction createTransactionFromMatch(MatchedOrder matchedOrder) {
+        Limit_Buy limit_buy = matchedOrder.getLimit_buy();
+        AbstractOrder limitSell = matchedOrder.getLimitSell();
+        double thisTransactionAssetAmount = calculateTransActionAssetAmount(matchedOrder);
+        double priceExcludingFee = thisTransactionAssetAmount * limitSell.getOrderLimit();
+        double transActionfee = thisTransactionAssetAmount * limitSell.getOrderLimit() * bigBangk.getFeePercentage() / 2;
         limit_buy.setAssetAmount(limit_buy.getAssetAmount() - thisTransactionAssetAmount);
-        limit_sellMatch.setAssetAmount(limit_sellMatch.getAssetAmount() - thisTransactionAssetAmount);
+        limitSell.setAssetAmount(limitSell.getAssetAmount() - thisTransactionAssetAmount);
         return new Transaction(limit_buy.getAsset(),
                 priceExcludingFee,
                 thisTransactionAssetAmount,
-                LocalDateTime.now(), transActionfee, limit_buy.getBuyer(), getWallet(limit_sellMatch));
+                LocalDateTime.now(), transActionfee, limit_buy.getBuyer(), getWallet(limitSell));
     }
 
-    private Map<Limit_Buy, List<AbstractOrder>> updateOrders(Map<Limit_Buy, List<AbstractOrder>> matchedOnLimitBuy) {
-        List<Limit_Buy> limitBuyToRemove = new ArrayList<>();
-
-        for (Limit_Buy limit_buy : matchedOnLimitBuy.keySet()) {
-            if (limit_buy.getAssetAmount() == 0) {
-                rootRepository.deleteOrderByID(limit_buy.getOrderId());
-                limitBuyToRemove.add(limit_buy);
-            } else {
-                rootRepository.updateLimitBuy(limit_buy);
-
-            }
-            updateLimitSellsAndStopLoss(matchedOnLimitBuy.get(limit_buy));
+    private double calculateTransActionAssetAmount(MatchedOrder matchedOrder) {
+        if (matchedOrder.getLimit_buy().getAssetAmount() - matchedOrder.getLimitSell().getAssetAmount() < 0) {
+            return matchedOrder.getLimit_buy().getAssetAmount();
+        } else {
+            return matchedOrder.getLimitSell().getAssetAmount();
         }
-        limitBuyToRemove.forEach(matchedOnLimitBuy.keySet()::remove);
-        return matchedOnLimitBuy;
     }
 
-    private void updateLimitSellsAndStopLoss(List<AbstractOrder> limitSells) {
-        List<AbstractOrder> limitSellsToRemove = new ArrayList<>();
-        for (AbstractOrder limit_sell : limitSells) {
-            if (limit_sell.getAssetAmount() == 0) {
-                rootRepository.deleteOrderByID(limit_sell.getOrderId());
-                limitSellsToRemove.add(limit_sell);
-            } else {
-                if (limit_sell instanceof Limit_Sell) {
-                    rootRepository.updateLimitSell((Limit_Sell) limit_sell);
-                } else {
-                    rootRepository.updateStopLoss((Stoploss_Sell) limit_sell);
-                }
+    private List<MatchedOrder> updateOrders(List<MatchedOrder> matchedOrders) {
+        Set<MatchedOrder> matchedOrdersToRemove = new HashSet<>();
+        for (MatchedOrder matchedOrder : matchedOrders) {
+            if (updateLimitBuy(matchedOrder.getLimit_buy())) {
+                matchedOrdersToRemove.add(matchedOrder);
+            }
+            if (updateLimitSell(matchedOrder.getLimitSell())) {
+                matchedOrdersToRemove.add(matchedOrder);
             }
         }
-        limitSells.removeAll(limitSellsToRemove);
+        matchedOrders.removeAll(matchedOrdersToRemove);
+        return matchedOrders;
+    }
+
+    private boolean updateLimitBuy(Limit_Buy limit_buy) {
+        if (limit_buy.getAssetAmount() == 0) {
+            rootRepository.deleteOrderByID(limit_buy.getOrderId());
+            return true;
+        } else {
+            rootRepository.updateLimitBuy(limit_buy);
+            return false;
+        }
+    }
+
+    private boolean updateLimitSell(AbstractOrder limitSell) {
+        if (limitSell.getAssetAmount() == 0) {
+            rootRepository.deleteOrderByID(limitSell.getOrderId());
+            return true;
+        } else {
+            if (limitSell instanceof Limit_Sell) {
+                rootRepository.updateLimitSell((Limit_Sell) limitSell);
+            } else {
+                rootRepository.updateStopLoss((Stoploss_Sell) limitSell);
+            }
+        }
+        return false;
     }
 
 
@@ -265,6 +285,23 @@ public class OrderMatchingService implements IObserver {
         public int compare(AbstractOrder o1, AbstractOrder o2) {
             return (o1.getOrderLimit() - o2.getOrderLimit()) == 0 ? o1.getDate().compareTo(o2.getDate()) :
                     (o1.getOrderLimit() - o2.getOrderLimit()) > 0 ? 1 : -1;
+        }
+    }
+
+    private static class lowestPriceThenOldest2 implements Comparator<MatchedOrder> {
+        @Override
+        public int compare(MatchedOrder o1, MatchedOrder o2) {
+            double compare = o1.getLimit_buy().getDate().compareTo(o2.getLimit_buy().getDate());
+            if (compare == 0) {
+                compare = o1.getLimitSell().getOrderLimit() - o2.getLimitSell().getOrderLimit();
+                if (compare == 0) {
+                    return o1.getLimitSell().getDate().compareTo(o2.getLimitSell().getDate());
+                } else {
+                    return compare > 0 ? 1 : -1;
+                }
+            } else {
+                return compare > 0 ? 1 : -1;
+            }
         }
     }
 }

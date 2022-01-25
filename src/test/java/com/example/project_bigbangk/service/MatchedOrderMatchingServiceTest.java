@@ -3,11 +3,8 @@
 package com.example.project_bigbangk.service;
 
 import com.example.project_bigbangk.BigBangkApplicatie;
-import com.example.project_bigbangk.model.Asset;
-import com.example.project_bigbangk.model.AssetCode_Name;
-import com.example.project_bigbangk.model.Bank;
+import com.example.project_bigbangk.model.*;
 import com.example.project_bigbangk.model.Orders.*;
-import com.example.project_bigbangk.model.Wallet;
 import com.example.project_bigbangk.repository.RootRepository;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -29,11 +26,12 @@ import javax.annotation.Resource;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @SpringBootTest
 //@DirtiesContext(classMode= DirtiesContext.ClassMode.)
 
-class OrderMatchingServiceTest {
+class MatchedOrderMatchingServiceTest {
     @MockBean
     RootRepository rootRepository;
 
@@ -90,32 +88,61 @@ class OrderMatchingServiceTest {
 
     @Test
     void checkForMatchingOrders() {
-        List<Limit_Buy> expectedLBuys = new ArrayList<>(List.of(limit_buyArray[3], limit_buyArray[1], limit_buyArray[0]));
+        List<Limit_Buy> expectedLBuys = fillExpectedBuys();
         List<AbstractOrder> LimitSellListTest = new ArrayList<>(List.of(limit_sellArray));
-        LimitSellListTest.addAll(ReflectionTestUtils.invokeMethod(orderMatchingService, "filterTriggeredStopLoss", new ArrayList<>(List.of(stoploss_sellArray))));
-        Map<Limit_Buy, List<AbstractOrder>> matchedOnLimitBuy = ReflectionTestUtils.invokeMethod(orderMatchingService,
+        List<AbstractOrder> stopLossSells = new ArrayList<>(List.of(stoploss_sellArray));
+        stopLossSells = ReflectionTestUtils.invokeMethod(orderMatchingService, "filterTriggeredStopLoss",stopLossSells);
+        assertNotNull(stopLossSells);
+        LimitSellListTest.addAll(stopLossSells);
+        List<MatchedOrder> matchedOrders = ReflectionTestUtils.invokeMethod(orderMatchingService,
                 "checkForMatchingOrders",
                 new ArrayList<>(List.of(limit_buyArray)), LimitSellListTest);
-        assertThat(matchedOnLimitBuy).isNotNull();
-        for (int i = 0; i < matchedOnLimitBuy.keySet().size(); i++) {
-            Limit_Buy actual = new ArrayList<>(matchedOnLimitBuy.keySet()).get(i);
+        assertThat(matchedOrders).isNotNull().size().isEqualTo(13);
+
+        for (MatchedOrder matchedOrder : matchedOrders) {
+            System.out.println(matchedOrder);
+        }
+        for (int i = 0; i < expectedLBuys.size(); i++) {
+            Limit_Buy actual = matchedOrders.get(i).getLimit_buy();
             Limit_Buy expectedLBuy = expectedLBuys.get(i);
             assertEquals(actual, expectedLBuy);
         }
-        assertTrue(matchedOnLimitBuy.keySet().containsAll(expectedLBuys));
+        assertTrue(matchedOrders.stream().map(MatchedOrder::getLimit_buy).collect(Collectors.toList()).containsAll(expectedLBuys));
         System.out.println(limit_buyArray[2].getOrderLimit());
-        Limit_Buy expectedLBuy = limit_buyArray[2];
-        //assertThat(matchedOnLimitBuy).doesNotContainKey(expectedLBuy) werk niet. Geen idee waarom.
-        assertNull(matchedOnLimitBuy.keySet().stream().filter(k -> k.equals(expectedLBuy)).findFirst().orElse(null));
-        List<AbstractOrder> limit_sellsMatched = matchedOnLimitBuy.get(limit_buyArray[0]);
-        List<AbstractOrder> expectedLSells = new ArrayList<>(List.of(limit_sellArray[4], limit_sellArray[3], limit_sellArray[5], limit_sellArray[0], limit_sellArray[6], stoploss_sellArray[1]));
-        for (int i = 0; i < limit_sellsMatched.size(); i++) {
-            AbstractOrder actual = limit_sellsMatched.get(i);
+        Limit_Buy notExpectedLBuy = limit_buyArray[2];
+        assertThat(matchedOrders).noneMatch(mo -> mo.getLimit_buy().equals(notExpectedLBuy));
+        //assertNull(matchedOrders.keySet().stream().filter(k -> k.equals(expectedLBuy)).findFirst().orElse(null));
+
+        List<AbstractOrder> expectedLSells = fillExpectedSells();
+        for (int i = 0; i < matchedOrders.size(); i++) {
+            AbstractOrder actual = matchedOrders.get(i).getLimitSell();
             AbstractOrder expectedLSell = expectedLSells.get(i);
             assertEquals(expectedLSell, actual);
         }
-        assertTrue(matchedOnLimitBuy.get(limit_buyArray[0]).containsAll(matchedOnLimitBuy.get(limit_buyArray[1])));
-        assertEquals(1, matchedOnLimitBuy.get(limit_buyArray[3]).size());
+        assertTrue(matchedOrders.stream().map(MatchedOrder::getLimitSell).collect(Collectors.toList()).containsAll(expectedLSells));
+        assertEquals(0, matchedOrders.stream().filter(mo -> mo.getLimit_buy().equals(limit_buyArray[2])).count());
+    }
+
+    private List<AbstractOrder> fillExpectedSells() {
+        List<AbstractOrder> expectedLSells = new ArrayList<>();
+        expectedLSells.add(limit_sellArray[2]);
+        expectedLSells.addAll(List.of(limit_sellArray[4], limit_sellArray[3], limit_sellArray[5], limit_sellArray[0], limit_sellArray[6], stoploss_sellArray[1]));
+        expectedLSells.addAll(List.of(limit_sellArray[4], limit_sellArray[3], limit_sellArray[5], limit_sellArray[0], limit_sellArray[6], stoploss_sellArray[1]));
+
+        return expectedLSells;
+    }
+
+    private List<Limit_Buy> fillExpectedBuys() {
+        List<Limit_Buy> expectedBuys = new ArrayList<>();
+        expectedBuys.add(limit_buyArray[3]);
+
+        for (int i = 0; i < 6; i++) {
+            expectedBuys.add(limit_buyArray[1]);
+        }
+        for (int i = 0; i < 6; i++) {
+            expectedBuys.add(limit_buyArray[0]);
+        }
+        return expectedBuys;
     }
 
     @Test
@@ -139,10 +166,10 @@ class OrderMatchingServiceTest {
 
     @Test
     void createTransActionsFromMatches() {
-        Map<Limit_Buy, List<AbstractOrder>> matchedOnLimitBuy = ReflectionTestUtils.invokeMethod(orderMatchingService,
+        List<MatchedOrder> matchedOrders = ReflectionTestUtils.invokeMethod(orderMatchingService,
                 "checkForMatchingOrders",
                 new ArrayList<>(List.of(limit_buyArray)), new ArrayList<>(List.of(limit_sellArray)));
-        List<Transaction> transActions = ReflectionTestUtils.invokeMethod(orderMatchingService, "createTransActionsFromAllMatches", matchedOnLimitBuy);
+        List<Transaction> transActions = ReflectionTestUtils.invokeMethod(orderMatchingService, "createTransActionsFromMatches", matchedOrders);
         assertThat(transActions).isNotNull().size().isEqualTo(7);
         assertEquals("ADA", transActions.get(0).getAsset().getCode());
         assertEquals(10, transActions.get(0).getAssetAmount());
@@ -155,36 +182,41 @@ class OrderMatchingServiceTest {
 
     @Test
     void updateOrders() {
-        Map<Limit_Buy, List<AbstractOrder>> matchedOnLimitBuy = ReflectionTestUtils.invokeMethod(orderMatchingService,
+        List<MatchedOrder> matchedOrders = ReflectionTestUtils.invokeMethod(orderMatchingService,
                 "checkForMatchingOrders",
                 new ArrayList<>(List.of(limit_buyArray)), new ArrayList<>(List.of(limit_sellArray)));
-        assertThat(matchedOnLimitBuy).isNotNull();
-        printList(matchedOnLimitBuy);
-        ReflectionTestUtils.invokeMethod(orderMatchingService, "createTransActionsFromAllMatches", matchedOnLimitBuy);
-        ReflectionTestUtils.invokeMethod(orderMatchingService, "updateOrders", matchedOnLimitBuy);
-        assertThat(matchedOnLimitBuy).isNotNull().size().isEqualTo(2);
-        assertEquals(0, matchedOnLimitBuy.get(limit_buyArray[0]).size());
-        assertEquals(0, matchedOnLimitBuy.get(limit_buyArray[3]).size());
+        assertThat(matchedOrders).isNotNull();
+        System.out.println(matchedOrders);
+        ReflectionTestUtils.invokeMethod(orderMatchingService, "createTransActionsFromMatches", matchedOrders);
+        System.out.println(matchedOrders);
+        ReflectionTestUtils.invokeMethod(orderMatchingService, "updateOrders", matchedOrders);
+        System.out.println(matchedOrders);
+
+        assertThat(matchedOrders).isNotNull().size().isEqualTo(0);
         assertEquals(0.5, limit_buyArray[0].getAssetAmount());
         assertEquals(1, limit_buyArray[3].getAssetAmount());
     }
+
     @Test
     void updateOrders2() {
         List<AbstractOrder> limitSellList = new ArrayList<>(List.of(limit_sellArray));
-        limitSellList.addAll(ReflectionTestUtils.invokeMethod(orderMatchingService, "filterTriggeredStopLoss", new ArrayList<>(List.of(stoploss_sellArray))));
-        Map<Limit_Buy, List<AbstractOrder>> matchedOnLimitBuy = ReflectionTestUtils.invokeMethod(orderMatchingService,
+        List<AbstractOrder> stopLossList = ReflectionTestUtils.invokeMethod(orderMatchingService
+                , "filterTriggeredStopLoss", new ArrayList<>(List.of(stoploss_sellArray)));
+        assertThat(stopLossList).isNotNull().size().isEqualTo(1);
+        limitSellList.addAll(stopLossList);
+        List<MatchedOrder> matchedOrders = ReflectionTestUtils.invokeMethod(orderMatchingService,
                 "checkForMatchingOrders",
                 new ArrayList<>(List.of(limit_buyArray)), limitSellList);
-        assertThat(matchedOnLimitBuy).isNotNull();
-        printList(matchedOnLimitBuy);
-        ReflectionTestUtils.invokeMethod(orderMatchingService, "createTransActionsFromAllMatches", matchedOnLimitBuy);
-        ReflectionTestUtils.invokeMethod(orderMatchingService, "updateOrders", matchedOnLimitBuy);
-        assertThat(matchedOnLimitBuy).isNotNull().size().isEqualTo(1);
-        assertNull(matchedOnLimitBuy.get(limit_buyArray[0]));
-        assertEquals(0, matchedOnLimitBuy.get(limit_buyArray[3]).size());
+        assertThat(matchedOrders).isNotNull();
+        System.out.println(matchedOrders);
+        ReflectionTestUtils.invokeMethod(orderMatchingService, "createTransActionsFromMatches", matchedOrders);
+        ReflectionTestUtils.invokeMethod(orderMatchingService, "updateOrders", matchedOrders);
+        assertThat(matchedOrders).isNotNull().size().isEqualTo(0);
         assertEquals(0, limit_buyArray[0].getAssetAmount());
         assertEquals(1, limit_buyArray[3].getAssetAmount());
-        assertThat(limitSellList).isNotNull().contains(stoploss_sellArray[1]).size().isEqualTo(1);
+        ReflectionTestUtils.invokeMethod(orderMatchingService, "updateLimitSells", stopLossList);
+        System.out.println(limitSellList);
+        assertThat(stopLossList).isNotNull().contains(stoploss_sellArray[1]).size().isEqualTo(1);
     }
 
     void ThreeTimesThesame(Transaction transaction) {
@@ -195,11 +227,11 @@ class OrderMatchingServiceTest {
 
     @Test
     void createTransActionsFromMatchesEmptyList() {
-        Map<Limit_Buy, List<AbstractOrder>> matchedOnLimitBuy = ReflectionTestUtils.invokeMethod(
+        List<MatchedOrder> matchedOrders = ReflectionTestUtils.invokeMethod(
                 orderMatchingService,
                 "checkForMatchingOrders",
                 new ArrayList<>(), new ArrayList<>());
-        List<Transaction> transActions = ReflectionTestUtils.invokeMethod(orderMatchingService, "createTransActionsFromAllMatches", matchedOnLimitBuy);
+        List<Transaction> transActions = ReflectionTestUtils.invokeMethod(orderMatchingService, "createTransActionsFromMatches", matchedOrders);
         assertThat(transActions).isNotNull().size().isEqualTo(0);
     }
 
@@ -257,15 +289,7 @@ class OrderMatchingServiceTest {
         Mockito.when(abstractOrder.getOrderLimit()).thenReturn(orderLimit);
         Mockito.when(abstractOrder.getAsset()).thenReturn(asset);
         Mockito.when(abstractOrder.getDate()).thenReturn(ldt);
-    }
-
-    private void printList(Map<Limit_Buy, List<AbstractOrder>> matchedOnLimitBuy) {
-        for (Limit_Buy limit_buy : matchedOnLimitBuy.keySet()) {
-            System.out.printf("LimitBuy: assetCode: %s assetAmount: %s orderLimit: %s, date %s\n", limit_buy.getAsset().getCode(), limit_buy.getAssetAmount(), limit_buy.getOrderLimit(), limit_buy.getDate());
-            for (AbstractOrder limit_sell : matchedOnLimitBuy.get(limit_buy)) {
-                System.out.printf("\tLimitSell: assetCode: %s assetAmount: %s orderLimit: %s, date %s\n", limit_sell.getAsset().getCode(), limit_sell.getAssetAmount(), limit_sell.getOrderLimit(), limit_sell.getDate());
-            }
-        }
+        Mockito.when(abstractOrder.toString()).thenCallRealMethod();
     }
 
 
