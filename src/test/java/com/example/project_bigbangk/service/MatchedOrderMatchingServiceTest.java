@@ -126,8 +126,10 @@ class MatchedOrderMatchingServiceTest {
     private List<AbstractOrder> fillExpectedSells() {
         List<AbstractOrder> expectedLSells = new ArrayList<>();
         expectedLSells.add(limit_sellArray[2]);
-        expectedLSells.addAll(List.of(limit_sellArray[4], limit_sellArray[3], limit_sellArray[5], limit_sellArray[0], limit_sellArray[6], stoploss_sellArray[1]));
-        expectedLSells.addAll(List.of(limit_sellArray[4], limit_sellArray[3], limit_sellArray[5], limit_sellArray[0], limit_sellArray[6], stoploss_sellArray[1]));
+        for (int i = 0; i < 2; i++) {
+            expectedLSells.addAll(List.of(limit_sellArray[4], limit_sellArray[3], limit_sellArray[5], limit_sellArray[0], limit_sellArray[6], stoploss_sellArray[1]));
+
+        }
 
         return expectedLSells;
     }
