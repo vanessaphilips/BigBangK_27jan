@@ -55,8 +55,8 @@ public class TransactionService {
         } else if (transaction.getSellerWallet().equals(bankWallet)) {
             transaction.getBuyerWallet().removeFromBalance(transaction.getFee());
         } else {
-            transaction.getSellerWallet().removeFromBalance(transaction.getFee() / 2.0);
-            transaction.getBuyerWallet().removeFromBalance(transaction.getFee() / 2.0);
+            transaction.getSellerWallet().removeFromBalance(transaction.getFee() );
+            transaction.getBuyerWallet().removeFromBalance(transaction.getFee());
         }
         rootRepository.saveTransaction(transaction);
     }
