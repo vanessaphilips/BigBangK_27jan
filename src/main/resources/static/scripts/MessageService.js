@@ -1,7 +1,7 @@
 
 
 
-//creates hidden popup in body
+/**creates a hidden popup in html*/
 let popupDiv = document.createElement('div');
 popupDiv.className = "popup";
 popupDiv.id = "popup"
@@ -17,18 +17,18 @@ popupDiv.appendChild(messageP);
 popupDiv.appendChild(popupButton);
 document.body.appendChild(popupDiv);
 
-//shows window with message
+/**shows popup with message given as parameter*/
 function showWindow(message){
     document.getElementById('popupMessage').innerHTML = message;
     document.getElementById('popupButton').style.display = 'block';
     document.getElementById('popup').style.display = 'block';
 }
 
-//closes window
 function closeWindow(){
     document.getElementById('popup').style.display = 'none';
 }
 
+/**shows popup without a close button that times out automatically based on millisecond parameter*/
 function showTimedWindow(message, milliseconds){
     document.getElementById('popupMessage').innerHTML = message;
     document.getElementById('popupButton').style.display = 'none';

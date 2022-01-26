@@ -18,6 +18,7 @@ class RegistrationDTO{
     }
 }
 
+const postalCodeAPIToken = 'Bearer 9565619a-9760-47d8-8f6d-e789d63b60ca';
 const MIN_AGE = 18;
 const MAX_AGE = 150;
 
@@ -27,12 +28,10 @@ $( document ).ready(function() {
     document.getElementById('postalCode').addEventListener('focusout', checkAddress);
 
     document.getElementById('number').addEventListener('focusout', checkAddress);
-
-    // document.getElementById('submitForm').addEventListener('click', prepareRegistration);
 });
 
 
-//generates minimum and maximum date entry based on current date.
+/**function checks the date to see if a registering client is of age*/
 window.onload = function() {
     let inp = document.getElementById('dateOfBirth');
     let maxday = new Date();
@@ -42,8 +41,6 @@ window.onload = function() {
     inp.max =  dateToString(maxday);
     inp.min =  dateToString(minday);
     inp.defaultValue = dateToString(new Date(2000, 11, 12));
-    // Debug
-    console.log(inp.outerHTML);
 }
 
 function dateToString(date){
@@ -51,6 +48,7 @@ function dateToString(date){
     return date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate();
 }
 
+/**checks if password matches regex and shows a message accordingly*/
 function checkPassword(){
     let regex = new RegExp(/^\S.{8,}$/);
     let password = document.getElementById('passwordReg').value;
@@ -66,20 +64,21 @@ function checkPassword(){
     }
 }
 
+/**checks postal code validity and then uses postal code to fetch adress information through API*/
 function checkAddress(){
     let regex = new RegExp(/^[1-9][0-9]{3}[\s]?[A-Za-z]{2}$/i);
 
     let postcode = document.getElementById('postalCode').value
     let huisnummer = document.getElementById('number').value
 
-    console.log('pc is valide: ' + regex.test(postcode))
+    console.log('valid postalcode: ' + regex.test(postcode))
 
     if(regex.test(postcode) && huisnummer){
         let formData = `postcode=${postcode}&number=${huisnummer}`
 
         fetch("https://postcode.tech/api/v1/postcode?" + formData , {
             headers: {
-                'Authorization': 'Bearer 9565619a-9760-47d8-8f6d-e789d63b60ca',
+                'Authorization': postalCodeAPIToken,
             },
         })
             .then(response => response.json())
@@ -99,13 +98,14 @@ function processAddress(data) {
         document.getElementById('number').classList.add('error');
     } else {
         document.getElementById('postalError').style.display = 'none';
-        document.getElementById('city').value = addressPart.city; // zonder validatie
-        document.getElementById('street').value = addressPart.street; // zonder validatie
+        document.getElementById('city').value = addressPart.city;
+        document.getElementById('street').value = addressPart.street;
         document.getElementById('postalCode').classList.remove('error');
         document.getElementById('number').classList.remove('error');
         }
 }
 
+/**sets up DTO for transfer*/
 function prepareRegistration() {
         let registration = new RegistrationDTO(
         document.getElementById('emailReg').value.trim(),
@@ -137,11 +137,9 @@ function sendRegistrationData(rData){
                 window.location.href = "index.html";
             }, 500);
         } else if (response.status === 409) {
-            console.log("User already in database: " + rData.email)
             response.text().then((message) => {showWindow(message)});
         } else {
             response.text().then((message) => {showWindow(message)});
-            console.log("Registration Failed: Missing or incorrect fields. Check if your BSN is valid.");
         }
     })
 }

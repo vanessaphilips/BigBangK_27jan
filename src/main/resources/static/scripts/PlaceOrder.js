@@ -28,6 +28,8 @@ document.getElementById('assetAmount').addEventListener('change', assetToCash);
 document.getElementById('cashAmount').addEventListener('change', cashToAsset);
 document.getElementById('limit').addEventListener('change', assetToCash);
 
+/**following two functions calculate cash value of trade with amount of asset and the other way around.
+uses the assets current price or the limit set by client*/
 function assetToCash(){
     if(document.getElementById("limit").value > 0){
         document.getElementById('cashAmount').value = document.getElementById('assetAmount').value * document.getElementById("limit").value;
@@ -44,7 +46,7 @@ function cashToAsset(){
     }
 }
 
-
+/**enables or disables the limit field based on selected order type*/
 function checkOrderType() {
     let type = document.getElementById('orderType').value;
 
@@ -59,6 +61,7 @@ function checkOrderType() {
     }
 }
 
+/**sets up DTO for transfer*/
 function submitTransaction(){
     let assetCode = asset.code;
     let orderType = document.getElementById('orderType').value;
@@ -73,8 +76,9 @@ function submitTransaction(){
     }
 }
 
+/**transfers order to backend*/
 function sendOrder(tData) {
-    //input validatie
+
     fetch(`${rootURL}placeorder`, {
         method: "POST",
         headers: acceptHeadersWithToken(token),
@@ -91,6 +95,7 @@ function sendOrder(tData) {
         })
 }
 
+/**fetches the latest price of the asset*/
 function getPrice() {
     fetch(`${rootURL}getcurrentprice`, {
         method: "POST",

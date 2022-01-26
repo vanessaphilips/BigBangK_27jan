@@ -17,8 +17,9 @@ class Wallet {
 
 let token = localStorage.getItem(JWT_KEY);
 
-let wallet = getWallet();
+getWallet();
 
+/**fetches wallet and shows assets owned by client including buttons to trade with said assets*/
 function getWallet(){
     fetch(`${rootURL}wallet`, {
         method: "GET",
@@ -51,7 +52,7 @@ function getWallet(){
         .catch((error) => { console.error('Error', error) });
 }
 
-
+/**sets the currently selected asset variable to the asset the button belongs to and goes to order page*/
 function orderSelectedAsset(assetText){
     let assetCode = assetText.substr(0,assetText.indexOf(' '));
     let assetName = assetText.split('(').pop().split(')')[0];
