@@ -11,19 +11,7 @@ pre {
     font-size: 19px;
 }
 
-input {
-    width: 80%;
-    padding-right: 40px;
-    font-family: Calibri, sans-serif;
-    font-size: 18px;
-}
-
-input:focus {
-    outline: none;
-    border: double rgba(249, 179, 110);
-}
-
-.contentpanel {
+.contentpanelExternal {
     border-radius: 25px;
     font-family: calibri, sans-serif;
     font-size: 18px;
@@ -34,21 +22,6 @@ input:focus {
     transform: translate(-50%);
     margin-top: clamp(10px, 30vh, 800px);
     padding-bottom: 0;
-}
-
-.popup {
-    border-radius: 25px;
-    padding: 30px;
-    size: auto;
-    font-family: calibri, sans-serif;
-    font-size: 18px;
-    background-color:rgba(249, 179, 110);
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 1;
-    text-align: center;
 }
 
 footer {
@@ -71,29 +44,6 @@ h1 {
     color: White;
     margin: 20px;
     horiz-align: center;
-}
-
-button {
-    background-color:rgba(249, 179, 110);
-    border-radius:28px;
-    min-width: 120px;
-    border:1px solid #6b92e0;
-    display: block;
-    cursor:pointer;
-    color:#ffffff;
-    font-size:17px;
-    padding:7px 15px;
-    text-decoration:none;
-    margin: 0 auto;
-}
-
-button:hover {
-    background-color:rgba(255, 199, 130);
-}
-
-.centerButton {
-    display: block;
-    margin: 0 auto;
 }
 
 .centerTitle {
