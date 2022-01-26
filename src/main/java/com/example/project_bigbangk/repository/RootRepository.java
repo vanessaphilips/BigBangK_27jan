@@ -275,7 +275,7 @@ public class RootRepository {
         return orderDAO.updateStopLoss(stoploss_sell);
     }
 
-    public List<Limit_Sell> getAllLimitSell() {
+    public List<Limit_Sell> getAllLimitSells() {
         List<Limit_Sell> limit_sells = orderDAO.getAllLimitSells();
         for (Limit_Sell limit_sell : limit_sells) {
             limit_sell.setSeller(findWalletByTransactionID(limit_sell.getOrderId()));
@@ -289,7 +289,7 @@ public class RootRepository {
      *
      * @return List<Limit_Buy> with all limit_Buy orders
      */
-    public List<Limit_Buy> getAllLimitBuy() {
+    public List<Limit_Buy> getAllLimitBuys() {
         List<Limit_Buy> limit_buys = orderDAO.getAllLimitBuys();
         for (Limit_Buy limit_buy : limit_buys) {
             limit_buy.setBuyer(findWalletByTransactionID(limit_buy.getOrderId()));
@@ -328,10 +328,14 @@ public class RootRepository {
         walletDAO.updateWalletAssets(transaction.getSellerWallet(), transaction.getAsset(), transaction.getSellerWallet().getAssets().get(transaction.getAsset()));
     }
 
+    /**
+     * Deze methode vult niet de currentPrice in Asset
+     * @deprecated use the wallet in Client object
+     * @param client
+     */
 
     public void fillWalletWithTransactions(Client client) {
         List<Transaction> transactions = orderDAO.findAllTransactionsByIban(client.getWallet().getIban());
-
         for (Transaction transaction : transactions) {
             int orderId = (int) transaction.getOrderId();
             transaction.setAsset(assetDAO.findAssetByOrderId(orderId));

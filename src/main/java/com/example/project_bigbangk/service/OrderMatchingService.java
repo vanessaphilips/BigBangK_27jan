@@ -71,9 +71,9 @@ public class OrderMatchingService implements IObserver {
      */
     @Override
     public void update() {
-        List<AbstractOrder> limitSells = rootRepository.getAllLimitSell().stream().map(lso -> (AbstractOrder) lso).collect(Collectors.toList());
+        List<AbstractOrder> limitSells = rootRepository.getAllLimitSells().stream().map(lso -> (AbstractOrder) lso).collect(Collectors.toList());
         List<AbstractOrder> stopLossSells = rootRepository.getAllStopLossSells().stream().map(lso -> (AbstractOrder) lso).collect(Collectors.toList());
-        List<Limit_Buy> limit_buys = rootRepository.getAllLimitBuy();
+        List<Limit_Buy> limit_buys = rootRepository.getAllLimitBuys();
         limit_buys = sortByDateReversed(limit_buys);
         validateOrders(limitSells, limit_buys, stopLossSells);
         stopLossSells = filterTriggeredStopLoss(stopLossSells);

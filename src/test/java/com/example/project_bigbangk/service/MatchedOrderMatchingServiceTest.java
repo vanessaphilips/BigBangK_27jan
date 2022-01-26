@@ -9,7 +9,6 @@ import com.example.project_bigbangk.repository.RootRepository;
 
 import org.junit.jupiter.api.BeforeEach;
 
-import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -56,8 +55,8 @@ class MatchedOrderMatchingServiceTest {
         Asset assetBTC = (createmockedAsset(AssetCode_Name.BTC, 39000));
         Asset assetADA = (createmockedAsset(AssetCode_Name.ADA, 1.07));
         fillOrderArrays(assetBTC, assetADA);
-        Mockito.when(rootRepository.getAllLimitBuy()).thenReturn(new ArrayList<>(List.of(limit_buyArray)));
-        Mockito.when(rootRepository.getAllLimitSell()).thenReturn(new ArrayList<>(List.of(limit_sellArray)));
+        Mockito.when(rootRepository.getAllLimitBuys()).thenReturn(new ArrayList<>(List.of(limit_buyArray)));
+        Mockito.when(rootRepository.getAllLimitSells()).thenReturn(new ArrayList<>(List.of(limit_sellArray)));
         Mockito.when(rootRepository.getAllStopLossSells()).thenReturn(new ArrayList<>(List.of(stoploss_sellArray)));
         Bank bigBangk = Mockito.mock(Bank.class);
         Wallet bankWallet = Mockito.mock(Wallet.class);
