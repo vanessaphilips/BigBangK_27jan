@@ -4,6 +4,8 @@ package com.example.project_bigbangk.model.DTO;
 @Author Philip Beeltje, Studentnummer: 500519452
 */
 
+import com.example.project_bigbangk.model.Asset;
+
 import java.time.LocalDateTime;
 
 public class OrderDTO {
@@ -14,7 +16,23 @@ public class OrderDTO {
     private double limit; //de trigger voor alle orders behalve transacties met bank. Sprint 3 default 0 of -1 bij transacties? (BUY SELL als type)
     private double assetAmount; //hoeveelheid coin of hoeveelheid geld(alleen in het geval dat je van de bank koopt. dan koop je 100€ aan bitcoin ipv 0.0004 bitcoin.
 
+    public Asset getAsset() {
+        return asset;
+    }
 
+    public void setAsset(Asset asset) {
+        this.asset = asset;
+    }
+
+    public WalletOwner getWalletOwner() {
+        return walletOwner;
+    }
+
+    public void setWalletOwner(WalletOwner walletOwner) {
+        this.walletOwner = walletOwner;
+    }
+
+    private Asset asset;
     private WalletOwner walletOwner;
     private int orderID;
     private LocalDateTime dateTime;
@@ -26,11 +44,12 @@ public class OrderDTO {
         this.assetAmount = assetAmount;
     }
 
-    public OrderDTO(String assetCode, String orderType, double limit, double assetAmount, int orderId, WalletOwner walletOwner, LocalDateTime dateTime) {
+    public OrderDTO(String assetCode, String orderType, double limit, double assetAmount, int orderId, WalletOwner walletOwner, LocalDateTime dateTime, Asset asset) {
         this(assetCode, orderType, limit, assetAmount);
         this.orderID = orderId;
         this.walletOwner = walletOwner;
         this.dateTime = dateTime;
+        this.asset = asset;
     }
 
 
@@ -49,6 +68,7 @@ public class OrderDTO {
     public void setDateTime(LocalDateTime dateTime) {
         this.dateTime = dateTime;
     }
+
     public String getAssetCode() {
         return assetCode;
     }
