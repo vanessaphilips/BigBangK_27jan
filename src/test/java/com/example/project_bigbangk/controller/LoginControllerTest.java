@@ -30,6 +30,8 @@ import static org.junit.jupiter.api.Assertions.*;
         "spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration")
 class LoginControllerTest {
     @MockBean
+    OrderOverviewController orderOverviewController;
+    @MockBean
     DeleteOrderController deleteOrderController;
     private MockMvc mockMvc;
     @MockBean
