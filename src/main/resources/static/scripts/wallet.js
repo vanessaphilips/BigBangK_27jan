@@ -63,6 +63,6 @@ function orderSelectedAsset(assetText){
     let assetObject = new Asset(asset);
     localStorage.setItem(CURRENT_ASSET_KEY, JSON.stringify(assetObject));
 
-    window.location.href = "PlaceOrder.html"; //blijft deze in menu?
+    window.location.href = "PlaceOrder.html";
 }
 
