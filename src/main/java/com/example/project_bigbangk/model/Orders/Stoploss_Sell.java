@@ -41,7 +41,7 @@ public class Stoploss_Sell extends AbstractOrder{
     public String toString() {
         return super.toString() +
                 "Stoploss_Sell{" +
-                "sellerWallet=" + seller.getIban() +
+                "sellerWallet=" + getSeller().getIban() +
                 '}';
     }
 }
