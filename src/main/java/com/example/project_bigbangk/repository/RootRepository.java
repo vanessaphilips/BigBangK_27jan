@@ -188,9 +188,10 @@ public class RootRepository {
         List<Limit_Buy> limit_buys = abstractOrders.stream().filter(ao -> ao instanceof Limit_Buy).map(ao -> (Limit_Buy) ao).collect(Collectors.toList());
         List<Limit_Sell> limit_sells = abstractOrders.stream().filter(ao -> ao instanceof Limit_Sell).map(ao -> (Limit_Sell) ao).collect(Collectors.toList());
         List<Stoploss_Sell> stoploss_sells = abstractOrders.stream().filter(ao -> ao instanceof Stoploss_Sell).map(ao -> (Stoploss_Sell) ao).collect(Collectors.toList());
-        limit_buys.forEach(lb -> lb.setBuyer(wallet));
-        limit_sells.forEach(ls -> ls.setSeller(wallet));
-        stoploss_sells.forEach(sl -> sl.setSeller(wallet));
+        Wallet stopInfiniteLoopWallet = walletDAO.findWalletByIban(wallet.getIban());
+        limit_buys.forEach(lb -> lb.setBuyer(stopInfiniteLoopWallet));
+        limit_sells.forEach(ls -> ls.setSeller(stopInfiniteLoopWallet));
+        stoploss_sells.forEach(sl -> sl.setSeller(stopInfiniteLoopWallet));
         wallet.setLimitBuy(limit_buys);
         wallet.setLimitSell(limit_sells);
         wallet.setStoplossSell(stoploss_sells);
