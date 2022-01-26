@@ -27,7 +27,7 @@ import java.util.List;
 import static com.example.project_bigbangk.BigBangkApplicatie.bigBangk;
 
 /**
- * Controller created by Vanessa Philips, 24/01/22
+ * Controller created by Vanessa Philips & Pieter Jan Bleichrodt, 24/01/22
  * Overview for all open orders
  */
 
@@ -114,7 +114,6 @@ public class OrderOverviewController {
                 walletBuyer = WalletOwner.CURRENTCLIENT;
             } else if (transaction.getBuyerWallet().equals(bigBangk.getWallet())) {
                 walletBuyer = WalletOwner.BANK;
-                //Asset asset, double priceExcludingFee, double assetAmount, LocalDateTime dateTime, double fee, WalletOwner seller, WalletOwner buyer
             }
             TransActionDTO transActionDTO = new TransActionDTO(transaction.getAsset(),
                     transaction.getPriceExcludingFee(), transaction.getAssetAmount(),
