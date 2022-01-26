@@ -19,12 +19,15 @@ input::-webkit-inner-spin-button {
     height: 50%;
 }
 
+/*hier padding toegevoegd ivm achtergrond*/
 .assetContainers {
+    border-radius: 25px;
     font-family: Calibri, sans-serif;
     display: flex;
     flex-direction: column;
     background-color: #ffffff;
     max-width:60%;
+    padding-right: 50px;
     height: 800px;
     justify-content: left;
     align-items: self-start;
