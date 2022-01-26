@@ -82,11 +82,11 @@ function sendOrder(tData) {
     })
         .then(async response => {
             if (response.status === 201) {
-                showWindow("Order placed succesfully");
+                response.text().then((message) => {showWindow(message)});
             }else if(response.status === 400) {
-                response.json().then((message) => {showWindow(message)});
+                response.text().then((message) => {showWindow(message)});
             }else if (response.status === 401) {
-                response.json().then((message) => {showWindow(message)});
+                response.text().then((message) => {showWindow(message)});
             }
         })
 }

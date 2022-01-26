@@ -32,10 +32,10 @@ h1 {
 
 .popup {
     border-radius: 25px;
+    padding: 30px;
+    size: auto;
     font-family: calibri, sans-serif;
     font-size: 18px;
-    size: auto;
-    padding: 5%;
     background-color:rgba(249, 179, 110);
     position: fixed;
     top: 50%;
@@ -86,12 +86,13 @@ button {
     border-radius:28px;
     min-width: 120px;
     border:1px solid #6b92e0;
-    display:inline-block;
+    display: block;
     cursor:pointer;
     color:#ffffff;
     font-size:17px;
     padding:7px 15px;
     text-decoration:none;
+    margin: 0 auto;
 }
 
 .smallButton {

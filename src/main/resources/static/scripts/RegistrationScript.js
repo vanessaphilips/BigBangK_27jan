@@ -125,24 +125,22 @@ function prepareRegistration() {
 }
 
 function sendRegistrationData(rData){
-    document.getElementById('emailError').style.display = 'none';
     fetch(`${rootURL}register`, {
         method: "POST",
         headers: acceptHeaders(),
         body: JSON.stringify(rData)
     }).then(response => {
         if (response.status === 201) {
-            console.log("Succesfull registration user: " + rData.email)
-            document.getElementById('registrationPopup').style.display = 'block';
+            console.log("Succesfull registration user: " + rData.email);
+            response.text().then((message) => {showTimedWindow(message, 500)});
             setTimeout(() => {
                 window.location.href = "index.html";
             }, 500);
-
         } else if (response.status === 409) {
             console.log("User already in database: " + rData.email)
-            document.getElementById('emailError').style.display = 'block';
-
+            response.text().then((message) => {showWindow(message)});
         } else {
+            response.text().then((message) => {showWindow(message)});
             console.log("Registration Failed: Missing or incorrect fields. Check if your BSN is valid.");
         }
     })

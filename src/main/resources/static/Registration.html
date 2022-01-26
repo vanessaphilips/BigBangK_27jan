@@ -9,6 +9,7 @@
     <script defer src="scripts/RegistrationScript.js"></script>
     <script defer type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script defer src="scripts/GoogleGraph.js"></script>
+    <script defer src="scripts/MessageService.js"></script>
     <script defer src="scripts/GlobalConstants.js"></script>
     <script defer src="scripts/URLs.js"></script>
     <script defer src="scripts/MarketPlaceClasses.js"></script>
@@ -23,7 +24,7 @@
     <h1>Registration</h1>
     <pre>
     <label for="emailReg">E-mail</label>
-    <input type="email" required="required" id="emailReg" > <div id="emailError" class="errorText" hidden><p>This e-mail is already in use.</p></div>
+    <input type="email" required="required" id="emailReg">
     <label for="passwordReg">Password</label>
     <input type="password" required="required" id="passwordReg"><div id="passwordError" class="errorText" hidden><p>Must be at least 8 characters and can't contain spaces.</p></div><div id="passwordOK" class="errorText" hidden><p>Password OK!</p></div>
 
@@ -60,11 +61,6 @@
 
 </form>
 </div>
-
-<div class="popup" id="registrationPopup" hidden>
-    <h1 id="popupMessage">Registration Succesful!</h1>
-</div>
-
 
 </body>
 </html>

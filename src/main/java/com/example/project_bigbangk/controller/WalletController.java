@@ -6,6 +6,8 @@ import com.example.project_bigbangk.service.Security.AuthenticateService;
 import com.example.project_bigbangk.service.WalletService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JSR310Module;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +45,8 @@ public class WalletController {
         if (authenticateService.authenticate(authorization)){
             try {
                 Wallet wallet = walletService.getWalletClient(authorization);
+                MAPPER.registerModule(new JSR310Module());
+                MAPPER.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
                 String jsonWallet = MAPPER.writeValueAsString(wallet);
                 return ResponseEntity.ok().body(jsonWallet);
             } catch (JsonProcessingException exception) {
