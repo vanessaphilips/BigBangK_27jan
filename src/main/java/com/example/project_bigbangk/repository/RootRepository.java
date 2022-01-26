@@ -164,10 +164,12 @@ public class RootRepository {
 
     public Wallet findWalletByEmail(String email) {
         Wallet wallet = walletDAO.findWalletByEmail(email);
-        fillWalletWithTransactions(wallet);
-        fillOrderListsInWallet(wallet);
-        fillWalletWithAssetsAmount(wallet);
-        return findWalletWithAssetByIban(wallet.getIban());
+        if (wallet != null) {
+            fillWalletWithTransactions(wallet);
+            fillOrderListsInWallet(wallet);
+            fillWalletWithAssetsAmount(wallet);
+        }
+        return wallet;
     }
 
     private void fillWalletWithTransactions(Wallet wallet) {
@@ -200,17 +202,21 @@ public class RootRepository {
 
     public Wallet findWalletbyBankCode(String bankCode) {
         Wallet wallet = walletDAO.findWalletByBankCode(bankCode);
-        fillWalletWithTransactions(wallet);
-        fillOrderListsInWallet(wallet);
-        fillWalletWithAssetsAmount(wallet);
-        return findWalletWithAssetByIban(wallet.getIban());
+        if (wallet != null) {
+            fillWalletWithTransactions(wallet);
+            fillOrderListsInWallet(wallet);
+            fillWalletWithAssetsAmount(wallet);
+        }
+        return wallet;
     }
 
     public Wallet findWalletByIban(String iban) {
         Wallet wallet = walletDAO.findWalletByIban(iban);
-        fillWalletWithTransactions(wallet);
-        fillOrderListsInWallet(wallet);
-        fillWalletWithAssetsAmount(wallet);
+        if (wallet != null) {
+            fillWalletWithTransactions(wallet);
+            fillOrderListsInWallet(wallet);
+            fillWalletWithAssetsAmount(wallet);
+        }
         return wallet;
     }
 
@@ -330,8 +336,9 @@ public class RootRepository {
 
     /**
      * Deze methode vult niet de currentPrice in Asset
-     * @deprecated use the wallet in Client object
+     *
      * @param client
+     * @deprecated use the wallet in Client object
      */
 
     public void fillWalletWithTransactions(Client client) {
