@@ -26,13 +26,22 @@ setTimeout(() => {
 document.getElementById('orderType').addEventListener('change', checkOrderType);
 document.getElementById('assetAmount').addEventListener('change', assetToCash);
 document.getElementById('cashAmount').addEventListener('change', cashToAsset);
+document.getElementById('limit').addEventListener('change', assetToCash);
 
 function assetToCash(){
+    if(document.getElementById("limit").value > 0){
+        document.getElementById('cashAmount').value = document.getElementById('assetAmount').value * document.getElementById("limit").value;
+    }else{
     document.getElementById('cashAmount').value = document.getElementById('assetAmount').value * asset.currentPrice;
+    }
 }
 
 function cashToAsset(){
-    document.getElementById('assetAmount').value = document.getElementById('cashAmount').value / asset.currentPrice;
+    if(document.getElementById("limit").value > 0){
+        document.getElementById('assetAmount').value = document.getElementById('cashAmount').value / document.getElementById("limit").value;
+    }else {
+        document.getElementById('assetAmount').value = document.getElementById('cashAmount').value / asset.currentPrice;
+    }
 }
 
 
@@ -57,7 +66,7 @@ function submitTransaction(){
     let assetAmount = document.getElementById('assetAmount').value;
 
     if(!assetCode || !orderType || !assetAmount){
-        window.alert("Please fill in all fields.")
+        showWindow("Please fill in all fields.");
     }else {
         const buysellorderDTO = new BuySellorderDTO(assetCode, orderType, limit, assetAmount);
         sendOrder(buysellorderDTO);
@@ -73,13 +82,11 @@ function sendOrder(tData) {
     })
         .then(async response => {
             if (response.status === 201) {
-                console.log(response.body + tData.asset);
+                showWindow("Order placed succesfully");
             }else if(response.status === 400) {
-                //error in body (insufficient funds/assets)
-                console.log(response.body);
+                response.json().then((message) => {showWindow(message)});
             }else if (response.status === 401) {
-                //token expired
-                console.log(response.body);
+                response.json().then((message) => {showWindow(message)});
             }
         })
 }
