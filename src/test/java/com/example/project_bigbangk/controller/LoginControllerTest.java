@@ -29,6 +29,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(properties =
         "spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration")
 class LoginControllerTest {
+    @MockBean
+    DeleteOrderController deleteOrderController;
     private MockMvc mockMvc;
     @MockBean
     OrderController orderController;

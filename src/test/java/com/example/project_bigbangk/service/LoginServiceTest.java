@@ -8,6 +8,7 @@ import com.example.project_bigbangk.service.Security.JWTService;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -17,6 +18,8 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class LoginServiceTest {
 
+    @MockBean
+    DeleteOrderService deleteOrderService;
     static ITokenService tokenService = Mockito.mock(JWTService.class);
     static RootRepository rootRepository = Mockito.mock(RootRepository.class);
     static AuthenticateService authenticateService = Mockito.mock(AuthenticateService.class);

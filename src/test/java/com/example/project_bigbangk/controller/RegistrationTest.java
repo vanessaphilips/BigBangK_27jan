@@ -2,6 +2,7 @@ package com.example.project_bigbangk.controller;
 
 import com.example.project_bigbangk.Utilities.ObjectToJsonHelper;
 import com.example.project_bigbangk.model.DTO.RegistrationDTO;
+import com.example.project_bigbangk.service.DeleteOrderService;
 import com.example.project_bigbangk.service.LoginService;
 import com.example.project_bigbangk.service.RegistrationService;
 import com.example.project_bigbangk.service.Security.AuthenticateService;
@@ -22,6 +23,8 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 @TestPropertySource(properties =
         "spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration")
 class RegistrationTest {
+    @MockBean
+    DeleteOrderController deleteOrderController;
     private MockMvc mockMvc;
     @MockBean
     OrderController orderController;
