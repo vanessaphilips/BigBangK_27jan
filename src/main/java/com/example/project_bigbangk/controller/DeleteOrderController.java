@@ -24,9 +24,9 @@ public class DeleteOrderController {
         this.deleteOrderService = deleteOrderService;
     }
 
-    @PostMapping("/deleteorder")
+    @DeleteMapping("/deleteorder/{orderID}")
     @ResponseBody
-    public ResponseEntity deleteOrder(@RequestHeader String authorization, @RequestBody int orderID) {
+    public ResponseEntity deleteOrder(@RequestHeader String authorization, @PathVariable int orderID) {
         if (authenticateService.authenticate(authorization)) {
             if (deleteOrderService.deleteOrder(orderID)){
                 return ResponseEntity.status(200).body("OK");
@@ -36,12 +36,4 @@ public class DeleteOrderController {
         }
         return ResponseEntity.status(401).body("token expired");
     }
-    //stuur orderid naar methode in service (ook service in constructor van controller hierboven^)
-    //in de service moet je op de een of andere manier bij delete order komen, moet dus een delete order methode in orderDAO
-    //en die moet je via de rootrepo aanroepen
-    //en als laatste response entity terugsturen met ok of zoiets
-
-//    A successful response of DELETE requests SHOULD be an HTTP response code 200 (OK) if the response includes an entity describing the status.
-//    The status should be 204 (No Content) if the action has been performed but the response does not include an entity.
-
 }
