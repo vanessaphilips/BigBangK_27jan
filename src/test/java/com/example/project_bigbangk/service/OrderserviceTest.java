@@ -9,6 +9,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.http.ResponseEntity;
+
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -20,21 +22,20 @@ class OrderserviceTest {
     private Orderservice orderservice;
     private RootRepository rootRepository;
 
+    OrderDTO orderDTOBuy = new OrderDTO("VIP", "BUY", 1,500);
+    OrderDTO orderDTOSell = new OrderDTO("CAT", "SELL", 0.5, 750);
+    OrderDTO orderDTOLimit_Buy = new OrderDTO("DOG", "LIMIT_BUY", 0.75, 600);
+    OrderDTO orderDTOLimit_Sell = new OrderDTO("FLY", "LIMIT_SELL", 1, 550);
+    OrderDTO orderDTOStoploss_Sell = new OrderDTO("ICE", "STOPLOSS_SELL", 0.8, 450);
+
     @BeforeEach
     void setUp() {
-
         rootRepository = Mockito.mock(RootRepository.class);
         orderservice = new Orderservice(rootRepository);
     }
 
     @Test
     void handleOrderByTypeOk() {
-        OrderDTO orderDTOBuy = new OrderDTO("VIP", "BUY", 1,500);
-        OrderDTO orderDTOSell = new OrderDTO("CAT", "SELL", 0.5, 750);
-        OrderDTO orderDTOLimit_Buy = new OrderDTO("DOG", "LIMIT_BUY", 0.75, 600);
-        OrderDTO orderDTOLimit_Sell = new OrderDTO("FLY", "LIMIT_SELL", 1, 550);
-        OrderDTO orderDTOStoploss_Sell = new OrderDTO("ICE", "STOPLOSS_SELL", 0.8, 450);
-
         Wallet bankWallet = createMockedWalletSufficient();
         Mockito.when(rootRepository.findWalletbyBankCode(Mockito.anyString())).thenReturn(bankWallet);
         Asset asset = Mockito.mock(Asset.class);
@@ -61,18 +62,15 @@ class OrderserviceTest {
 
         actual = orderservice.handleOrderByType(orderDTOStoploss_Sell, client);
         expected = ResponseEntity.status(201).body(Orderservice.Messages.WaitingStoplossSell.getBody());
-        assertEquals(expected, actual);
+        assertThat(expected).isEqualTo(actual);
 
+        actual = orderservice.handleOrderByType(orderDTOStoploss_Sell, client);
+        expected = ResponseEntity.status(400).body(Orderservice.Messages.AssetClient.getBody());
+        assertNotEquals(expected, actual);
     }
 
     @Test
     void handleOrderByTypeNok() {
-        OrderDTO orderDTOBuy = new OrderDTO("VIP", "BUY", 1,500);
-        OrderDTO orderDTOSell = new OrderDTO("CAT", "SELL", 0.5, 750);
-        OrderDTO orderDTOLimit_Buy = new OrderDTO("DOG", "LIMIT_BUY", 0.75, 600);
-        OrderDTO orderDTOLimit_Sell = new OrderDTO("FLY", "LIMIT_SELL", 1, 550);
-        OrderDTO orderDTOStoploss_Sell = new OrderDTO("ICE", "STOPLOSS_SELL", 0.8, 450);
-
         Wallet bankWallet = createMockedWalletNotSufficient();
         Mockito.when(rootRepository.findWalletbyBankCode(Mockito.anyString())).thenReturn(bankWallet);
         Asset asset = Mockito.mock(Asset.class);
@@ -89,18 +87,21 @@ class OrderserviceTest {
         expected = ResponseEntity.status(400).body(Orderservice.Messages.AssetClient.getBody());
         assertEquals(expected, actual);
 
-//        actual = orderservice.handleOrderByType(orderDTOLimit_Buy, client);
-//        expected = ResponseEntity.status(400).body(Orderservice.Messages.FundClient.getBody());
-//        assertEquals(expected,actual);
+        actual = orderservice.handleOrderByType(orderDTOLimit_Buy, client);
+        expected = ResponseEntity.status(400).body(Orderservice.Messages.FundClient.getBody());
+        assertEquals(expected,actual);
 
-//        actual = orderservice.handleOrderByType(orderDTOLimit_Sell, client);
-//        expected = ResponseEntity.status(400).body(Orderservice.Messages.AssetClient.getBody());
-//        assertEquals(expected, actual);
+        actual = orderservice.handleOrderByType(orderDTOLimit_Sell, client);
+        expected = ResponseEntity.status(400).body(Orderservice.Messages.AssetClient.getBody());
+        assertEquals(expected, actual);
 
-//        actual = orderservice.handleOrderByType(orderDTOStoploss_Sell, client);
-//        expected = ResponseEntity.status(400).body(Orderservice.Messages.AssetClient.getBody());
-//        assertEquals(expected, actual);
+        actual = orderservice.handleOrderByType(orderDTOStoploss_Sell, client);
+        expected = ResponseEntity.status(400).body(Orderservice.Messages.AssetClient.getBody());
+        assertThat(expected).isEqualTo(actual);
 
+        actual = orderservice.handleOrderByType(orderDTOLimit_Sell, client);
+        expected = ResponseEntity.status(201).body(Orderservice.Messages.WaitingLimitSell.getBody());
+        assertNotEquals(expected, actual);
     }
 
         private Wallet createMockedWalletSufficient(){

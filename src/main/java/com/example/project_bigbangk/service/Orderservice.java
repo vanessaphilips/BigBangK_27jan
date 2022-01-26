@@ -44,34 +44,35 @@ public class Orderservice {
         Messages(String envBody) {
             this.body = envBody;
         }
+
         public String getBody() {
             return body;
         }
     }
 
-    public ResponseEntity handleOrderByType(OrderDTO order, Client client){
+    public ResponseEntity handleOrderByType(OrderDTO order, Client client) {
         clientWallet = client.getWallet();
         bankWallet = rootRepository.findWalletbyBankCode(BigBangkApplicatie.bigBangk.getCode());
         currentAssetPrice = rootRepository.getCurrentPriceByAssetCode(order.getAssetCode());
         asset = rootRepository.findAssetByCode(order.getAssetCode());
 
-        if(order.getOrderType().equals(TransactionType.BUY.toString())){
+        if (order.getOrderType().equals(TransactionType.BUY.toString())) {
             checkBuyOrder(order);
             return response;
         }
-        if(order.getOrderType().equals(TransactionType.SELL.toString())){
+        if (order.getOrderType().equals(TransactionType.SELL.toString())) {
             checkSellOrder(order);
             return response;
         }
-        if(order.getOrderType().equals(TransactionType.LIMIT_BUY.toString())) {
+        if (order.getOrderType().equals(TransactionType.LIMIT_BUY.toString())) {
             checkLbuyOrder(order);
             return response;
         }
-        if(order.getOrderType().equals(TransactionType.LIMIT_SELL.toString())) {
+        if (order.getOrderType().equals(TransactionType.LIMIT_SELL.toString())) {
             checkLsellOrder(order);
             return response;
         }
-        if(order.getOrderType().equals(TransactionType.STOPLOSS_SELL.toString())) {
+        if (order.getOrderType().equals(TransactionType.STOPLOSS_SELL.toString())) {
             checkSlossOrder(order);
             return response;
         }
@@ -79,23 +80,23 @@ public class Orderservice {
         return response;
     }
 
-    public ResponseEntity getResponse(){
+    public ResponseEntity getResponse() {
         return response;
     }
 
-    public void checkBuyOrder(OrderDTO order){
+    public void checkBuyOrder(OrderDTO order) {
         double priceExcludingFee = order.getAssetAmount() * currentAssetPrice;
         double orderFee = priceExcludingFee * BigBangkApplicatie.bigBangk.getFeePercentage();
         double totalCost = priceExcludingFee + orderFee;
 
-        if(clientWallet.sufficientBalance(totalCost)){
-            if(bankWallet.sufficientAsset(asset, order.getAssetAmount())){
+        if (clientWallet.sufficientBalance(totalCost)) {
+            if (bankWallet.sufficientAsset(asset, order.getAssetAmount())) {
                 executeBuyOrder(order, priceExcludingFee, orderFee, totalCost, clientWallet, bankWallet);
                 response = ResponseEntity.status(201).body(Messages.SuccessBuy.getBody());
-            } else{
+            } else {
                 response = ResponseEntity.status(400).body(Messages.AssetBank.getBody());
             }
-         } else {
+        } else {
             response = ResponseEntity.status(400).body(Messages.FundClient.getBody());
         }
     }
@@ -107,20 +108,20 @@ public class Orderservice {
         bankWallet.addToBalance(totalCost);
         bankWallet.removeFromAsset(asset, order.getAssetAmount());
 
-        Transaction transaction = new Transaction(asset, priceExcludingFee , order.getAssetAmount(), LocalDateTime.now(), orderFee, clientWallet, bankWallet);
+        Transaction transaction = new Transaction(asset, priceExcludingFee, order.getAssetAmount(), LocalDateTime.now(), orderFee, clientWallet, bankWallet);
         rootRepository.saveTransaction(transaction);
     }
 
-    public void checkSellOrder(OrderDTO order){
+    public void checkSellOrder(OrderDTO order) {
         double sellOrderValue = order.getAssetAmount() * currentAssetPrice;
         double orderFee = sellOrderValue * BigBangkApplicatie.bigBangk.getFeePercentage();
         double totalPayout = sellOrderValue - orderFee;
 
-        if(bankWallet.sufficientBalance(totalPayout)) {
+        if (bankWallet.sufficientBalance(totalPayout)) {
             if (clientWallet.sufficientAsset(asset, order.getAssetAmount())) {
                 executeSellOrder(order, sellOrderValue, orderFee, totalPayout, bankWallet, clientWallet);
                 response = ResponseEntity.status(201).body(Messages.SuccessSell.getBody());
-            } else{
+            } else {
                 response = ResponseEntity.status(400).body(Messages.FundBank.getBody());
             }
         } else {
@@ -143,55 +144,51 @@ public class Orderservice {
 
     /**
      * Checks if the Limit_Buy order can be done, if yes -> save LimitBuyOrder in database
-     * @param order orderDTO
-     * author = Vanessa Philips
+     * @param order orderDTO | author = Vanessa Philips
      */
     public void checkLbuyOrder(OrderDTO order) {
         double totalPrice = order.getLimit() * order.getAssetAmount();
         double orderFee = totalPrice * BigBangkApplicatie.bigBangk.getFeePercentage();
-        double totalCost = totalPrice + (orderFee/2.0);
+        double totalCost = totalPrice + (orderFee / 2.0);
 
         if (clientWallet.sufficientBalance(totalCost)) {
             Limit_Buy limit_buy = new Limit_Buy(asset, order.getLimit(), order.getAssetAmount(), LocalDateTime.now(), clientWallet);
             rootRepository.saveLimitBuyOrder(limit_buy);
+            response = ResponseEntity.status(201).body(Messages.WaitingLimitBuy.getBody());
         } else {
             response = ResponseEntity.status(400).body(Messages.FundClient.getBody());
         }
-            response = ResponseEntity.status(201).body(Messages.WaitingLimitBuy.getBody());
     }
 
     // Limit_Sell
 
     /**
      * Checks if the Limit_Sell order can be done, if yes -> save LimitSellOrder in database
-     * @param order
-     * author = Vanessa Philips
+     * @param order | author = Vanessa Philips
      */
-    public void checkLsellOrder(OrderDTO order){
+    public void checkLsellOrder(OrderDTO order) {
         if (clientWallet.sufficientAsset(asset, order.getAssetAmount())) {
             Limit_Sell limit_sell = new Limit_Sell(asset, order.getLimit(), order.getAssetAmount(), LocalDateTime.now(), clientWallet);
             rootRepository.saveLimitSellOrder(limit_sell);
+            response = ResponseEntity.status(201).body(Messages.WaitingLimitSell.getBody());
         } else {
             response = ResponseEntity.status(400).body(Messages.AssetClient.getBody());
         }
-        response = ResponseEntity.status(201).body(Messages.WaitingLimitSell.getBody());
     }
 
     // Stoploss_Sell
 
     /**
      * Checks if the Stoploss_Sell order can be done, if yes -> save StoplossSellOrder in database
-     * @param order orderDTO
-     * author = Vanessa Philips
+     * @param order orderDTO | author = Vanessa Philips
      */
-    public void checkSlossOrder(OrderDTO order){
+    public void checkSlossOrder(OrderDTO order) {
         if (clientWallet.sufficientAsset(asset, order.getAssetAmount())) {
             Stoploss_Sell stoploss_sell = new Stoploss_Sell(asset, order.getLimit(), order.getAssetAmount(), LocalDateTime.now(), clientWallet);
             rootRepository.saveStoploss_Sell(stoploss_sell);
+            response = ResponseEntity.status(201).body(Messages.WaitingStoplossSell.getBody());
         } else {
             response = ResponseEntity.status(400).body(Messages.AssetClient.getBody());
         }
-        response = ResponseEntity.status(201).body(Messages.WaitingStoplossSell.getBody());
     }
-
 }
