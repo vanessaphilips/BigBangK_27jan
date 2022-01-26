@@ -24,14 +24,14 @@ function declareSubPages() {
     navElements.wallet = stringToHTML('<object data="wallet.html"  id="currentContentObject"></object>')
     navElements.history = stringToHTML('<object data="TransactionHistory.html"  id="currentContentObject"></object>')
     navElements.order = stringToHTML('<object  data="PlaceOrder.html"  id="currentContentObject"></object>')
+    navElements.orderoverview = stringToHTML('<object  data="orderoverview.html"  id="currentContentObject"></object>')
+    navElements.wallet = stringToHTML('<object data="wallet.html"  id="currentContentObject"></object>')
 }
 
 function setCurrentContent(selectedContent) {
     let height = selectedContent.clientHeight
     if (currentContentContainer.firstChild !== undefined) {
-
         currentContentContainer.replaceChild(selectedContent, currentContentContainer.firstChild)
-
     } else {
         currentContentContainer.appendChild(selectedContent)
     }

@@ -38,7 +38,7 @@ public class OrderOverviewController {
     private final AuthenticateService authenticateService;
     private final OrderOverViewService orderOverViewService;
     private final Logger logger = LoggerFactory.getLogger(OrderOverviewController.class);
-    private static ObjectMapper MAPPER;
+    private ObjectMapper MAPPER;
     private Bank bigBangK;
 
     public OrderOverviewController(AuthenticateService authenticateService, OrderOverViewService orderOverViewService, BigBangkApplicatie bigBangkApplicatie) {
@@ -46,12 +46,13 @@ public class OrderOverviewController {
         this.authenticateService = authenticateService;
         this.orderOverViewService = orderOverViewService;
         this.bigBangK = bigBangkApplicatie.getBank();
+        this.MAPPER = new ObjectMapper();
         logger.info("New OrderOverviewController");
     }
 
     @GetMapping("/orderoverview")
     @ResponseBody
-    public ResponseEntity<String> getAllOrders(@RequestHeader String authorization, @RequestBody String date) {
+    public ResponseEntity<String> getAllOrders(@RequestHeader String authorization) {
         if (!authorization.split(" ")[0].equals("Bearer")) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Got to login");
         }
@@ -77,7 +78,7 @@ public class OrderOverviewController {
 
     @GetMapping("/clienttransactions")
     @ResponseBody
-    public ResponseEntity<String> getClientTransactions(@RequestHeader String authorization, @RequestBody String date) {
+    public ResponseEntity<String> getClientTransactions(@RequestHeader String authorization) {
         if (!authorization.split(" ")[0].equals("Bearer")) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Got to login");
         }
@@ -119,7 +120,8 @@ public class OrderOverviewController {
                     transaction.getPriceExcludingFee(), transaction.getAssetAmount(),
                     transaction.getDate(), transaction.getFee(), walletSeller, walletBuyer);
             transActionDTOS.add(transActionDTO);
-        }return transActionDTOS;
+        }
+        return transActionDTOS;
     }
 
     private List<OrderDTO> convertLimitBuysToOrderDTOs(List<Limit_Buy> orders, Client client) {
@@ -165,6 +167,7 @@ public class OrderOverviewController {
                 abstractorder.getAssetAmount(),
                 abstractorder.getOrderId(),
                 walletOwner,
-                abstractorder.getDate());
+                abstractorder.getDate(),
+                abstractorder.getAsset());
     }
 }

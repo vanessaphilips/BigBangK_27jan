@@ -64,7 +64,7 @@ public class JdbcOrderDAO {
     }
 
     public List<Transaction> findAllTransactionsByIban(String iban) {
-        String sql = "SELECT * FROM bigbangk.order WHERE ordertype = ? && (buyer = ? || seller = ?);";
+        String sql = "SELECT * FROM bigbangk.order WHERE ordertype = ? AND (buyer = ? OR seller = ?);";
         try {
             return jdbcTemplate.query(sql, new TransactionRowMapper(), TransactionType.TRANSACTION.toString(), iban, iban);
         } catch (DataAccessException dataAccessException) {
@@ -136,19 +136,14 @@ public class JdbcOrderDAO {
         }
     }
 
-    /**
-     * for retreiving all Limit_buy orders
-     *
-     * @return List<Limit_Buy> with all limit_Buy orders
-     */
 
     public List<AbstractOrder> findOrdersByWallet(Wallet wallet) {
-        String sql = "SELECT * FROM bigbangk.order WHERE ordertype=?;";
+        String sql = "SELECT * FROM bigbangk.order WHERE ordertype=? AND(seller=? OR buyer=?);";
         List<AbstractOrder> abstractOrders = new ArrayList<>();
         try {
-            abstractOrders.addAll(jdbcTemplate.query(sql, new LimitSellRowMapper(), TransactionType.LIMIT_SELL.toString()));
-            abstractOrders.addAll(jdbcTemplate.query(sql, new LimitBuyRowMapper(), TransactionType.LIMIT_BUY.toString()));
-            abstractOrders.addAll(jdbcTemplate.query(sql, new StopLossRowMapper(), TransactionType.STOPLOSS_SELL.toString()));
+            abstractOrders.addAll(jdbcTemplate.query(sql, new LimitSellRowMapper(), TransactionType.LIMIT_SELL.toString(), wallet.getIban(), wallet.getIban()));
+            abstractOrders.addAll(jdbcTemplate.query(sql, new LimitBuyRowMapper(), TransactionType.LIMIT_BUY.toString(), wallet.getIban(), wallet.getIban()));
+            abstractOrders.addAll(jdbcTemplate.query(sql, new StopLossRowMapper(), TransactionType.STOPLOSS_SELL.toString(), wallet.getIban(), wallet.getIban()));
             return abstractOrders;
         } catch (DataAccessException dataAccessException) {
             logger.info(dataAccessException.getMessage());
@@ -156,6 +151,11 @@ public class JdbcOrderDAO {
         return null;
     }
 
+    /**
+     * for retreiving all Limit_buy orders
+     *
+     * @return List<Limit_Buy> with all limit_Buy orders
+     */
     public List<Limit_Buy> getAllLimitBuys() {
         String sql = "SELECT * FROM bigbangk.order WHERE ordertype=?;";
         try {
