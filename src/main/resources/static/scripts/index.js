@@ -24,14 +24,14 @@ function sendLoginData(lData) {
         method: "POST",
         headers: acceptHeaders(),
         body: JSON.stringify(lData)
-    })
-        .then(async response => {
+    }).then(async response => {
             if (response.ok) {
                 storeToken(await response.json());
                 console.log("login successful" + lData.email);
                 window.location.href = "menu.html";
             }else {
                 console.log("login failed");
+                response.text().then((message) => {showWindow(message)});
             }
         })
 }

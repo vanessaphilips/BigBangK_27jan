@@ -28,7 +28,7 @@ import static com.example.project_bigbangk.BigBangkApplicatie.bigBangk;
 
 /**
  * Controller created by Vanessa Philips & Pieter Jan Bleichrodt, 24/01/22
- * Overview for all open orders
+ * Overview for all orders
  */
 
 @CrossOrigin
