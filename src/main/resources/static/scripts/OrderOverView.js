@@ -1,15 +1,24 @@
 let ORDERVIEW_CONTAINER_ID = "orderViewContainer";
-let ORDER_CONTAINER_CLASS = "orderContainer";
+
+let ORDER_COLUMN_TITLE_CLASS = "columnTitle";
 let ORDER_COLUMN_CLASS = "orderColumn";
+
+let ORDER_CONTAINER_CLASS = "orderContainer";
 let ASSETAMOUNTLABELCLASS = "assetAmount";
 let ORDERTYPELABELCLASS = "orderType";
 let DATETIMELABELCLASS = "dateTime";
 let LIMITLABELCLASS = "limit";
-let ORDERCURRENTPRICELABELCLASS = "currentPrice";
+const ORDERCURRENTPRICELABELCLASS = "currentPrice";
+const PRICE_EX_FEE_LABEL_CLASS = "PriceExlcudingfee";
+const FEE_LABEL_CLASS = "Fee";
 const KEY_CLASS = "key"
 const VALUE_CLASS = "value"
 const ASSETCODELABEL_CLASS = "code"
-let ORDER_COLUMN_TITLE_CLASS = "columnTitle";
+
+const DELETE_BUTTON_TEXT  ="Delete";
+let ORDER_DELETE_BUTTON_CLASS = "orderDeleteButton";
+const ORDER_TO_DELETE_LABEL_ID= "orderToDelete";
+
 const token = localStorage.getItem(JWT_KEY);
 const ORDERVIEW_CONTAINER = document.getElementById(ORDERVIEW_CONTAINER_ID)
 let currentContent = "ALL"
@@ -29,6 +38,48 @@ function createKeyValueContainer(labelClass, innerHtml) {
     return container;
 }
 
+function deleteOrder(orderID) {
+   deleteOrderFetch(token, orderID);
+   initializePage();
+}
+
+function customizeMessageService() {
+    let popupCancelButton = document.createElement('button');
+    popupCancelButton.id = "popUpCancelButton"
+    let orderID = document.createElement("label");
+    orderID.style.display = "none";
+    orderID.id = ORDER_TO_DELETE_LABEL_ID;
+    popupCancelButton.addEventListener("click", function () {
+        closeWindow();
+    });
+    popupCancelButton.innerHTML = "Cancel";
+    popupDiv.appendChild(popupCancelButton);
+    popupDiv.appendChild(orderID);
+    popupButton.addEventListener("click", function () {
+        deleteOrder(orderID.innerText);
+    });
+}
+
+function deleteOrderPopUp(orderID) {
+    document.getElementById(ORDER_TO_DELETE_LABEL_ID).innerText = orderID;
+    console.log("delete order: "+ orderID)
+    showWindow("Are you sure you want to delete this order?\n" +
+        "This action cannot be undone!")
+
+}
+
+function createDeleteButton(order) {
+    const deleteButton = document.createElement("button")
+    deleteButton.className = ORDER_DELETE_BUTTON_CLASS;
+
+    deleteButton.innerText = DELETE_BUTTON_TEXT;
+    deleteButton.addEventListener("click", () => {
+        console.log("deleteButtonClicked")
+        deleteOrderPopUp(order.orderID);
+    })
+    return deleteButton;
+}
+
 function createOrderContainer(order) {
     const orderContainer = document.createElement("div");
     orderContainer.id = order.orderID;
@@ -36,22 +87,24 @@ function createOrderContainer(order) {
     orderContainer.appendChild(createKeyValueContainer(ASSETCODELABEL_CLASS, order.asset.code));
     orderContainer.appendChild(createKeyValueContainer(ASSETAMOUNTLABELCLASS, normalizePrice(order.assetAmount)));
     if (order instanceof TransactionDTO) {
-        if(order.seller === WalletOwner.CURRENTCLIENT|| order.buyer===WalletOwner.CURRENTCLIENT){
+        if (order.seller === WalletOwner.CURRENTCLIENT || order.buyer === WalletOwner.CURRENTCLIENT) {
             orderContainer.classList.add(WalletOwner.CURRENTCLIENT);
         }
-        orderContainer.appendChild(createKeyValueContainer("Fee", order.fee))
-        orderContainer.appendChild(createKeyValueContainer("PriceExlcudingfee", order.priceExcludingFee))
+        orderContainer.appendChild(createKeyValueContainer(FEE_LABEL_CLASS, normalizePrice(order.fee)))
+
+        orderContainer.appendChild(createKeyValueContainer(PRICE_EX_FEE_LABEL_CLASS, normalizePrice(order.priceExcludingFee)))
     } else {
         if (order.walletOwner === WalletOwner.CURRENTCLIENT) {
             orderContainer.classList.add(WalletOwner.CURRENTCLIENT);
         }
-
         orderContainer.appendChild(createKeyValueContainer(LIMITLABELCLASS, normalizePrice(order.limit)));
         orderContainer.appendChild(createKeyValueContainer(ORDERCURRENTPRICELABELCLASS, normalizePrice(order.asset.currentPrice)));
     }
     orderContainer.appendChild(createKeyValueContainer(ORDERTYPELABELCLASS, order.orderType));
     orderContainer.appendChild(createKeyValueContainer(DATETIMELABELCLASS, order.dateTime.toLocaleDateString()));
-
+    if (order.walletOwner === WalletOwner.CURRENTCLIENT) {
+        orderContainer.appendChild(createDeleteButton(order));
+    }
     return orderContainer
 }
 
@@ -63,7 +116,6 @@ function emptyOrderViewContainer() {
 
 filterOrders.addEventListener("change", () => {
     currentContent = filterOrders.options[filterOrders.selectedIndex].value;
-    emptyOrderViewContainer();
     fillPage();
 })
 
@@ -84,6 +136,7 @@ function createOrderColumn(filteredOrderDTOs) {
 }
 
 function fillPage() {
+    emptyOrderViewContainer();
     for (const orderType in OrderType) {
         let filteredOrderDTOs;
         let showTranActions = false;
@@ -130,6 +183,22 @@ const ordersFetch = async (token, url) => {
     }).then(jsObject => jsObject)
         .catch(error => console.log("Somethin went wrong: " + error))
 }
+const deleteOrderFetch = async (token, orderID) => {
+    return await fetch(`${rootURL}deleteorder/${orderID}`,
+        {
+            method: 'DELETE',
+            headers: acceptHeadersWithToken(token)
+        }).then(promise => {
+        if (promise.ok) {
+            console.log("Order deleted")
+        } else if (promise.status === 204) {
+            console.log("Order could not be found, and is therefore not deleted")
+        } else if (promise.status === 401) {
+            console.log("Unauthorized")
+        }
+    }).then(jsObject => jsObject)
+        .catch(error => console.log("Somethin went wrong: " + error))
+}
 
 
 function convertFetchToOrderDTOs(orders) {
@@ -149,5 +218,5 @@ function convertFetchToTrasactionDTOs(transactions) {
     console.log(transactionDTOs)
     return transactionDTOs
 }
-
+customizeMessageService()
 initializePage()

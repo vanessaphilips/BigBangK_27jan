@@ -1,0 +1,27 @@
+.popup {
+    border-radius: 25px;
+    padding: 30px;
+    size: auto;
+    font-family: calibri, sans-serif;
+    font-size: 18px;
+    background-color:rgba(249, 179, 110);
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+    text-align: center;
+}
+button {
+    background-color:rgba(249, 179, 110);
+    border-radius:28px;
+    min-width: 120px;
+    border:1px solid #6b92e0;
+    display: block;
+    cursor:pointer;
+    color:#ffffff;
+    font-size:17px;
+    padding:7px 15px;
+    text-decoration:none;
+    margin: 0 auto;
+}
