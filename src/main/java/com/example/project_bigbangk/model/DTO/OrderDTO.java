@@ -44,6 +44,10 @@ public class OrderDTO {
         this.assetAmount = assetAmount;
     }
 
+    OrderDTO() {
+
+    }
+
     public OrderDTO(String assetCode, String orderType, double limit, double assetAmount, int orderId, WalletOwner walletOwner, LocalDateTime dateTime, Asset asset) {
         this(assetCode, orderType, limit, assetAmount);
         this.orderID = orderId;
