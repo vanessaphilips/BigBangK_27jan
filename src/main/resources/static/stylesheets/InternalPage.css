@@ -63,12 +63,13 @@ input:focus {
 
 .smallDisplay {
     border-radius: 3px;
-    border: solid 1px black;
-    width: 80%;
     padding: 1px 20px;
-    background-color: white;
-    font-family: Calibri, sans-serif;
-    font-size: 18px;
+    margin: auto;
+    border: solid 1px black;
+    color: rgba(249, 179, 110);
+    font-size: 2em;
+    font-weight: bold;
+    background-color: rgb(89, 164, 209);
 }
 
 .asset {

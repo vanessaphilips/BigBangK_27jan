@@ -38,7 +38,8 @@ public class Orderservice {
         SuccessSell("Sell-Order successful"),
         WaitingLimitBuy("Limit-buy order saved and waiting for match"),
         WaitingLimitSell("Limit-sell order saved and waiting for match"),
-        WaitingStoplossSell("Stoploss-sell order saved and waiting for match");
+        WaitingStoplossSell("Stoploss-sell order saved and waiting for match"),
+        NoLimitSet("Cannot place an order with a limit of 0 or less");
         private String body;
 
         Messages(String envBody) {
@@ -151,7 +152,9 @@ public class Orderservice {
         double orderFee = totalPrice * BigBangkApplicatie.bigBangk.getFeePercentage();
         double totalCost = totalPrice + (orderFee / 2.0);
 
-        if (clientWallet.sufficientBalance(totalCost)) {
+        if(order.getLimit()<= 0) {
+            response = ResponseEntity.status(400).body(Messages.NoLimitSet.getBody());
+        }else if (clientWallet.sufficientBalance(totalCost)) {
             Limit_Buy limit_buy = new Limit_Buy(asset, order.getLimit(), order.getAssetAmount(), LocalDateTime.now(), clientWallet);
             rootRepository.saveLimitBuyOrder(limit_buy);
             response = ResponseEntity.status(201).body(Messages.WaitingLimitBuy.getBody());
@@ -167,7 +170,9 @@ public class Orderservice {
      * @param order | author = Vanessa Philips
      */
     public void checkLsellOrder(OrderDTO order) {
-        if (clientWallet.sufficientAsset(asset, order.getAssetAmount())) {
+        if(order.getLimit()<= 0) {
+            response = ResponseEntity.status(400).body(Messages.NoLimitSet.getBody());
+        }else if (clientWallet.sufficientAsset(asset, order.getAssetAmount())) {
             Limit_Sell limit_sell = new Limit_Sell(asset, order.getLimit(), order.getAssetAmount(), LocalDateTime.now(), clientWallet);
             rootRepository.saveLimitSellOrder(limit_sell);
             response = ResponseEntity.status(201).body(Messages.WaitingLimitSell.getBody());
@@ -183,7 +188,9 @@ public class Orderservice {
      * @param order orderDTO | author = Vanessa Philips
      */
     public void checkSlossOrder(OrderDTO order) {
-        if (clientWallet.sufficientAsset(asset, order.getAssetAmount())) {
+        if(order.getLimit()<= 0) {
+            response = ResponseEntity.status(400).body(Messages.NoLimitSet.getBody());
+        }else if (clientWallet.sufficientAsset(asset, order.getAssetAmount())) {
             Stoploss_Sell stoploss_sell = new Stoploss_Sell(asset, order.getLimit(), order.getAssetAmount(), LocalDateTime.now(), clientWallet);
             rootRepository.saveStoploss_Sell(stoploss_sell);
             response = ResponseEntity.status(201).body(Messages.WaitingStoplossSell.getBody());
