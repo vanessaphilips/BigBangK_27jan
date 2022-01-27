@@ -27,9 +27,9 @@ function getWallet(){
             console.log(json);
             let walletDTO = json;
             document.getElementById("iban").innerHTML = walletDTO.iban;
-            document.getElementById("totalWorth").innerHTML = walletDTO.totalWorth + " €";
-            document.getElementById("balance").innerHTML = walletDTO.balance + " €";
-            document.getElementById("freeBalance").innerHTML = walletDTO.freeBalance + " €";
+            document.getElementById("totalWorth").innerHTML = walletDTO.totalWorth.toFixed(2) + " €";
+            document.getElementById("balance").innerHTML = walletDTO.balance.toFixed(2) + " €";
+            document.getElementById("freeBalance").innerHTML = walletDTO.freeBalance.toFixed(2) + " €";
             for (let assetEntry of Object.entries(walletDTO.assets)){
                 if(assetEntry[1] > 0) {
                     let assetDiv = document.createElement('div');
