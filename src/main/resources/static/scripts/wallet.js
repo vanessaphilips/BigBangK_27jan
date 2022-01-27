@@ -1,21 +1,18 @@
 
 
-class Wallet {
-    constructor(bank, iban, balance, assets, transaction, limitSell, limitBuy, stoplossSell, owner)
+class walletDTO {
+    constructor(iban, balance, assets, totalWorth, freeBalance)
     {
-        this.bank = bank;
         this.iban = iban;
         this.balance = balance;
         this.assets = assets;
-        this.transaction = transaction;
-        this.limitSell = limitSell;
-        this.limitBuy = limitBuy;
-        this.stoplossSell = stoplossSell;
-        this.owner = owner;
+        this.totalWorth = totalWorth;
+        this.freeBalance = freeBalance;
     }
 }
 
 let token = localStorage.getItem(JWT_KEY);
+
 
 getWallet();
 
@@ -28,10 +25,12 @@ function getWallet(){
         .then(response => response.json())
         .then(json => {
             console.log(json);
-            let wallet = json;
-            document.getElementById("iban").innerHTML = wallet.iban;
-            document.getElementById("balance").innerHTML = wallet.balance;
-            for (let assetEntry of Object.entries(wallet.assets)){
+            let walletDTO = json;
+            document.getElementById("iban").innerHTML = walletDTO.iban;
+            document.getElementById("totalWorth").innerHTML = walletDTO.totalWorth + " €";
+            document.getElementById("balance").innerHTML = walletDTO.balance + " €";
+            document.getElementById("freeBalance").innerHTML = walletDTO.freeBalance + " €";
+            for (let assetEntry of Object.entries(walletDTO.assets)){
                 if(assetEntry[1] > 0) {
                     let assetDiv = document.createElement('div');
                     assetDiv.className = 'asset';
@@ -41,11 +40,8 @@ function getWallet(){
                         orderSelectedAsset(assetEntry[0]);});
                     orderButton.className = "smallButton";
                     orderButton.innerHTML = "Trade";
-                    let buttonDiv = document.createElement('div');
-                    buttonDiv.className = "contentpanelRight";
-                    buttonDiv.appendChild(orderButton);
+                    assetDiv.appendChild(orderButton);
                     document.getElementById('assetContainer').appendChild(assetDiv);
-                    document.getElementById('assetContainer').appendChild(buttonDiv);
                 }
             }
         })

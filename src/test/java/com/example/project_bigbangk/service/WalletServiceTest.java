@@ -17,7 +17,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.assertj.core.api.Assertions.*;
 
 /**
@@ -91,7 +90,7 @@ class WalletServiceTest {
 
     @Test
     void getWalletClient() {
-        Wallet klantWallet = walletService.getWalletClient("token");
+        Wallet klantWallet = walletService.getWallet("token");
         assertThat(klantWallet).isEqualTo(mockWallet);
     }
 
@@ -102,7 +101,7 @@ class WalletServiceTest {
         transactions.add(transaction2);
         transactions.add(transaction3);
         Mockito.when(mockWallet.getTransaction()).thenReturn(transactions);
-        Mockito.when(walletService.getWalletClient("token")).thenReturn(mockWallet);
+        Mockito.when(walletService.getWallet("token")).thenReturn(mockWallet);
         List<GraphicsWalletDTO> history = walletService.calculateHisory();
         System.out.println(history.get(0).nieuw);
         System.out.println(history.get(1).nieuw);

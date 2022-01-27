@@ -1,6 +1,7 @@
 package com.example.project_bigbangk.controller;
 
 import com.example.project_bigbangk.model.DTO.GraphicsWalletDTO;
+import com.example.project_bigbangk.model.DTO.WalletDTO;
 import com.example.project_bigbangk.model.Wallet;
 import com.example.project_bigbangk.service.Security.AuthenticateService;
 import com.example.project_bigbangk.service.WalletService;
@@ -44,10 +45,8 @@ public class WalletController {
         }
         if (authenticateService.authenticate(authorization)){
             try {
-                Wallet wallet = walletService.getWalletClient(authorization);
-                MAPPER.registerModule(new JSR310Module());
-                MAPPER.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-                String jsonWallet = MAPPER.writeValueAsString(wallet);
+                WalletDTO walletDTO = walletService.getWalletDTO(authorization);
+                String jsonWallet = MAPPER.writeValueAsString(walletDTO);
                 return ResponseEntity.ok().body(jsonWallet);
             } catch (JsonProcessingException exception) {
                 logger.error(exception.getMessage());

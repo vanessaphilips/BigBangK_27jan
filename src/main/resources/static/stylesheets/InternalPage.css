@@ -63,7 +63,7 @@ input:focus {
 
 .smallDisplay {
     border-radius: 3px;
-    padding: 1px 20px;
+    padding: 1px 15px;
     margin: auto;
     border: solid 1px black;
     color: rgba(249, 179, 110);
@@ -73,9 +73,10 @@ input:focus {
 }
 
 .asset {
+    float: left;
     border-radius: 3px;
     border: solid 1px black;
-    width: 80%;
+    width: 90%;
     padding: 1px 20px;
     background-color: white;
     font-family: Calibri, sans-serif;
@@ -97,6 +98,7 @@ button {
 }
 
 .smallButton {
+    float: right;
     min-width: 30px;
     font-size:12px;
     padding:3px 6px;

@@ -5,6 +5,7 @@ import com.example.project_bigbangk.model.Asset;
 import com.example.project_bigbangk.model.AssetCode_Name;
 import com.example.project_bigbangk.model.Client;
 import com.example.project_bigbangk.model.DTO.GraphicsWalletDTO;
+import com.example.project_bigbangk.model.DTO.WalletDTO;
 import com.example.project_bigbangk.model.Orders.Transaction;
 import com.example.project_bigbangk.model.Wallet;
 import com.example.project_bigbangk.repository.RootRepository;
@@ -32,9 +33,19 @@ public class WalletService {
         this.rootRepository = rootRepository;
     }
 
-    public Wallet getWalletClient(String token){
+    public Wallet getWallet(String token){
         this.client = authenticateService.getClientFromToken(token);
         return client.getWallet();
+    }
+
+    public WalletDTO getWalletDTO(String token){
+        this.client = authenticateService.getClientFromToken(token);
+        double totalWorth = client.getWallet().getBalance();
+        for (Asset asset : client.getWallet().getAssets().keySet()) {
+            totalWorth+= client.getWallet().getAssets().get(asset) * rootRepository.getCurrentPriceByAssetCode(asset.getCode());
+        }
+        double freeBalance = client.getWallet().freeBalance();
+        return new WalletDTO(client.getWallet().getIban(), client.getWallet().getBalance(), client.getWallet().getAssets(), totalWorth, freeBalance);
     }
 
 

@@ -72,8 +72,8 @@ public class Wallet implements Cloneable {
     public double freeBalance(){
         double reservedBalance = 0.0;
         for (Limit_Buy limit_buy : limitBuy) {
-            reservedBalance += limit_buy.getOrderLimit();
-            reservedBalance += (limit_buy.getOrderLimit() * BigBangkApplicatie.bigBangk.getFeePercentage());
+            reservedBalance += limit_buy.getOrderLimit() * limit_buy.getAssetAmount();
+            reservedBalance += (limit_buy.getOrderLimit() * limit_buy.getAssetAmount() * BigBangkApplicatie.bigBangk.getFeePercentage());
         }
         return balance - reservedBalance;
     }

@@ -20,7 +20,7 @@ document.getElementById("coinName").innerHTML = "Trade " + asset.name;
 getPrice();
 
 setTimeout(() => {
-    document.getElementById("currentPrice").innerHTML = asset.currentPrice
+    document.getElementById("currentPrice").innerHTML = asset.currentPrice + " €";
 }, 100);
 
 document.getElementById('orderType').addEventListener('change', checkOrderType);
