@@ -1,5 +1,6 @@
 :root {
-    --orange: #ff8034;
+    --orange: rgba(249, 179, 110);
+    --orangeHover: rgba(249, 179, 130);
     --blue:  #459ac7;
     --fullwidth: 100%;
     --selected: #69c7fa;
@@ -25,7 +26,7 @@ input::-webkit-inner-spin-button {
     font-family: Calibri, sans-serif;
     display: flex;
     flex-direction: column;
-    background-color: #ffffff;
+    background-color:transparent;
     max-width:60%;
     padding-right: 50px;
     height: 800px;
@@ -51,9 +52,10 @@ input::-webkit-inner-spin-button {
     margin: 5px;
     width: 100%;
     border-bottom-style: solid;
-    border-width: thin;
+    border-width: 10px;
     border-color: var(--blue);
     padding: 5px;
+    border-radius: 10px;
 }
 
 
@@ -98,7 +100,7 @@ input::-webkit-inner-spin-button {
     border-style: solid;
     border-color: var(--blue);
     border-width: 2px;
-    border-radius: 10%;
+    border-radius: 5px;
     height: fit-content;
     width: fit-content;
     font-size: 70%;

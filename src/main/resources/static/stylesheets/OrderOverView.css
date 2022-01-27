@@ -1,5 +1,6 @@
 :root {
-    --orange: #ff8034;
+    --orange: rgba(249, 179, 110);
+    --orangeHover: rgba(249, 179, 130);
     --blue: #459ac7;
     --fullwidth: 100%;
     --selected: #69c7fa;
@@ -14,20 +15,15 @@
 }
 #filterOrders{
     position: relative;
-    font-family: Arial;
     margin: 1%;
-    height: 200%;
     background-color: var(--orange);
     border-block-style: none;
     border-radius: 10px;
-    position: relative;
-    font-family: Arial;
+    width: 100px;
+    height: 20px;
 }
-
-
-
-.custom-select select {
-    display: none; /*hide original SELECT element: */
+.select-selected:hover{
+    background-color: var(--orangeHover);
 }
 
 .select-selected {
